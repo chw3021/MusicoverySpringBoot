@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musicovery.spotifyapi.service.SpotifyApiUserService;
+
+
 @RestController
-@RequestMapping("/spotify")
+@RequestMapping("/api/spotify")
 public class SpotifyApiUserController {
 
     private final SpotifyApiUserService spotifyApiUserService;

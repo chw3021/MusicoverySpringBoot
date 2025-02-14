@@ -17,13 +17,13 @@ import com.musicovery.spotifyapi.dto.SpotifyApiRequestDTO;
 public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
 
     private final SpotifyApiUtil spotifyApiUtil;
-    private final SpotifyAuthService spotifyAuthService;
+    private final SpotifyAuthServiceImpl spotifyAuthService;
     private final RestTemplate restTemplate;
 
     @Value("${spotify.api.base_url}")
     private String baseUrl;
 
-    public SpotifyApiMusicServiceImpl(SpotifyApiUtil spotifyApiUtil, SpotifyAuthService spotifyAuthService) {
+    public SpotifyApiMusicServiceImpl(SpotifyApiUtil spotifyApiUtil, SpotifyAuthServiceImpl spotifyAuthService) {
         this.spotifyApiUtil = spotifyApiUtil;
         this.spotifyAuthService = spotifyAuthService;
         this.restTemplate = new RestTemplate();
