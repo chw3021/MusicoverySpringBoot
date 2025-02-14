@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<!-- 공통 정보  -->
+	<th:block th:fragment="config">
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<title> 확인하기 </title>
+	<th:block th:fragment="header">
+	<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">플리</a>
+			            <ul class="dropdown-menu">
+			              <li><a class="dropdown-item" href="/data/playlistList">플리 작업중</a></li>
+			            </ul>
+	</li>
+	</th:block>
+</html>

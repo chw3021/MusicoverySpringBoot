@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{template/mainView/MainView}">
+				<!-- "~{template/안 폴더/그 안 폴더/메인 h t m l}" -->
+
+	<th:block layout:fragment="content">
+	
+		<div class="text-center"><h3>플리의 리스트</h3></div>
+		<thead>
+		
+		</thead>
+		<tbody class="list">
+			
+		</tbody>
+	
+	
+	<div class="text-end">
+		<button type="button" id="insertFormBtn" class="btn btn-primary btn-sm mb-2">생성하기</button>
+	</div>
+	
+	</th:block>
+	
+	<th:block layout:fragment="script">
+		<script src="/js/playlist/playlistList.js"></script>
+	</th:block>
+	
+</html>
