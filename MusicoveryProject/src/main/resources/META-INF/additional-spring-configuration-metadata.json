@@ -18,5 +18,20 @@
     "name": "spotify.client.secret",
     "type": "java.lang.String",
     "description": "A description for 'spotify.client.secret'"
+  },
+  {
+    "name": "ai.recommendation.api",
+    "type": "java.lang.String",
+    "description": "A description for 'ai.recommendation.api'"
+  },
+  {
+    "name": "spotify.api.base_url",
+    "type": "java.lang.String",
+    "description": "A description for 'spotify.api.base_url'"
+  },
+  {
+    "name": "spotify.api.token_url",
+    "type": "java.lang.String",
+    "description": "A description for 'spotify.api.token_url'"
   }
 ]}
