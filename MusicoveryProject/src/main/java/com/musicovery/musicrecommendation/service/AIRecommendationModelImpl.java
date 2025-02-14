@@ -3,6 +3,7 @@ package com.musicovery.musicrecommendation.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -10,7 +11,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class AIRecommendationModelImpl implements AIRecommendationModel {
 
-    private final RestTemplate restTemplate;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Value("${ai.recommendation.api}")
     private String aiRecommendationApi; // Flask 서버 URL (예: http://localhost:5000/recommend/)

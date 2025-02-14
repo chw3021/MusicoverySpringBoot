@@ -2,7 +2,13 @@ package com.musicovery.spotifyapi.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.musicovery.spotifyapi.common.SpotifyApiUtil;
 import com.musicovery.spotifyapi.dto.SpotifyApiRequestDTO;
@@ -12,6 +18,7 @@ public class SpotifyApiServiceImpl implements SpotifyApiService {
 
     private final SpotifyApiUtil spotifyApiUtil;
     private final SpotifyAuthService spotifyAuthService;
+    private final RestTemplate restTemplate;
 
     @Value("${spotify.api.base_url}")
     private String baseUrl;
@@ -19,17 +26,27 @@ public class SpotifyApiServiceImpl implements SpotifyApiService {
     public SpotifyApiServiceImpl(SpotifyApiUtil spotifyApiUtil, SpotifyAuthService spotifyAuthService) {
         this.spotifyApiUtil = spotifyApiUtil;
         this.spotifyAuthService = spotifyAuthService;
+        this.restTemplate = new RestTemplate();
     }
 
 
     /**
-     * 🔍 음악 검색
+     * 🔍 음악 검색 (Spotify API 호출)
      */
     public String searchMusic(String keyword, String type) {
         String accessToken = spotifyAuthService.getAccessToken();
         String url = baseUrl + "/search?q=" + keyword + "&type=" + type;
-        SpotifyApiRequestDTO request = new SpotifyApiRequestDTO(url, "GET");
-        return spotifyApiUtil.callSpotifyApi(request, accessToken, null);
+
+        // Authorization 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+
+        return response.getBody();
     }
 
     /**
