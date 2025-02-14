@@ -22,4 +22,5 @@ public class SpotifyAuthController {
         String accessToken = spotifyAuthService.getAccessToken();
         return ResponseEntity.ok(accessToken);
     }
+   
 }

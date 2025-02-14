@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.musicovery.spotifyapi.service.SpotifyApiService;
+import com.musicovery.spotifyapi.service.SpotifyApiMusicService;
 @RestController
 @RequestMapping("/api/spotify")
 public class SpotifyApiController {
 
-    private final SpotifyApiService spotifyApiService;
+    private final SpotifyApiMusicService spotifyApiService;
 
-    public SpotifyApiController(SpotifyApiService spotifyApiService) {
+    public SpotifyApiController(SpotifyApiMusicService spotifyApiService) {
         this.spotifyApiService = spotifyApiService;
     }
 

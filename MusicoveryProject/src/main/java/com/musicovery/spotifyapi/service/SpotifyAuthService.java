@@ -21,6 +21,12 @@ public class SpotifyAuthService {
     @Value("${spotify.client.secret}")
     private String clientSecret;
 
+    @Value("${spotify.api.redirect_uri}")
+    private String redirectUri;
+
+    @Value("${spotify.api.token_url}")
+    private String tokenUrl;
+    
     private SpotifyApi spotifyApi;
     private String accessToken;
 
@@ -37,7 +43,6 @@ public class SpotifyAuthService {
         if (accessToken == null) {
             requestAccessToken();
         }
-        System.out.println(accessToken);
         return accessToken;
     }
 
@@ -53,9 +58,17 @@ public class SpotifyAuthService {
             accessToken = spotifyApi.getAccessToken();
 
             // 디버깅 로그 추가
+            System.out.println("=======================");
+            System.out.println("=======================");
+            System.out.println("=======================");
             System.out.println("Access Token: " + accessToken);
+            System.out.println("=======================");
+            System.out.println("=======================");
+            System.out.println("=======================");
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
+    
+
 }

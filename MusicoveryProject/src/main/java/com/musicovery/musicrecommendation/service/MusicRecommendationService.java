@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.musicovery.spotifyapi.service.SpotifyApiService;
+import com.musicovery.spotifyapi.service.SpotifyApiMusicService;
 
 @Service
 public class MusicRecommendationService {
 
-    private final SpotifyApiService spotifyApiService;
+    private final SpotifyApiMusicService spotifyApiService;
     private final AIRecommendationModel aiModel;
 
-    public MusicRecommendationService(SpotifyApiService spotifyApiService, AIRecommendationModel aiModel) {
+    public MusicRecommendationService(SpotifyApiMusicService spotifyApiService, AIRecommendationModel aiModel) {
         this.spotifyApiService = spotifyApiService;
         this.aiModel = aiModel;
     }

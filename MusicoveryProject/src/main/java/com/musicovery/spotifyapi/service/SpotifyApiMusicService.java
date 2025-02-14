@@ -2,7 +2,7 @@ package com.musicovery.spotifyapi.service;
 
 import java.util.List;
 
-public interface SpotifyApiService {
+public interface SpotifyApiMusicService {
     String searchMusic(String keyword, String type);
     public String getRecommendedTracks(
             String seedArtists,
