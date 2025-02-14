@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "spotify.*",
+    "type": "java.lang.String",
+    "description": "A description for 'spotify.api.token_url'"
+  },
+  {
+    "name": "spotify.client.id",
+    "type": "java.lang.String",
+    "description": "A description for 'spotify.client.id'"
+  },
+  {
+    "name": "spotify.api.*",
+    "type": "java.lang.String",
+    "description": "A description for 'spotify.client.id'"
+  },
+  {
+    "name": "spotify.client.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'spotify.client.secret'"
+  }
+]}
