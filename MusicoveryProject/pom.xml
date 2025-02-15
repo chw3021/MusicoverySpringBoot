@@ -79,8 +79,11 @@
 		    <artifactId>spotify-web-api-java</artifactId>
 		    <version>9.1.1</version>
 		</dependency>
-		
-
+		<!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
+		<dependency>
+		    <groupId>com.mysql</groupId>
+		    <artifactId>mysql-connector-j</artifactId>
+	    </dependency>
 	</dependencies>
 
 	<build>
