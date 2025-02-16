@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class SpotifyTokenResponse {
     @JsonProperty("access_token")
     private String accessToken;
+	private String refreshToken;
     private String tokenType;
     private int expiresIn;
 }

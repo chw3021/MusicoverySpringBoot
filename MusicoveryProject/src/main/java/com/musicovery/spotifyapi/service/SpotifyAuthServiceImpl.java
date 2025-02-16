@@ -1,28 +1,27 @@
 package com.musicovery.spotifyapi.service;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.hc.core5.http.ParseException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import com.musicovery.spotifyapi.dto.SpotifyTokenResponse;
 
 import jakarta.annotation.PostConstruct;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
+import se.michaelthelin.spotify.model_objects.specification.User;
+import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRefreshRequest;
+import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
 import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
-
+import se.michaelthelin.spotify.requests.data.users_profile.GetCurrentUsersProfileRequest;
 @Service
-public class SpotifyAuthServiceImpl implements SpotifyAuthService{
+public class SpotifyAuthServiceImpl implements SpotifyAuthService {
 
     @Value("${spotify.client.id}")
     private String clientId;
@@ -32,13 +31,17 @@ public class SpotifyAuthServiceImpl implements SpotifyAuthService{
 
     @Value("${spotify.api.token_url}")
     private String tokenUrl;
-    
+
     @Value("${spotify.api.redirect_uri}")
     private String redirectUri;
-    
+
     private SpotifyApi spotifyApi;
     private String accessToken;
-    private String userAccessToken; // 사용자의 액세스 토큰
+	private String userAccessToken;
+	private String refreshToken;
+	private Instant tokenExpiryTime;
+
+	private final Map<String, TokenInfo> userTokens = new ConcurrentHashMap<>(); // 사용자별 토큰 저장
 
     private final RestTemplate restTemplate;
 
@@ -46,78 +49,143 @@ public class SpotifyAuthServiceImpl implements SpotifyAuthService{
         this.restTemplate = restTemplate;
     }
 
-    // Spotify 인증 URL 생성 메서드
-    public String getSpotifyAuthUrl(String scope) {
-        String url = "https://accounts.spotify.com/authorize" +
-                "?response_type=code" +
-                "&client_id=" + clientId +
-                "&redirect_uri=" + redirectUri +
-                "&scope=" + scope;
-        return url;
-    }
-    
     @PostConstruct
     public void init() {
         this.spotifyApi = new SpotifyApi.Builder()
                 .setClientId(clientId)
                 .setClientSecret(clientSecret)
                 .build();
-        requestAccessToken();  // 초기화 후 바로 토큰 요청
+		requestAccessToken();
     }
 
-    public String getAccessToken() {
-        if (accessToken == null) {
-            requestAccessToken();
-        }
-        return accessToken;
-    }
-
-    public String getUserAccessToken() {
-        return userAccessToken;
-    }
-
-    private void requestAccessToken() {
-        if (spotifyApi == null) {
-            throw new IllegalStateException("Spotify API is not initialized.");
-        }
-
-        ClientCredentialsRequest clientCredentialsRequest = spotifyApi.clientCredentials().build();
-        try {
-            final ClientCredentials clientCredentials = clientCredentialsRequest.execute();
-            spotifyApi.setAccessToken(clientCredentials.getAccessToken());
-            accessToken = spotifyApi.getAccessToken();
-
-            // 디버깅 로그 추가
-            System.out.println("=======================");
-            System.out.println("=======================");
-            System.out.println("=======================");
-            System.out.println("Access Token: " + accessToken);
-            System.out.println("=======================");
-            System.out.println("=======================");
-            System.out.println("=======================");
-        } catch (IOException | SpotifyWebApiException | ParseException e) {
-            System.out.println("Error: " + e.getMessage());
+	// accessToken 관련 메서드
+	private void requestAccessToken() {
+		try {
+			ClientCredentialsRequest clientCredentialsRequest = spotifyApi.clientCredentials().build();
+			ClientCredentials clientCredentials = clientCredentialsRequest.execute();
+			this.accessToken = clientCredentials.getAccessToken();
+			this.tokenExpiryTime = Instant.now().plusSeconds(clientCredentials.getExpiresIn());
+		} catch (IOException | SpotifyWebApiException | ParseException e) {
+			throw new IllegalStateException("Failed to retrieve access token", e);
         }
     }
-    
 
-    public String requestAccessTokenWithCode(String code) {
-        // 인증 코드로 액세스 토큰을 요청하는 로직
-        String url = tokenUrl + "?grant_type=authorization_code&code=" + code + "&redirect_uri=" + redirectUri + "&client_id=" + clientId + "&client_secret=" + clientSecret;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<SpotifyTokenResponse> response = restTemplate.exchange(url, HttpMethod.POST, request, SpotifyTokenResponse.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            userAccessToken = response.getBody().getAccessToken();  // 사용자 토큰 추출
-            System.out.println("User Access Token: " + userAccessToken);
-        } else {
-            throw new IllegalStateException("Failed to retrieve User Access Token");
-        }
-
-        return userAccessToken;
+	public String getAccessToken() {
+		if (Instant.now().isAfter(tokenExpiryTime)) {
+			requestAccessToken();
+		}
+		return accessToken;
     }
+
+	// ======= userAccessToken 관련 메서드 =======
+	/**
+	 * 사용자의 액세스 토큰 요청 후 저장
+	 */
+	public String requestUserAccessToken(String code) {
+		try {
+			AuthorizationCodeRequest authRequest = spotifyApi.authorizationCode(code).build();
+			AuthorizationCodeCredentials credentials = authRequest.execute();
+
+			// 사용자 ID 가져오기 (Spotify API 요청)
+			String userId = fetchSpotifyUserId(credentials.getAccessToken());
+
+			// 사용자별 토큰 저장
+			userTokens.put(userId, new TokenInfo(credentials.getAccessToken(), credentials.getRefreshToken(),
+					Instant.now().plusSeconds(credentials.getExpiresIn())));
+
+			return credentials.getAccessToken();
+		} catch (Exception e) {
+			throw new IllegalStateException("Failed to request access token", e);
+		}
+	}
+
+	/**
+	 * 사용자 ID 기반으로 토큰 리프레시
+	 */
+	public String refreshUserAccessToken(String userId) {
+		TokenInfo tokenInfo = userTokens.get(userId);
+		if (tokenInfo == null || tokenInfo.refreshToken == null) {
+			throw new IllegalStateException("No refresh token available for user: " + userId);
+		}
+
+		try {
+			AuthorizationCodeRefreshRequest refreshRequest = spotifyApi.authorizationCodeRefresh()
+					.refresh_token(tokenInfo.refreshToken).build();
+
+			AuthorizationCodeCredentials credentials = refreshRequest.execute();
+
+			// 새 토큰 업데이트
+			userTokens.put(userId, new TokenInfo(credentials.getAccessToken(), tokenInfo.refreshToken,
+					Instant.now().plusSeconds(credentials.getExpiresIn())));
+
+			return credentials.getAccessToken();
+		} catch (Exception e) {
+			throw new IllegalStateException("Failed to refresh access token", e);
+		}
+	}
+
+	public String getValidUserAccessToken(String userId) {
+		TokenInfo tokenInfo = userTokens.get(userId);
+
+		if (tokenInfo == null || Instant.now().isAfter(tokenInfo.expiryTime)) {
+			return refreshUserAccessToken(userId);
+		}
+		return tokenInfo.accessToken;
+	}
+
+	/**
+	 * Spotify API를 호출하여 사용자 ID 가져오기
+	 */
+	public String fetchSpotifyUserId(String accessToken) {
+		try {
+			SpotifyApi spotifyApi = new SpotifyApi.Builder().setAccessToken(accessToken).build();
+
+			GetCurrentUsersProfileRequest request = spotifyApi.getCurrentUsersProfile().build();
+			User user = request.execute();
+
+			return user.getId(); // Spotify User ID 반환
+		} catch (IOException | SpotifyWebApiException | ParseException e) {
+			throw new IllegalStateException("Failed to fetch Spotify User ID", e);
+		}
+	}
+	public String getSpotifyAuthUrl() {
+	    String scope = String.join(" ",
+	        "user-read-private",
+	        "user-read-email",
+	        "playlist-modify-public",
+	        "playlist-modify-private",
+	        "user-read-recently-played",
+	        "user-top-read",
+	        "user-read-playback-state",
+	        "user-modify-playback-state",
+	        "user-read-currently-playing",
+	        "streaming",
+	        "user-follow-modify",
+	        "user-follow-read",
+	        "user-library-read",
+	        "user-library-modify"
+	    );
+
+	    return "https://accounts.spotify.com/authorize" +
+	            "?response_type=code" +
+	            "&client_id=" + clientId +
+	            "&redirect_uri=" + redirectUri +
+	            "&scope=" + scope;
+	}
+
+	/**
+	 * 사용자 토큰을 저장하는 내부 클래스
+	 */
+	private static class TokenInfo {
+		String accessToken;
+		String refreshToken;
+		Instant expiryTime;
+
+		TokenInfo(String accessToken, String refreshToken, Instant expiryTime) {
+			this.accessToken = accessToken;
+			this.refreshToken = refreshToken;
+			this.expiryTime = expiryTime;
+		}
+	}
+
 }
