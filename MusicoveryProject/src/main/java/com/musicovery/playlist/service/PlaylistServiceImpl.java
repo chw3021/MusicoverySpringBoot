@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.musicovery.playlist.domain.Playlist;
+import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.repository.PlaylistRepository;
 
 import lombok.Setter;

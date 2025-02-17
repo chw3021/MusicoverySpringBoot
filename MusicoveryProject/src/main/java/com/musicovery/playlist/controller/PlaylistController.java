@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.musicovery.playlist.domain.Playlist;
+import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.service.PlaylistService;
 
 import lombok.RequiredArgsConstructor;

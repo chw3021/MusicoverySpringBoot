@@ -2,7 +2,7 @@ package com.musicovery.playlist.service;
 
 import java.util.List;
 
-import com.musicovery.playlist.domain.Playlist;
+import com.musicovery.playlist.entity.Playlist;
 
 public interface PlaylistService {
 
