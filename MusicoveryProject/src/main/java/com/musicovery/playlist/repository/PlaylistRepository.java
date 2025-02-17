@@ -1,10 +1,10 @@
 package com.musicovery.playlist.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.musicovery.playlist.entity.Playlist;
 
-//dao
-public interface PlaylistRepository extends CrudRepository<Playlist, Long> {
+public interface PlaylistRepository extends JpaRepository<Playlist, String> {
+
 
 }

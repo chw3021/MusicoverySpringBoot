@@ -34,8 +34,13 @@ public class Weight {
 
     // 복합키 설정: user_id + music_id
     @Embeddable
+    @Data
     public static class WeightPK implements java.io.Serializable {
-        private String userId;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 9087209274475808996L;
+		private String userId;
         private Integer musicId;
     }
 }

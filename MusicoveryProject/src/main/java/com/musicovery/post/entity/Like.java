@@ -28,6 +28,6 @@ public class Like {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "playlist_post_id")
+    @JoinColumn(name = "post_id")
     private PlaylistPost playlistPost;
 }
