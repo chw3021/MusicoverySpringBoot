@@ -10,4 +10,4 @@ public class MusicoveryProjectApplication {
 		SpringApplication.run(MusicoveryProjectApplication.class, args);
 	}
 
-}
+}  
