@@ -57,11 +57,13 @@ public class SpotifyApiUtil {
 		return response.getBody();
 	}
 
-	public String callSpotifyApi(String userId, SpotifyApiRequestDTO api, String body) {
-		String userAccessToken = spotifyAuthService.getValidUserAccessToken(userId); // 사용자 ID 기반 토큰 가져오기
+	
+    // 세션 ID를 기반으로 Spotify API 호출
+    public String callSpotifyApi(String sessionId, SpotifyApiRequestDTO api, String body) {
+        String userAccessToken = spotifyAuthService.getValidUserAccessToken(sessionId);
 
         HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", "Bearer " + userAccessToken);
+        headers.set("Authorization", "Bearer " + userAccessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);

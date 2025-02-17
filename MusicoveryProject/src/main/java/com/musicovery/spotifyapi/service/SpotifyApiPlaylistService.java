@@ -2,13 +2,13 @@ package com.musicovery.spotifyapi.service;
 
 public interface SpotifyApiPlaylistService {
 
-	String createPlaylist(String userId, String playlistName, String description);
+	String createPlaylist(String sessionId, String playlistName, String description);
 
-	String updatePlaylist(String playlistId, String newName, String newDescription);
+	String updatePlaylist(String sessionId, String playlistId, String name, String description);
 
-	String deletePlaylist(String playlistId);
+	String removeTrackFromPlaylist(String sessionId, String playlistId, String trackUri);
 
-	String addTrackToPlaylist(String playlistId, String trackUri);
+	String deletePlaylist(String sessionId, String playlistId);
 
-	String removeTrackFromPlaylist(String playlistId, String trackUri);
+	String addTrackToPlaylist(String sessionId, String playlistId, String trackUri);
 }
