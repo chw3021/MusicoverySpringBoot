@@ -52,12 +52,13 @@ public class SpotifyApiMusicController {
             @RequestParam(required = false) Double minEnergy,
             @RequestParam(required = false) Double maxEnergy,
             @RequestParam(required = false) Double targetEnergy,
+            @RequestParam(required = false) Double targetTempo,
             @RequestParam(required = false, defaultValue = "20") Integer limit) {
 
         String result = spotifyApiMusicService.getRecommendedTracks(
                 seedArtists, seedTracks, seedGenres,
                 minDanceability, maxDanceability, targetDanceability,
-                minEnergy, maxEnergy, targetEnergy, limit);
+                minEnergy, maxEnergy, targetEnergy, targetTempo, limit);
 
         return ResponseEntity.ok(result);
     }

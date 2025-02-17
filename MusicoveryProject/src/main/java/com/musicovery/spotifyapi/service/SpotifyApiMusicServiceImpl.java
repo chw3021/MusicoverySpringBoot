@@ -1,7 +1,13 @@
 package com.musicovery.spotifyapi.service;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -37,9 +43,6 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
 		return spotifyApiUtil.callSpotifyApi(request, accessToken);
     }
 
-    /**
-     * 🎵 AI 추천 결과 기반으로 곡 정보 조회
-     */
     public String getTracksByIds(List<String> trackIds) {
 		String accessToken = spotifyAuthService.getAccessToken();
         String ids = String.join(",", trackIds);
@@ -73,6 +76,7 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
             Double minEnergy,
             Double maxEnergy,
             Double targetEnergy,
+            Double targetTempo,
             Integer limit) {
 
 		String accessToken = spotifyAuthService.getAccessToken();
@@ -105,6 +109,9 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
         if (targetEnergy != null) {
             urlBuilder.append("target_energy=").append(targetEnergy).append("&");
         }
+        if (targetTempo != null) {
+            urlBuilder.append("target_tempo=").append(targetTempo).append("&");
+        }
         if (limit != null) {
             urlBuilder.append("limit=").append(limit).append("&");
         }
@@ -116,5 +123,24 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
 		return spotifyApiUtil.callSpotifyApi(request, accessToken);
     }
 
+    /**
+     * 🎵 음악 재생
+     */
+    @Override
+    public void playMusic(String musicId) {
+        String accessToken = spotifyAuthService.getAccessToken();
+        String url = baseUrl + "/me/player/play";
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("uris", List.of("spotify:track:" + musicId));
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+        restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
+    }
 
 }
