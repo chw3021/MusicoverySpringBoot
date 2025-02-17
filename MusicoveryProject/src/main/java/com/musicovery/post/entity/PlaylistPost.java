@@ -42,7 +42,7 @@ public class PlaylistPost {
     private User user; // 플레이리스트 작성자
 
     @OneToMany(mappedBy = "playlistPost", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reply> comments = new ArrayList<>();
+    private List<Reply> replys = new ArrayList<>();
 
     @OneToMany(mappedBy = "playlistPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes = new ArrayList<>();

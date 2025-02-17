@@ -104,7 +104,7 @@ public class PlaylistRepositoryTests {
 	//플리 삭제
 	//@Test
 	public void playlistDeleteTest() {
-		playlistRepository.deleteById(3L);
+		//playlistRepository.deleteById(3L);
 		
 	}
 }

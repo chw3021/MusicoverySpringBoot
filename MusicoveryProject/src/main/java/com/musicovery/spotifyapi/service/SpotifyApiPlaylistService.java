@@ -1,5 +1,7 @@
 package com.musicovery.spotifyapi.service;
 
+import java.util.List;
+
 public interface SpotifyApiPlaylistService {
 
 	String createPlaylist(String sessionId, String playlistName, String description);
@@ -11,4 +13,6 @@ public interface SpotifyApiPlaylistService {
 	String deletePlaylist(String sessionId, String playlistId);
 
 	String addTrackToPlaylist(String sessionId, String playlistId, String trackUri);
+	
+	List<String> getTracksInPlaylist(String playlistId);
 }

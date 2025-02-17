@@ -4,25 +4,38 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.musicovery.musicrecommendation.service.WeightService;
 import com.musicovery.post.entity.Like;
 import com.musicovery.post.entity.PlaylistPost;
 import com.musicovery.post.entity.Reply;
 import com.musicovery.post.repository.LikeRepository;
 import com.musicovery.post.repository.PlaylistPostRepository;
 import com.musicovery.post.repository.ReplyRepository;
+import com.musicovery.spotifyapi.service.SpotifyApiPlaylistService;
 import com.musicovery.user.entity.User;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class PlaylistPostService {
 
+    private final WeightService weightService;
     private final PlaylistPostRepository playlistPostRepository;
+    private final SpotifyApiPlaylistService spotifyApiPlaylistService;
     private final LikeRepository likeRepository;
     private final ReplyRepository replyRepository;
 
+
+    public PlaylistPostService(WeightService weightService, PlaylistPostRepository playlistPostRepository, 
+                               SpotifyApiPlaylistService spotifyApiPlaylistService, LikeRepository likeRepository,
+                               ReplyRepository replyRepository) {
+        this.weightService = weightService;
+        this.playlistPostRepository = playlistPostRepository;
+        this.spotifyApiPlaylistService = spotifyApiPlaylistService;
+		this.likeRepository = likeRepository;
+		this.replyRepository = replyRepository;
+    }
+    
     @Transactional
     public PlaylistPost createPost(User user, String title, String description, String playlistId) {
         PlaylistPost post = new PlaylistPost();
@@ -34,6 +47,14 @@ public class PlaylistPostService {
         post.setReplyCount(0);
         playlistPostRepository.save(post);
 
+        // Spotify API에서 플레이리스트 ID로 음악 리스트 불러오기
+        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(playlistId);
+
+        // 음악들에 대해 가중치 증가
+        for (String trackId : trackIds) {
+            Integer musicId = Integer.parseInt(trackId); // trackId를 musicId로 변환 (Spotify ID -> 실제 음악 ID)
+            weightService.increaseWeightForLikedPlaylist(user.getUserId(), musicId);
+        }
         return post;
     }
 
@@ -51,6 +72,18 @@ public class PlaylistPostService {
             post.setLikeCount(post.getLikeCount() + 1);
         }
         playlistPostRepository.save(post);
+        
+
+        String playlistId = post.getPlaylistId();
+        
+        // Spotify API에서 플레이리스트 ID로 음악 리스트 불러오기
+        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(playlistId);
+
+        // 좋아요 처리 후 음악들에 대한 가중치 증가
+        for (String trackId : trackIds) {
+            Integer musicId = Integer.parseInt(trackId); // trackId를 musicId로 변환 (Spotify ID -> 실제 음악 ID)
+            weightService.increaseWeightForLikedPlaylist(user.getUserId(), musicId);
+        }
     }
 
     @Transactional
@@ -64,6 +97,15 @@ public class PlaylistPostService {
 
         post.setReplyCount(post.getReplyCount() + 1);
         playlistPostRepository.save(post);
+        
+        String playlistId = post.getPlaylistId();
+
+        // 댓글 처리 후 음악들에 대한 가중치 증가
+        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(playlistId);
+        for (String trackId : trackIds) {
+            Integer musicId = Integer.parseInt(trackId); // trackId를 musicId로 변환 (Spotify ID -> 실제 음악 ID)
+            weightService.increaseWeightForCommentedPlaylist(user.getUserId(), musicId);
+        }
     }
     
 
