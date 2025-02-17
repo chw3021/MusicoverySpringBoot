@@ -1,11 +1,13 @@
 package com.musicovery.friends.service;
 
-import java.util.List;
-
-import com.musicovery.friends.dto.FriendsDto;
+import com.musicovery.friends.dto.FriendsDTO;
 import com.musicovery.friends.entity.Friends;
 
 public interface FriendsService {
-    Friends addFriend(FriendsDto friendsDto);
-    List<Friends> getFriendsByUserId(Long userId);
+
+    Friends sendFriendRequest(FriendsDTO friendDTO);  // 친구 요청 보내기
+
+    Friends acceptFriendRequest(Long requestId);  // 친구 요청 수락
+
+    Friends declineFriendRequest(Long requestId);  // 친구 요청 거절
 }

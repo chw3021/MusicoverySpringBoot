@@ -8,8 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserReportDTO {
-    private Long reporterId;
-    private Long reportedUserId;
+    private String reporterId;      // String으로 수정
+    private String reportedUserId;  // String으로 수정
     private String reason;
     private LocalDateTime reportedAt;
+    private String status;          // status 필드 추가
 }

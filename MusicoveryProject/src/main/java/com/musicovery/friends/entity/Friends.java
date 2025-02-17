@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "friends")
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Setter
 public class Friends {
 
     @Id
@@ -24,11 +26,13 @@ public class Friends {
     private Long id;
 
     @Column(nullable = false)
-    private Long userId; // 친구 요청을 보낸 사용자 ID
+    private Long userId;
 
     @Column(nullable = false)
-    private Long friendId; // 친구 요청을 받은 사용자 ID
+    private Long friendId;
 
     @Column(nullable = false)
-    private boolean isAccepted; // 친구 요청 수락 여부
+    private Boolean isAccepted;  // Boolean 타입으로 선언
+
+    // setter는 Lombok의 @Setter로 자동 생성됨, 아니면 수동으로 정의
 }
