@@ -46,7 +46,7 @@ public class SpotifyApiPlaylistController {
     }
 
     /**
-     * ❌ 플레이리스트에서 노래 삭제 API
+     * ❌ 플레이리스트에서 노래 삭제 API (Track URI 기반)
      */
     @DeleteMapping("/playlist/{playlistId}/track")
     public ResponseEntity<String> removeTrackFromPlaylist(HttpSession session, @PathVariable String playlistId,
@@ -55,5 +55,25 @@ public class SpotifyApiPlaylistController {
         String result = spotifyApiPlaylistService.removeTrackFromPlaylist(sessionId, playlistId, trackUri);
         return ResponseEntity.ok(result);
     }
-}
 
+    /**
+     * 🗑 플레이리스트 삭제 API
+     */
+    @DeleteMapping("/playlist/{playlistId}")
+    public ResponseEntity<String> deletePlaylist(HttpSession session, @PathVariable String playlistId) {
+        String sessionId = session.getId();
+        String result = spotifyApiPlaylistService.deletePlaylist(sessionId, playlistId);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * ➕ 플레이리스트에 노래 추가 API (Track ID 기반)
+     */
+    @PostMapping("/playlist/{playlistId}/track")
+    public ResponseEntity<String> addTrackToPlaylist(HttpSession session, @PathVariable String playlistId,
+                                                     @RequestParam String trackId) {
+        String sessionId = session.getId();
+        String result = spotifyApiPlaylistService.addTrackToPlaylist(sessionId, playlistId, trackId);
+        return ResponseEntity.ok(result);
+    }
+}

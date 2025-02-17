@@ -1,5 +1,6 @@
 package com.musicovery.spotifyapi.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.musicovery.spotifyapi.common.SpotifyApiUtil;
@@ -16,10 +17,13 @@ public class SpotifyApiUserServiceImpl implements SpotifyApiUserService {
         this.spotifyApiUtil = spotifyApiUtil;
     }
 
+    @Value("${spotify.api.base_url}")
+    private String baseUrl;
+    
     @Override
     public String getUserInfo(String sessionId) {
         // Spotify API 호출을 위한 DTO 생성
-        SpotifyApiRequestDTO requestDTO = new SpotifyApiRequestDTO("/v1/me", "GET");
+        SpotifyApiRequestDTO requestDTO = new SpotifyApiRequestDTO(baseUrl+"/me", "GET");
 
         // `SpotifyApiUtil`을 사용하여 API 요청 수행
         return spotifyApiUtil.callSpotifyApi(sessionId, requestDTO, null);

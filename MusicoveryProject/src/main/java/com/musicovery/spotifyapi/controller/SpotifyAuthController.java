@@ -24,19 +24,6 @@ public class SpotifyAuthController {
     public SpotifyAuthController(SpotifyAuthService spotifyAuthService) {
         this.spotifyAuthService = spotifyAuthService;
     }
-	
-//    @GetMapping("/getUserAccessToken")
-//    public ResponseEntity<String> getUserAccessToken(HttpSession session) {
-//        try {
-//            String sessionId = session.getId();
-//            String accessToken = spotifyAuthService.getValidUserAccessToken(sessionId);
-//            return ResponseEntity.ok(accessToken);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Error retrieving access token: " + e.getMessage());
-//        }
-//    }
-
 
 	/**
 	 * Spotify 로그인 페이지로 자동 리디렉트
@@ -47,6 +34,8 @@ public class SpotifyAuthController {
 		response.sendRedirect(authUrl); // Spotify 인증 페이지로 바로 리디렉트
 		return ResponseEntity.ok().build();
     }
+	
+
     @GetMapping("/callback")
     public ResponseEntity<String> handleSpotifyCallback(@RequestParam("code") String code, HttpSession session) {
         try {

@@ -1,6 +1,7 @@
 package com.musicovery.spotifyapi.service;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,6 +43,7 @@ public class SpotifyAuthServiceImpl implements SpotifyAuthService {
         this.spotifyApi = new SpotifyApi.Builder()
                 .setClientId(clientId)
                 .setClientSecret(clientSecret)
+                .setRedirectUri(URI.create(redirectUri))
                 .build();
 		requestAccessToken();
     }
@@ -84,6 +86,8 @@ public class SpotifyAuthServiceImpl implements SpotifyAuthService {
 
             return credentials.getAccessToken();
         } catch (Exception e) {
+            System.err.println("Spotify 인증 실패: {}"+ e.getMessage());
+            e.printStackTrace();
             throw new IllegalStateException("Failed to request access token", e);
         }
     }
