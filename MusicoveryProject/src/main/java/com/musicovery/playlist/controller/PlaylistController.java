@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.service.PlaylistService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 
@@ -33,10 +33,10 @@ public class PlaylistController {
      */
     @PostMapping("/create")
     public ResponseEntity<Playlist> createPlaylist(
-            @RequestHeader("Authorization") String sessionId,
+    		HttpSession session,
             @RequestParam String name,
             @RequestParam String description) {
-        Playlist playlist = playlistService.createPlaylist(sessionId, name, description);
+        Playlist playlist = playlistService.createPlaylist(session.getId(), name, description);
         return ResponseEntity.ok(playlist);
     }
 
@@ -45,11 +45,11 @@ public class PlaylistController {
      */
     @PutMapping("/update")
     public ResponseEntity<Playlist> updatePlaylist(
-            @RequestHeader("Authorization") String sessionId,
+    		HttpSession session,
             @RequestParam String playlistId,
             @RequestParam String name,
             @RequestParam String description) {
-        Playlist updatedPlaylist = playlistService.updatePlaylist(sessionId, playlistId, name, description);
+        Playlist updatedPlaylist = playlistService.updatePlaylist(session.getId(), playlistId, name, description);
         return ResponseEntity.ok(updatedPlaylist);
     }
 
@@ -58,9 +58,9 @@ public class PlaylistController {
      */
     @DeleteMapping("/delete")
     public ResponseEntity<String> deletePlaylist(
-            @RequestHeader("Authorization") String sessionId,
+    		HttpSession session,
             @RequestParam String playlistId) {
-        playlistService.deletePlaylist(sessionId, playlistId);
+        playlistService.deletePlaylist(session.getId(), playlistId);
         return ResponseEntity.ok("삭제 완료");
     }
 
@@ -86,8 +86,8 @@ public class PlaylistController {
     @GetMapping("/{playlistId}/detail")
     public ResponseEntity<Map<String, Object>> getPlaylistDetail(
             @PathVariable String playlistId,
-            @RequestHeader("Authorization") String sessionId) {
-        return ResponseEntity.ok(playlistService.getPlaylistDetail(sessionId, playlistId));
+            HttpSession session) {
+        return ResponseEntity.ok(playlistService.getPlaylistDetail(session.getId(), playlistId));
     }
 }
 

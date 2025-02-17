@@ -1,7 +1,6 @@
 package com.musicovery.playlist.domain;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -75,32 +74,32 @@ public class PlaylistRepositoryTests {
 
 	//플리 상세조회
 	//@Test
-	public void playlistDetailTest() {
-		Optional<Playlist> playlistOptional = playlistRepository.findById(1L);
-		if(playlistOptional.isPresent()) {
-			Playlist playlist = playlistOptional.get();
-			log.info(playlist.toString());
-		}
-	}
+//	public void playlistDetailTest() {
+//		Optional<Playlist> playlistOptional = playlistRepository.findById(1L);
+//		if(playlistOptional.isPresent()) {
+//			Playlist playlist = playlistOptional.get();
+//			log.info(playlist.toString());
+//		}
+//	}
 
 	
 	//플리 수정
 	//@Test
-	public void playlistUpdateTest() {
-		Optional<Playlist> playlistOptional = playlistRepository.findById(2L);
-		
-		if(playlistOptional.isPresent()) {
-			Playlist playlist = playlistOptional.get();
-			
-			playlist.setPlaylistTitle("수정이 된 플레이리스트입니다.");
-			playlist.setPlaylistComment("장르는 힙합으로, 버스에서 내렸을 때 들을 플리를 만들어보았습니다.");
-			playlist.setUserId("탄감자@gmail.com");
-			
-			log.info("플리 테이블 데이터 수정 완료.");
-			playlistRepository.save(playlist);
-		}
-	}
-	
+//	public void playlistUpdateTest() {
+//		Optional<Playlist> playlistOptional = playlistRepository.findById(2L);
+//		
+//		if(playlistOptional.isPresent()) {
+//			Playlist playlist = playlistOptional.get();
+//			
+//			playlist.setPlaylistTitle("수정이 된 플레이리스트입니다.");
+//			playlist.setPlaylistComment("장르는 힙합으로, 버스에서 내렸을 때 들을 플리를 만들어보았습니다.");
+//			playlist.setUserId("탄감자@gmail.com");
+//			
+//			log.info("플리 테이블 데이터 수정 완료.");
+//			playlistRepository.save(playlist);
+//		}
+//	}
+//	
 	//플리 삭제
 	//@Test
 	public void playlistDeleteTest() {

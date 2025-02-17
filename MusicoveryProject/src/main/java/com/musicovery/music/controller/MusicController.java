@@ -1,10 +1,13 @@
 package com.musicovery.music.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musicovery.music.entity.Music;
@@ -31,4 +34,16 @@ public class MusicController {
     public Music addMusic(@RequestBody Music music) {
         return musicService.saveMusic(music);
     }
+
+    /**
+     * 🎵 음악 재생
+     */
+    @PostMapping("/play")
+    public ResponseEntity<String> playMusic(
+            @RequestHeader("Authorization") String sessionId,
+            @RequestParam String musicId) {
+        musicService.playMusic(sessionId, musicId);
+        return ResponseEntity.ok("음악 재생 시작");
+    }
+    
 }
