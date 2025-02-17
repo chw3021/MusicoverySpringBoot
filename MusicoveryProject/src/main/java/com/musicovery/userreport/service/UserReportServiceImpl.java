@@ -21,16 +21,17 @@ public class UserReportServiceImpl implements UserReportService {
     @Override
     public UserReport reportUser(UserReportDTO userReportDTO) {
         UserReport userReport = UserReport.builder()
-                .reporterId(userReportDTO.getReporterId())
-                .reportedUserId(userReportDTO.getReportedUserId())
+                .reporterId(userReportDTO.getReporterId())          // String으로 수정
+                .reportedUserId(userReportDTO.getReportedUserId())  // String으로 수정
                 .reason(userReportDTO.getReason())
                 .reportedAt(LocalDateTime.now()) // 신고 시간 설정
+                .status("Pending")   // 기본 상태 "Pending" 설정
                 .build();
         return userReportRepository.save(userReport);
     }
 
     @Override
-    public List<UserReport> getReportsByUser(Long reportedUserId) {
-        return userReportRepository.findByReportedUserId(reportedUserId);
+    public List<UserReport> getReportsByUser(String reportedUserId) {
+        return userReportRepository.findByReportedUserId(reportedUserId);  // String으로 수정
     }
 }

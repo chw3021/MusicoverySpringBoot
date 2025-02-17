@@ -8,4 +8,5 @@ import com.musicovery.friends.entity.Friends;
 
 public interface FriendsRepository extends JpaRepository<Friends, Long> {
     List<Friends> findByUserId(Long userId);
+    List<Friends> findByUserIdAndIsAcceptedTrue(Long userId);//수락된친구만 조회
 }
