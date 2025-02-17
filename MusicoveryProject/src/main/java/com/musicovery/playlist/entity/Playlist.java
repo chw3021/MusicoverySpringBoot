@@ -1,4 +1,4 @@
-package com.musicovery.playlist.domain;
+package com.musicovery.playlist.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
