@@ -18,27 +18,27 @@ public class WeightService {
 
     // 플레이리스트 좋아요 시 가중치 증가
     @Transactional
-    public void increaseWeightForLikedPlaylist(String userId, Integer musicId) {
+    public void increaseWeightForLikedPlaylist(String userId, String musicId) {
         Weight weight = weightRepository.findByUserIdAndMusicId(userId, musicId)
-                .orElse(new Weight(null, userId, musicId, 0));
+                .orElse(new Weight(userId, musicId, 0));
         weight.setWeightAmount(weight.getWeightAmount() + 1);
         weightRepository.save(weight);
     }
 
     // 플레이리스트 댓글 시 가중치 증가
     @Transactional
-    public void increaseWeightForCommentedPlaylist(String userId, Integer musicId) {
+    public void increaseWeightForCommentedPlaylist(String userId, String musicId) {
         Weight weight = weightRepository.findByUserIdAndMusicId(userId, musicId)
-                .orElse(new Weight(null, userId, musicId, 0));
+                .orElse(new Weight(userId, musicId, 0));
         weight.setWeightAmount(weight.getWeightAmount() + 2);
         weightRepository.save(weight);
     }
 
     // 음악 재생 시 가중치 증가
     @Transactional
-    public void increaseWeightForPlayedSong(String userId, Integer musicId) {
+    public void increaseWeightForPlayedSong(String userId, String musicId) {
         Weight weight = weightRepository.findByUserIdAndMusicId(userId, musicId)
-                .orElse(new Weight(null, userId, musicId, 0));
+                .orElse(new Weight(userId, musicId, 0));
         weight.setWeightAmount(weight.getWeightAmount() + 1);
         weightRepository.save(weight);
     }

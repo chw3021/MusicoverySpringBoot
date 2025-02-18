@@ -16,7 +16,7 @@ public interface SpotifyApiMusicService {
             Double targetEnergy,
             Double targetTempo,
             Integer limit);
-    String getTracksByIds(List<String> trackIds);  // AI 추천 결과를 바탕으로 곡 조회
+    String getTracksByIds(List<String> recommendedTrackIds);  // AI 추천 결과를 바탕으로 곡 조회
 	/**
 	 * 🎵 음악 재생
 	 */

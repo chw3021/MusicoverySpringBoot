@@ -1,9 +1,11 @@
 package com.musicovery.musicrecommendation.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.musicovery.musicrecommendation.entity.Recommendation;
 import com.musicovery.spotifyapi.service.SpotifyApiMusicService;
 
 @Service
@@ -21,13 +23,17 @@ public class MusicRecommendationService {
      * 🎵 AI 기반 추천
      */
     public String getAIRecommendedTracks(String userId) {
-        // 1️⃣ AI 추천 모델을 사용하여 선호 장르 또는 곡 ID 목록 가져오기
-        List<String> recommendedTrackIds = aiModel.getRecommendedTracks(userId);
+        // 1️⃣ AI 추천 모델을 사용하여 추천 목록 가져오기
+        List<Recommendation> recommendedTracks = aiModel.getRecommendedTracks(userId);
         
         // 2️⃣ 추천된 곡 ID를 바탕으로 Spotify에서 곡 정보를 가져오기
-        return spotifyApiMusicService.getTracksByIds(recommendedTrackIds);
+        List<String> trackIds = recommendedTracks.stream()
+                .map(Recommendation::getMusicId)
+                .collect(Collectors.toList());
+        
+        // 3️⃣ 추천된 곡 정보를 반환
+        return spotifyApiMusicService.getTracksByIds(trackIds);
     }
-    
 
     /**
      * 🔍 키워드 기반 추천 (장르, BPM, 분위기, 가사를 기반으로 추천)

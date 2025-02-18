@@ -43,7 +43,7 @@ public class MusicService {
         }
 
         // 가중치 증가
-        weightService.increaseWeightForPlayedSong(userId, Integer.parseInt(musicId));
+        weightService.increaseWeightForPlayedSong(userId, musicId);
 
         // Spotify에서 음악 재생 API 호출
         spotifyApiMusicService.playMusic(musicId);

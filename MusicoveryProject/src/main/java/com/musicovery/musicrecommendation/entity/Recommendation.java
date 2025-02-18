@@ -1,6 +1,5 @@
 package com.musicovery.musicrecommendation.entity;
 
-
 import java.io.Serializable;
 
 import jakarta.persistence.Column;
@@ -11,13 +10,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@IdClass(Weight.WeightPK.class)
-public class Weight {
+@IdClass(Recommendation.RecommendationPK.class)
+public class Recommendation {
 
     @Id
     @Column(nullable = false)
@@ -28,18 +28,17 @@ public class Weight {
     private String musicId;  // 음악 ID
 
     @Column(nullable = false)
-    private Integer weightAmount;  // 가중치
+    private Double score;  // 추천점수
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class WeightPK implements Serializable {
+    public static class RecommendationPK implements Serializable {
         /**
 		 * 
 		 */
-		private static final long serialVersionUID = -1067861242594876139L;
+		private static final long serialVersionUID = -1390660598156225134L;
 		private String userId;
         private String musicId;
     }
 }
-

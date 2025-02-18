@@ -52,8 +52,7 @@ public class PlaylistPostService {
 
         // 음악들에 대해 가중치 증가
         for (String trackId : trackIds) {
-            Integer musicId = Integer.parseInt(trackId); // trackId를 musicId로 변환 (Spotify ID -> 실제 음악 ID)
-            weightService.increaseWeightForLikedPlaylist(user.getUserId(), musicId);
+            weightService.increaseWeightForLikedPlaylist(user.getUserId(), trackId);
         }
         return post;
     }
@@ -81,8 +80,7 @@ public class PlaylistPostService {
 
         // 좋아요 처리 후 음악들에 대한 가중치 증가
         for (String trackId : trackIds) {
-            Integer musicId = Integer.parseInt(trackId); // trackId를 musicId로 변환 (Spotify ID -> 실제 음악 ID)
-            weightService.increaseWeightForLikedPlaylist(user.getUserId(), musicId);
+            weightService.increaseWeightForLikedPlaylist(user.getUserId(), trackId);
         }
     }
 
@@ -103,8 +101,7 @@ public class PlaylistPostService {
         // 댓글 처리 후 음악들에 대한 가중치 증가
         List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(playlistId);
         for (String trackId : trackIds) {
-            Integer musicId = Integer.parseInt(trackId); // trackId를 musicId로 변환 (Spotify ID -> 실제 음악 ID)
-            weightService.increaseWeightForCommentedPlaylist(user.getUserId(), musicId);
+            weightService.increaseWeightForCommentedPlaylist(user.getUserId(), trackId);
         }
     }
     

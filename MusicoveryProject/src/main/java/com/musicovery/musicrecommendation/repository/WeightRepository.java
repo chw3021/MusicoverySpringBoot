@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.musicovery.musicrecommendation.entity.Weight;
 
-public interface WeightRepository extends JpaRepository<Weight, Long> {
-    
-    // userId와 musicId로 가중치 조회
-    Optional<Weight> findByUserIdAndMusicId(String userId, Integer musicId);
+public interface WeightRepository extends JpaRepository<Weight, Weight.WeightPK> {
 
-    // 가중치 업데이트가 필요하면 업데이트 쿼리 작성
+    // userId와 musicId로 가중치 조회
+    Optional<Weight> findByUserIdAndMusicId(String userId, String musicId);
+
+    // 가중치 업데이트 또는 저장
     Weight save(Weight weight);
 }
