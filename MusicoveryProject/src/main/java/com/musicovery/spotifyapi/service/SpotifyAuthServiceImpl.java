@@ -3,8 +3,6 @@ package com.musicovery.spotifyapi.service;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.hc.core5.http.ParseException;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +31,7 @@ public class SpotifyAuthServiceImpl implements SpotifyAuthService {
     @Value("${spotify.api.redirect_uri}")
     private String redirectUri;
 
-    private SpotifyApi spotifyApi;
+    public SpotifyApi spotifyApi;
     private String accessToken;
 	private Instant tokenExpiryTime;
 
@@ -48,6 +46,10 @@ public class SpotifyAuthServiceImpl implements SpotifyAuthService {
 		requestAccessToken();
     }
 
+    @Override
+    public SpotifyApi getSpotifyApi() {
+        return this.spotifyApi;
+    }
 	// accessToken 관련 메서드
 	private void requestAccessToken() {
 		try {
@@ -72,8 +74,6 @@ public class SpotifyAuthServiceImpl implements SpotifyAuthService {
 	 * 사용자의 액세스 토큰 요청 후 저장
 	 */
 	
-	private final Map<String, TokenInfo> userTokens = new ConcurrentHashMap<>(); // 사용자별 토큰 저장
-
     @Override
     public String requestUserAccessToken(String code) {
         try {
@@ -91,39 +91,19 @@ public class SpotifyAuthServiceImpl implements SpotifyAuthService {
             throw new IllegalStateException("Failed to request access token", e);
         }
     }
-
     @Override
-    public String refreshUserAccessToken(String sessionId) {
-        TokenInfo tokenInfo = userTokens.get(sessionId);
-        if (tokenInfo == null || tokenInfo.refreshToken == null) {
-            throw new IllegalStateException("No refresh token available for session: " + sessionId);
-        }
-
+    public String refreshUserAccessToken(String refreshToken) {
         try {
             AuthorizationCodeRefreshRequest refreshRequest = spotifyApi.authorizationCodeRefresh()
-                    .refresh_token(tokenInfo.refreshToken).build();
+                    .refresh_token(refreshToken)
+                    .build();
 
             AuthorizationCodeCredentials credentials = refreshRequest.execute();
-
-            userTokens.put(sessionId, new TokenInfo(credentials.getAccessToken(), tokenInfo.refreshToken,
-                    Instant.now().plusSeconds(credentials.getExpiresIn())));
-
             return credentials.getAccessToken();
         } catch (Exception e) {
             throw new IllegalStateException("Failed to refresh access token", e);
         }
     }
-
-    @Override
-    public String getValidUserAccessToken(String sessionId) {
-        TokenInfo tokenInfo = userTokens.get(sessionId);
-
-        if (tokenInfo == null || Instant.now().isAfter(tokenInfo.expiryTime)) {
-            return refreshUserAccessToken(sessionId);
-        }
-        return tokenInfo.accessToken;
-    }
-
     @Override
 	public String getSpotifyAuthUrl() {
 	    String scope = String.join(" ",
@@ -150,16 +130,5 @@ public class SpotifyAuthServiceImpl implements SpotifyAuthService {
 	            "&scope=" + scope;
 	}
 
-    private static class TokenInfo {
-        String accessToken;
-        String refreshToken;
-        Instant expiryTime;
-
-        TokenInfo(String accessToken, String refreshToken, Instant expiryTime) {
-            this.accessToken = accessToken;
-            this.refreshToken = refreshToken;
-            this.expiryTime = expiryTime;
-        }
-    }
 
 }

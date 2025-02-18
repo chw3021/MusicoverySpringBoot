@@ -7,16 +7,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 //import com.musicovery.user.entity.User;
-import com.musicovery.admin.service.UserService;
+import com.musicovery.admin.service.UserManagementService;
 
 //import java.util.List;
 
 @RestController
 @RequestMapping("/admin/users")
 public class UserController {
-	private final UserService userService;
+	private final UserManagementService userService;
 
-	public UserController(UserService userService) {
+	public UserController(UserManagementService userService) {
 		this.userService = userService;
 	}
 

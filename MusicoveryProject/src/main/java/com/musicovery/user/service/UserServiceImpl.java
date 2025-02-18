@@ -2,7 +2,6 @@ package com.musicovery.user.service;
 
 import java.util.Optional;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.musicovery.user.dto.UserDTO;
@@ -13,7 +12,7 @@ import com.musicovery.user.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository = null;
-	private final PasswordEncoder passwordEncoder = null;
+	//private final PasswordEncoder passwordEncoder = null;
 
 	@Override
 	public User SignupUser(UserSignupDTO userSignupDTO) {
@@ -23,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
 		User user = User.builder()
 				.email(userSignupDTO.getEmail())
-				.passwd(passwordEncoder.encode(userSignupDTO.getPasswd())) // 비밀번호 암호화
+				//.passwd(passwordEncoder.encode(userSignupDTO.getPasswd())) // 비밀번호 암호화
 				.nickname(userSignupDTO.getNickname())
 				.phone(userSignupDTO.getPhone())
 				.address(userSignupDTO.getAddress())
@@ -41,9 +40,9 @@ public class UserServiceImpl implements UserService {
 		}
 
 		User user = optionalUser.get();
-		if (!passwordEncoder.matches(userDTO.getPasswd(), user.getPasswd())) {
-			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-		}
+//		if (!passwordEncoder.matches(userDTO.getPasswd(), user.getPasswd())) {
+//			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+//		}
 
 		return user; // JWT 토큰 발급 로직 추가 가능
 	}

@@ -21,5 +21,5 @@ public interface SpotifyApiMusicService {
 	 * 🎵 음악 재생
 	 * @return 
 	 */
-	String playMusic(String sessionId, String musicId);
+	String playMusic(String accessToken, String musicId);
 }
