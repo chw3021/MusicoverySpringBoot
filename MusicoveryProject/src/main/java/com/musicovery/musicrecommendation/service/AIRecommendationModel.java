@@ -5,7 +5,7 @@ import java.util.List;
 import com.musicovery.musicrecommendation.entity.Recommendation;
 
 public interface AIRecommendationModel {
-    List<Recommendation> getRecommendedTracks(String userId);
+    List<Recommendation> getAiRecommendations(String userId);
 
 	String trainModel();
 }

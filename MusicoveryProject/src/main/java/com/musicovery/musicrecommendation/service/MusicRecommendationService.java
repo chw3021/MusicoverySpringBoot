@@ -24,7 +24,7 @@ public class MusicRecommendationService {
      */
     public String getAIRecommendedTracks(String userId) {
         // 1️⃣ AI 추천 모델을 사용하여 추천 목록 가져오기
-        List<Recommendation> recommendedTracks = aiModel.getRecommendedTracks(userId);
+        List<Recommendation> recommendedTracks = aiModel.getAiRecommendations(userId);
         
         // 2️⃣ 추천된 곡 ID를 바탕으로 Spotify에서 곡 정보를 가져오기
         List<String> trackIds = recommendedTracks.stream()

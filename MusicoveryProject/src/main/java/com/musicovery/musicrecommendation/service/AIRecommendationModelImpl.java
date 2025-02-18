@@ -21,7 +21,7 @@ public class AIRecommendationModelImpl implements AIRecommendationModel {
     private String aiRecommendationApi; // Flask 서버 URL (예: http://localhost:5000/)
 
     @Override
-    public List<Recommendation> getRecommendedTracks(String userId) {
+    public List<Recommendation> getAiRecommendations(String userId) {
         String url = aiRecommendationApi + "/recommend/" + userId;
         AIRecommendationResponse response = restTemplate.getForObject(url, AIRecommendationResponse.class);
 
