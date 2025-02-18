@@ -24,8 +24,7 @@ public class SpotifyApiMusicController {
      */
     @GetMapping("/search")
     public ResponseEntity<String> searchMusic(@RequestParam String keyword, @RequestParam String type) {
-        System.out.println("dfa");
-    	
+   	
     	String result = spotifyApiMusicService.searchMusic(keyword, type);
         return ResponseEntity.ok(result);
     }

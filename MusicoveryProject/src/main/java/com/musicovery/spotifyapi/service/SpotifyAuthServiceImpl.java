@@ -75,14 +75,14 @@ public class SpotifyAuthServiceImpl implements SpotifyAuthService {
 	private final Map<String, TokenInfo> userTokens = new ConcurrentHashMap<>(); // 사용자별 토큰 저장
 
     @Override
-    public String requestUserAccessToken(String code, String sessionId) {
+    public String requestUserAccessToken(String code) {
         try {
             AuthorizationCodeRequest authRequest = spotifyApi.authorizationCode(code).build();
             
             
             AuthorizationCodeCredentials credentials = authRequest.execute();
-            userTokens.put(sessionId, new TokenInfo(credentials.getAccessToken(), credentials.getRefreshToken(),
-                    Instant.now().plusSeconds(credentials.getExpiresIn())));
+//            userTokens.put(sessionId, new TokenInfo(credentials.getAccessToken(), credentials.getRefreshToken(),
+//                    Instant.now().plusSeconds(credentials.getExpiresIn())));
 
             return credentials.getAccessToken();
         } catch (Exception e) {

@@ -2,6 +2,9 @@ package com.musicovery.post.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.musicovery.musicrecommendation.service.WeightService;
@@ -106,6 +109,11 @@ public class PlaylistPostService {
     }
     
 
+    public Page<PlaylistPost> getPlaylistPosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return playlistPostRepository.findAll(pageable);
+    }
+    
     public List<PlaylistPost> getRanking() {
         return playlistPostRepository.findAllByOrderByLikeCountDesc();
     }

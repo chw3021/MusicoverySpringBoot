@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.musicovery.spotifyapi.service.SpotifyAuthService;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
@@ -35,18 +36,24 @@ public class SpotifyAuthController {
 		return ResponseEntity.ok().build();
     }
 	
+	@GetMapping("/callback")
+	public ResponseEntity<String> handleSpotifyCallback(@RequestParam("code") String code, HttpServletResponse response) {
+	    try {
+	        String accessToken = spotifyAuthService.requestUserAccessToken(code);
 
-    @GetMapping("/callback")
-    public ResponseEntity<String> handleSpotifyCallback(@RequestParam("code") String code, HttpSession session) {
-        try {
-            String sessionId = session.getId();
-            String accessToken = spotifyAuthService.requestUserAccessToken(code, sessionId);
-            return ResponseEntity.ok("Spotify 인증 완료! 액세스 토큰 발급 완료: " + accessToken);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Spotify 인증 실패: " + e.getMessage());
-        }
-    }
+	        // 🎵 쿠키에 accessToken 저장
+	        Cookie accessTokenCookie = new Cookie("MUSICOVERY_ACCESS_TOKEN", accessToken);
+	        accessTokenCookie.setHttpOnly(true);
+	        accessTokenCookie.setPath("/");
+	        accessTokenCookie.setMaxAge(60 * 60 * 24); // 1일 유지
+	        response.addCookie(accessTokenCookie);
+
+	        return ResponseEntity.ok("Spotify 인증 완료! 액세스 토큰 발급 완료: " + accessToken);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("Spotify 인증 실패: " + e.getMessage());
+	    }
+	}
 
     @GetMapping("/refresh-token")
     public ResponseEntity<String> refreshToken(HttpSession session) {

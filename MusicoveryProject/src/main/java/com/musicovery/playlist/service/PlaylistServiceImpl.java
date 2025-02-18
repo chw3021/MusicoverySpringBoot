@@ -24,12 +24,12 @@ public class PlaylistServiceImpl implements PlaylistService {
      * 📂 플레이리스트 생성 + Spotify API 동기화
      */
     @Override
-    public Playlist createPlaylist(String sessionId, String name, String description) {
+    public Playlist createPlaylist(String accessToken, String name, String description) {
         // Spotify API를 호출하여 플레이리스트 생성
-        String spotifyPlaylistId = spotifyApiPlaylistService.createPlaylist(sessionId, name, description);
+        String spotifyPlaylistId = spotifyApiPlaylistService.createPlaylist(accessToken, name, description);
 
         // 생성된 플레이리스트 정보를 DB에 저장
-        Playlist playlist = new Playlist(spotifyPlaylistId, name, description, null, sessionId);
+        Playlist playlist = new Playlist(spotifyPlaylistId, name, description, null, accessToken);
         return playlistRepository.save(playlist);
     }
 
@@ -37,7 +37,7 @@ public class PlaylistServiceImpl implements PlaylistService {
      * 📝 플레이리스트 수정 + Spotify API 동기화
      */
     @Override
-    public Playlist updatePlaylist(String sessionId, String playlistId, String name, String description) {
+    public Playlist updatePlaylist(String accessToken, String playlistId, String name, String description) {
         Optional<Playlist> optionalPlaylist = playlistRepository.findById(playlistId);
         if (optionalPlaylist.isPresent()) {
             Playlist playlist = optionalPlaylist.get();
@@ -45,7 +45,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             playlist.setPlaylistComment(description);
 
             // Spotify API에도 반영
-            spotifyApiPlaylistService.updatePlaylist(sessionId, playlistId, name, description);
+            spotifyApiPlaylistService.updatePlaylist(accessToken, playlistId, name, description);
 
             return playlistRepository.save(playlist);
         } else {
@@ -57,9 +57,9 @@ public class PlaylistServiceImpl implements PlaylistService {
      * 🗑 플레이리스트 삭제 + Spotify API 동기화
      */
     @Override
-    public void deletePlaylist(String sessionId, String playlistId) {
+    public void deletePlaylist(String accessToken, String playlistId) {
         playlistRepository.deleteById(playlistId);
-        spotifyApiPlaylistService.deletePlaylist(sessionId, playlistId);
+        spotifyApiPlaylistService.deletePlaylist(accessToken, playlistId);
     }
 
     /**
@@ -81,7 +81,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     
 
     @Override
-    public Map<String, Object> getPlaylistDetail(String sessionId, String playlistId) {
+    public Map<String, Object> getPlaylistDetail(String accessToken, String playlistId) {
         Playlist playlist = getPlaylist(playlistId);
         List<String> trackIds = getTracksInPlaylist(playlistId);
 

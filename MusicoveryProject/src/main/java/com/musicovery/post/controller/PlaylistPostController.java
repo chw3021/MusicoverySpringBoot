@@ -2,6 +2,7 @@ package com.musicovery.post.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,8 +53,8 @@ public class PlaylistPostController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<PlaylistPost>> getPlaylistPosts() {
-        List<PlaylistPost> posts = playlistPostService.getPlaylistPosts();
+    public ResponseEntity<Page<PlaylistPost>> getPlaylistPosts(@RequestParam int page, @RequestParam int size) {
+        Page<PlaylistPost> posts = playlistPostService.getPlaylistPosts(page, size);
         return ResponseEntity.ok(posts);
     }
 }

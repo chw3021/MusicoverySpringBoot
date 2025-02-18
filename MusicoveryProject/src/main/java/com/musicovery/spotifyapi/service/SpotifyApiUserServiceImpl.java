@@ -21,11 +21,11 @@ public class SpotifyApiUserServiceImpl implements SpotifyApiUserService {
     private String baseUrl;
     
     @Override
-    public String getUserInfo(String sessionId) {
+    public String getUserInfo(String accessToken) {
         // Spotify API 호출을 위한 DTO 생성
         SpotifyApiRequestDTO requestDTO = new SpotifyApiRequestDTO(baseUrl+"/me", "GET");
 
         // `SpotifyApiUtil`을 사용하여 API 요청 수행
-        return spotifyApiUtil.callSpotifyApi(sessionId, requestDTO, null);
+        return spotifyApiUtil.callSpotifyApi(accessToken, requestDTO, null);
     }
 }

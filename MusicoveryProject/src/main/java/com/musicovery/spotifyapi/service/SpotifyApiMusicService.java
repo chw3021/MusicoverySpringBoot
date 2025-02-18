@@ -19,6 +19,7 @@ public interface SpotifyApiMusicService {
     String getTracksByIds(List<String> recommendedTrackIds);  // AI 추천 결과를 바탕으로 곡 조회
 	/**
 	 * 🎵 음악 재생
+	 * @return 
 	 */
-	void playMusic(String musicId);
+	String playMusic(String sessionId, String musicId);
 }

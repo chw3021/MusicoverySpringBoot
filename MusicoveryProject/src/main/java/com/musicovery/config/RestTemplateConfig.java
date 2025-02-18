@@ -1,4 +1,4 @@
-package com.musicovery.common;
+package com.musicovery.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

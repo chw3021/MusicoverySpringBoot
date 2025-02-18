@@ -1,6 +1,7 @@
 package com.musicovery.post.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.musicovery.user.entity.User;
@@ -15,6 +16,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -49,4 +52,7 @@ public class PlaylistPost {
 
     private int likeCount;
     private int replyCount;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate; // 게시글 작성 날짜
 }

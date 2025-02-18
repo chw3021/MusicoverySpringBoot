@@ -57,36 +57,32 @@ public class SpotifyApiUtil {
 		return response.getBody();
 	}
 
-	
-    // 세션 ID를 기반으로 Spotify API 호출
-    public String callSpotifyApi(String sessionId, SpotifyApiRequestDTO api, String body) {
-        String userAccessToken = spotifyAuthService.getValidUserAccessToken(sessionId);
+	public String callSpotifyApi(String accessToken, SpotifyApiRequestDTO api, String body) {
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.set("Authorization", "Bearer " + accessToken);
+	    headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + userAccessToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
+	    HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
+	    ResponseEntity<String> response;
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
-        ResponseEntity<String> response;
+	    switch (api.getMethod().toUpperCase()) {
+	        case "GET":
+	            response = restTemplate.exchange(api.getUrl(), HttpMethod.GET, requestEntity, String.class);
+	            break;
+	        case "POST":
+	            response = restTemplate.exchange(api.getUrl(), HttpMethod.POST, requestEntity, String.class);
+	            break;
+	        case "PUT":
+	            response = restTemplate.exchange(api.getUrl(), HttpMethod.PUT, requestEntity, String.class);
+	            break;
+	        case "DELETE":
+	            response = restTemplate.exchange(api.getUrl(), HttpMethod.DELETE, requestEntity, String.class);
+	            break;
+	        default:
+	            throw new UnsupportedOperationException("지원하지 않는 HTTP 메서드: " + api.getMethod());
+	    }
 
-        switch (api.getMethod().toUpperCase()) {
-            case "GET":
-                response = restTemplate.exchange(api.getUrl(), HttpMethod.GET, requestEntity, String.class);
-                break;
-            case "POST":
-                response = restTemplate.exchange(api.getUrl(), HttpMethod.POST, requestEntity, String.class);
-                break;
-            case "PUT":
-                response = restTemplate.exchange(api.getUrl(), HttpMethod.PUT, requestEntity, String.class);
-                break;
-            case "DELETE":
-                response = restTemplate.exchange(api.getUrl(), HttpMethod.DELETE, requestEntity, String.class);
-                break;
-            default:
-                throw new UnsupportedOperationException("지원하지 않는 HTTP 메서드: " + api.getMethod());
-        }
-
-        log.info("응답 코드: " + response.getStatusCode());
-        return response.getBody();
-    }
+	    log.info("응답 코드: " + response.getStatusCode());
+	    return response.getBody();
+	}
 }

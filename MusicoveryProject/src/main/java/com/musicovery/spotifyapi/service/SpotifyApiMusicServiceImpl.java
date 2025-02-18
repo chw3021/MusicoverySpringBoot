@@ -4,13 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musicovery.spotifyapi.common.SpotifyApiUtil;
 import com.musicovery.spotifyapi.dto.SpotifyApiRequestDTO;
 
@@ -127,20 +125,22 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
      * 🎵 음악 재생
      */
     @Override
-    public void playMusic(String musicId) {
-        String accessToken = spotifyAuthService.getAccessToken();
+    public String playMusic(String sessionId, String musicId) {
         String url = baseUrl + "/me/player/play";
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
+        // 🎵 API 요청 본문 생성
         Map<String, Object> body = new HashMap<>();
         body.put("uris", List.of("spotify:track:" + musicId));
+        String requestBody;
+        
+        try {
+            requestBody = new ObjectMapper().writeValueAsString(body);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("JSON 변환 중 오류 발생", e);
+        }
 
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-
-        restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
+        // 🎵 Spotify API 호출
+        return spotifyApiUtil.callSpotifyApi(sessionId, new SpotifyApiRequestDTO("PUT", url), requestBody);
     }
 
 }

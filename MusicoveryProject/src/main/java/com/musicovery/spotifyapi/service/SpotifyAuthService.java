@@ -7,7 +7,7 @@ public interface SpotifyAuthService {
 	/**
 	 * 사용자의 액세스 토큰 요청 후 저장
 	 */
-	String requestUserAccessToken(String code, String sessionId);
+	String requestUserAccessToken(String code);
 
 	String refreshUserAccessToken(String sessionId);
 
