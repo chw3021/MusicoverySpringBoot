@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 //import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserManagementServiceImpl implements UserManagementService {
 //    private final UserRepository userRepository;
 
 //    public UserServiceImpl(UserRepository userRepository) {

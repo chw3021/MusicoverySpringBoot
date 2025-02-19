@@ -1,13 +1,12 @@
 package com.musicovery.spotifyapi.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musicovery.spotifyapi.service.SpotifyApiUserService;
-
-import jakarta.servlet.http.HttpSession;
 
 
 @RestController
@@ -21,9 +20,8 @@ public class SpotifyApiUserController {
     }
 
     @GetMapping("/userInfo")
-    public ResponseEntity<String> getUserInfo(HttpSession session) {
-        String sessionId = session.getId(); // 세션 ID 가져오기
-        String userInfo = spotifyApiUserService.getUserInfo(sessionId);
+    public ResponseEntity<String> getUserInfo(@CookieValue(value = "MUSICOVERY_ACCESS_TOKEN", required = false) String accessToken) {
+        String userInfo = spotifyApiUserService.getUserInfo(accessToken);
         return ResponseEntity.ok(userInfo);
     }
 }

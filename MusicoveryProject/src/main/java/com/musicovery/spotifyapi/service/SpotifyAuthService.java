@@ -1,5 +1,7 @@
 package com.musicovery.spotifyapi.service;
 
+import se.michaelthelin.spotify.SpotifyApi;
+
 public interface SpotifyAuthService {
 	String getAccessToken();
 
@@ -9,11 +11,13 @@ public interface SpotifyAuthService {
 	 */
 	String requestUserAccessToken(String code);
 
-	String refreshUserAccessToken(String sessionId);
-
-
-	String getValidUserAccessToken(String sessionId);
+	String refreshUserAccessToken(String refreshToken);
 
 
 	String getSpotifyAuthUrl();
+
+
+	SpotifyApi getSpotifyApi();
+
+
 }
