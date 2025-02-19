@@ -10,7 +10,7 @@ public interface PlaylistService {
 	public void playlistInsert(Playlist playlist);
 	public void playlistUpdate(Playlist playlist);
 	public void playlistDelete(Playlist playlist);
-	//public Playlist playlistDetail(Playlist playlist);	//
+	public Playlist playlistDetail(Playlist playlist);	
 	public Playlist getPlaylist(Long playlistId);
 	
 	

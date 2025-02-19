@@ -31,6 +31,23 @@ public class PlaylistServiceImpl implements PlaylistService {
 		playlistRepository.save(playlist);
 	}
 
+
+	@Override 
+	public Playlist playlistDetail(Playlist playlist) {
+		return null; 
+		}
+
+
+
+	@Override
+	public Playlist getPlaylist(Long playlistId) {
+		Optional<Playlist> playlistOptional = playlistRepository.findById(playlistId);
+		Playlist updateData = playlistOptional.orElseThrow();
+		
+		return updateData;
+	}
+
+	
 	@Override
 	public void playlistUpdate(Playlist playlist) {
 		Optional<Playlist> playlistOptional = playlistRepository.findById(playlist.getPlaylistId());
@@ -40,28 +57,30 @@ public class PlaylistServiceImpl implements PlaylistService {
 		updatePlaylist.setPlaylistTitle(playlist.getPlaylistTitle());
 		updatePlaylist.setPlaylistComment(playlist.getPlaylistComment());
 		updatePlaylist.setUserId(playlist.getUserId());
+		updatePlaylist.setBpmCheckbox(playlist.getBpmCheckbox());
+		updatePlaylist.setConceptCheckbox(playlist.getConceptCheckbox());
+		updatePlaylist.setMoodCheckbox(playlist.getMoodCheckbox());
+		updatePlaylist.setMusicCheckbox(playlist.getMusicCheckbox());
+		updatePlaylist.setPlaylistBPM(playlist.getPlaylistBPM());
+		updatePlaylist.setPlaylistConcept(playlist.getPlaylistConcept());
+		updatePlaylist.setPlaylistDate(playlist.getPlaylistDate());
+		updatePlaylist.setPlaylistId(playlist.getPlaylistId());
+		updatePlaylist.setPlaylistMOOD(playlist.getPlaylistMOOD());
+		updatePlaylist.setPlaylistPhoto(playlist.getPlaylistPhoto());
+		updatePlaylist.setPlaylistSearch(playlist.getPlaylistSearch());
+		
 		
 		if(!playlist.getPlaylistPhoto().isEmpty()) {
 			updatePlaylist.setPlaylistPhoto(playlist.getPlaylistPhoto());
 		}
 		playlistRepository.save(updatePlaylist);
 	}	
-	
 	@Override
 	public void playlistDelete(Playlist playlist) {
 		playlistRepository.deleteById(playlist.getPlaylistId());
 	}
 
-	/*
-	 * @Override public Playlist playlistDetail(Playlist playlist) { return null; }
-	 */
-
-	@Override
-	public Playlist getPlaylist(Long playlistId) {
-		Optional<Playlist> playlistOptional = playlistRepository.findById(playlistId);
-		Playlist updateData = playlistOptional.orElseThrow();
-		
-		return updateData;
-	}
+	
+	
 
 }
