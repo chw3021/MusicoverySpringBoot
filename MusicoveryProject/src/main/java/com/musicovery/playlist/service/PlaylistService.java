@@ -8,6 +8,7 @@ import com.musicovery.playlist.entity.Playlist;
 
 public interface PlaylistService {
 
+
     // 추가할 메서드 시그니처
     List<Playlist> getAllPlaylists();    
     List<Playlist> getAllPlaylistsByUserId(String userId);

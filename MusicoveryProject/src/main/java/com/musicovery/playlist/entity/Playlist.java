@@ -37,6 +37,7 @@ public class Playlist {
     @Column(nullable = false)
     private String userId;  // 사용자 ID (이메일)
 
+    
     @Temporal(TemporalType.TIMESTAMP)
     private Date playlistDate;  // 사용자 ID (이메일)
 }
