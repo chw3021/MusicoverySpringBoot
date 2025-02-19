@@ -23,9 +23,14 @@ public class Streaming {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+	//  @ManyToOne
+	//  @JoinColumn(name = "host_user_id")
+	//private User user; // 스트리밍 호스트 사용자 ID
+    
     @Column(nullable = false)
     private Long hostUserId; // 스트리밍 호스트 사용자 ID
 
+  
     @Column(nullable = false)
     private String playlistName; // 스트리밍 플레이리스트 이름
 

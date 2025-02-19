@@ -12,8 +12,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -39,9 +37,9 @@ public class PlaylistPost {
     private String description;
 
     private String playlistId; // Spotify 플레이리스트 ID
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
     private User user; // 플레이리스트 작성자
 
     @OneToMany(mappedBy = "playlistPost", cascade = CascadeType.ALL, orphanRemoval = true)
