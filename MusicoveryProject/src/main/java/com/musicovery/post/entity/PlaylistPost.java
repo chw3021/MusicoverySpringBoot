@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.musicovery.user.entity.User;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -40,7 +39,10 @@ public class PlaylistPost {
     
 //    @ManyToOne
 //    @JoinColumn(name = "user_id")
-    private User user; // 플레이리스트 작성자
+//   private User user; // 플레이리스트 작성자
+    
+    @JoinColumn(name = "user_id")
+    private String user; // 임시용
 
     @OneToMany(mappedBy = "playlistPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reply> replys = new ArrayList<>();
@@ -50,6 +52,7 @@ public class PlaylistPost {
 
     private int likeCount;
     private int replyCount;
+    private int viewCount;
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate; // 게시글 작성 날짜
