@@ -1,7 +1,6 @@
 package com.musicovery.spotifyapi.controller;
 
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +17,6 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import com.musicovery.spotifyapi.service.SpotifyAuthService;
 
-import jakarta.servlet.http.HttpServletResponse;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
 
@@ -32,19 +30,7 @@ public class SpotifyAuthController {
         this.spotifyAuthService = spotifyAuthService;
     }
 
-	/**
-	 * Spotify 로그인 페이지로 자동 리디렉트
-	 */
-	//@GetMapping("/getUserAccessToken")
-	public ResponseEntity<Void> login(HttpServletResponse response) throws IOException {
-		String authUrl = spotifyAuthService.getSpotifyAuthUrl();
-		response.sendRedirect(authUrl); // Spotify 인증 페이지로 바로 리디렉트
-		return ResponseEntity.ok().build();
-    }
 
-    /**
-     * Spotify 로그인 페이지로 자동 리디렉트
-     */
     @GetMapping("/getUserAccessToken")
     public ResponseEntity<String> login() {
         String authUrl = spotifyAuthService.getSpotifyAuthUrl();
