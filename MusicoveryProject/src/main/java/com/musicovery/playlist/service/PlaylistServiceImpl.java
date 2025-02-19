@@ -1,5 +1,6 @@
 package com.musicovery.playlist.service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,70 +24,40 @@ public class PlaylistServiceImpl implements PlaylistService {
     /**
      * 📂 플레이리스트 생성 + Spotify API 동기화
      */
+
     @Override
     public Playlist createPlaylist(String accessToken, String name, String description) {
         // Spotify API를 호출하여 플레이리스트 생성
         String spotifyPlaylistId = spotifyApiPlaylistService.createPlaylist(accessToken, name, description);
+
+        // 현재 시간 생성
+        Date currentDate = new Date();
+
+        // 생성된 플레이리스트 정보를 DB에 저장
+        Playlist playlist = new Playlist(spotifyPlaylistId, name, description, null, accessToken, currentDate);
+        return playlistRepository.save(playlist);
     }
 
-
-	@Override 
-	public Playlist playlistDetail(Playlist playlist) {
-		return null; 
-		}
-
-
-
-	@Override
-	public Playlist getPlaylist(Long playlistId) {
-		Optional<Playlist> playlistOptional = playlistRepository.findById(playlistId);
-		Playlist updateData = playlistOptional.orElseThrow();
-		
-		return updateData;
-	}
-
-	
-	@Override
-	public void playlistUpdate(Playlist playlist) {
-		Optional<Playlist> playlistOptional = playlistRepository.findById(playlist.getPlaylistId());
-		
-		Playlist updatePlaylist = playlistOptional.get();
-		
-		updatePlaylist.setPlaylistTitle(playlist.getPlaylistTitle());
-		updatePlaylist.setPlaylistComment(playlist.getPlaylistComment());
-		updatePlaylist.setUserId(playlist.getUserId());
-		updatePlaylist.setPlaylistDate(playlist.getPlaylistDate());
-		updatePlaylist.setPlaylistId(playlist.getPlaylistId());
-		updatePlaylist.setPlaylistPhoto(playlist.getPlaylistPhoto());
-		
-		
-		if(!playlist.getPlaylistPhoto().isEmpty()) {
-			updatePlaylist.setPlaylistPhoto(playlist.getPlaylistPhoto());
-		}
-		playlistRepository.save(updatePlaylist);
-	}	
-	@Override
-	public void playlistDelete(Playlist playlist) {
-		playlistRepository.deleteById(playlist.getPlaylistId());
-	}
-
-//        // 생성된 플레이리스트 정보를 DB에 저장
-//        Playlist playlist = new Playlist(spotifyPlaylistId, name, description, null, accessToken);
-//        return playlistRepository.save(playlist);
-//    }
     /**
      * 📝 플레이리스트 수정 + Spotify API 동기화
      */
     @Override
-    public Playlist updatePlaylist(String accessToken, String playlistId, String name, String description) {
-        Optional<Playlist> optionalPlaylist = playlistRepository.findById(playlistId);
+    public Playlist updatePlaylist(String accessToken, Playlist playlist, String name, String description) {
+        Optional<Playlist> optionalPlaylist = playlistRepository.findById(playlist.getPlaylistId());
         if (optionalPlaylist.isPresent()) {
-            Playlist playlist = optionalPlaylist.get();
-            playlist.setPlaylistTitle(name);
-            playlist.setPlaylistComment(description);
+
+    		Playlist updatePlaylist = optionalPlaylist.get();
+    		
+    		updatePlaylist.setPlaylistTitle(playlist.getPlaylistTitle());
+    		updatePlaylist.setPlaylistComment(playlist.getPlaylistComment());
+    		updatePlaylist.setUserId(playlist.getUserId());
+    		updatePlaylist.setPlaylistDate(playlist.getPlaylistDate());
+    		updatePlaylist.setPlaylistId(playlist.getPlaylistId());
+    		updatePlaylist.setPlaylistPhoto(playlist.getPlaylistPhoto());
 
             // Spotify API에도 반영
-            spotifyApiPlaylistService.updatePlaylist(accessToken, playlistId, name, description);
+            spotifyApiPlaylistService.updatePlaylist(accessToken, playlist.getPlaylistId(), name, description);
+
 
             return playlistRepository.save(playlist);
         } else {
@@ -132,14 +103,16 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         return response;
     }
-	@Override
-	public List<Playlist> playlistList(Playlist playlist) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public void playlistInsert(Playlist playlist) {
-		// TODO Auto-generated method stub
-		
-	}
+
+
+
+    @Override
+    public List<Playlist> getAllPlaylists() {
+        return playlistRepository.findAll();
+    }
+
+    @Override
+    public List<Playlist> getAllPlaylistsByUserId(String userId) {
+        return playlistRepository.findAllByUserId(userId);
+    }
 }

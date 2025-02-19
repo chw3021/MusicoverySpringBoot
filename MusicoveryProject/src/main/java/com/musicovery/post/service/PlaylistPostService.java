@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.musicovery.musicrecommendation.service.WeightService;
+import com.musicovery.post.dto.PlaylistPostDTO;
 import com.musicovery.post.entity.Like;
 import com.musicovery.post.entity.PlaylistPost;
 import com.musicovery.post.entity.Reply;
@@ -110,9 +112,20 @@ public class PlaylistPostService {
     }
     
 
-    public Page<PlaylistPost> getPlaylistPosts(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return playlistPostRepository.findAll(pageable);
+    public Page<PlaylistPostDTO> getPlaylistPosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate"));
+        
+        return playlistPostRepository.findAllWithProjection(pageable)
+            .map(post -> PlaylistPostDTO.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .description(post.getDescription())
+                .user(post.getUser())
+                .createdDate(post.getCreatedDate())
+                .likeCount(post.getLikeCount())
+                .replyCount(post.getReplyCount())
+                .viewCount(post.getViewCount())
+                .build());
     }
     
     public List<PlaylistPost> getRanking() {

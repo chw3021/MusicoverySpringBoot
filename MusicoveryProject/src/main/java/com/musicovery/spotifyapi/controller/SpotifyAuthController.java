@@ -9,10 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.musicovery.spotifyapi.service.SpotifyAuthService;
 
@@ -97,20 +99,26 @@ public class SpotifyAuthController {
         }
     }
     
-	@GetMapping("/refresh-token")
-	public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
-	    try {
-	        String refreshToken = request.get("refreshToken");
-	        String newAccessToken = spotifyAuthService.refreshUserAccessToken(refreshToken);
+    @PostMapping("/refresh-token")  // GET에서 POST로 변경
+    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
+        try {
+            String refreshToken = request.get("refreshToken");
+            String newAccessToken = spotifyAuthService.refreshUserAccessToken(refreshToken);
 
-	        Map<String, String> response = new HashMap<>();
-	        response.put("accessToken", newAccessToken);
+            Map<String, String> response = new HashMap<>();
+            response.put("accessToken", newAccessToken);
 
-	        return ResponseEntity.ok(response);
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	            .body("토큰 갱신 실패: " + e.getMessage());
-	    }
-	}
-
+            return ResponseEntity.ok(response);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().value() == 401) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(e.getResponseBodyAsString());
+            }
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();  // 디버깅을 위한 로그 추가
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("토큰 갱신 실패: " + e.getMessage());
+        }
+    }
 }

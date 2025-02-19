@@ -10,7 +10,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -35,13 +34,14 @@ public class PlaylistPost {
     @Column(length = 500)
     private String description;
 
+    @Column(name = "playlist_id")
     private String playlistId; // Spotify 플레이리스트 ID
     
 //    @ManyToOne
 //    @JoinColumn(name = "user_id")
 //   private User user; // 플레이리스트 작성자
-    
-    @JoinColumn(name = "user_id")
+
+    @Column(name = "user_id")
     private String user; // 임시용
 
     @OneToMany(mappedBy = "playlistPost", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -50,10 +50,17 @@ public class PlaylistPost {
     @OneToMany(mappedBy = "playlistPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes = new ArrayList<>();
 
+
+    @Column(name = "like_count")  // 실제 컬럼명 매핑
     private int likeCount;
+
+    @Column(name = "reply_count")  // 실제 컬럼명 매핑
     private int replyCount;
+
+    @Column(name = "view_count")  // 실제 컬럼명 매핑
     private int viewCount;
     
+    @Column(name = "created_date")  // 실제 컬럼명 매핑
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate; // 게시글 작성 날짜
+    private Date createdDate;
 }

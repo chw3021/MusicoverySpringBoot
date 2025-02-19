@@ -7,13 +7,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "PLAYLIST")
+@Table(name = "playlist")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,6 +38,7 @@ public class Playlist {
     private String userId;  // 사용자 ID (이메일)
 
     
-    private Date playlistDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date playlistDate;  // 사용자 ID (이메일)
 }
 
