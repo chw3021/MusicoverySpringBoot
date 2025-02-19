@@ -1,74 +1,93 @@
 package com.musicovery.playlist.controller;
 
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.musicovery.playlist.domain.Playlist;
+import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.service.PlaylistService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 
-@Controller
-@RequestMapping("/playlist/*")
+
+@RestController
+@RequestMapping("/playlist")
 @RequiredArgsConstructor
 public class PlaylistController {
 
-	
-	private final PlaylistService playlistService;
-	
-	
-	@GetMapping("/playlistList")
-	public String playlistList(Playlist playlist, Model model) {
-		List<Playlist> playlistList = playlistService.playlistList(playlist);
-		model.addAttribute("playlistList", playlistList);
-		
-		return "musicovery/playlist/playlistList";
-	}
+    private final PlaylistService playlistService;
 
-	
-	@GetMapping("/insertForm")
-	public String insertForm(Playlist playlist) {
-		return "musicovery/playlist/insertForm";
-	}
-	
-	
-	@PostMapping("/playlistInsert")
-	public String playlistInsert(Playlist playlist) {
-		playlistService.playlistInsert(playlist);
-		return "redirect:/playlist/playlistList";
-	}
+    /**
+     * 📂 플레이리스트 생성
+     */
+    @PostMapping("/create")
+    public ResponseEntity<Playlist> createPlaylist(
+    		HttpSession session,
+            @RequestParam String name,
+            @RequestParam String description) {
+        Playlist playlist = playlistService.createPlaylist(session.getId(), name, description);
+        return ResponseEntity.ok(playlist);
+    }
 
-	
-	
+    /**
+     * 📝 플레이리스트 수정
+     */
+    @PutMapping("/update")
+    public ResponseEntity<Playlist> updatePlaylist(
+    		HttpSession session,
+            @RequestParam String playlistId,
+            @RequestParam String name,
+            @RequestParam String description) {
+        Playlist updatedPlaylist = playlistService.updatePlaylist(session.getId(), playlistId, name, description);
+        return ResponseEntity.ok(updatedPlaylist);
+    }
 
-	@PostMapping("/updateForm")
-	public String updateForm(Playlist playlist, Model model) {
-		Playlist updateData = playlistService.getPlaylist(playlist.getPlaylistId());
-		model.addAttribute("updateData", updateData);
-		return "musicovery/playlist/updateForm";
-	}
+    /**
+     * 🗑 플레이리스트 삭제
+     */
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deletePlaylist(
+    		HttpSession session,
+            @RequestParam String playlistId) {
+        playlistService.deletePlaylist(session.getId(), playlistId);
+        return ResponseEntity.ok("삭제 완료");
+    }
 
+    /**
+     * 🔍 플레이리스트 상세 조회
+     */
+    @GetMapping("/{playlistId}")
+    public ResponseEntity<Playlist> getPlaylist(@PathVariable String playlistId) {
+        return ResponseEntity.ok(playlistService.getPlaylist(playlistId));
+    }
 
-	
-	@PostMapping("/playlistUpdate")
-	public String playlistUpdate(Playlist playlist) {
-		playlistService.playlistUpdate(playlist);
-		
-		return "redirect:/playlist/"+ playlist.getPlaylistId();
-	}
-	
-	
-	@PostMapping("/playlistDelete")
-	public String playlistDelete(Playlist playlist) {
-		playlistService.playlistDelete(playlist);
-		
-		return "redirect:/playlist/playlistList";
-	}
-
+    /**
+     * 🎵 플레이리스트의 트랙 ID 목록 조회
+     */
+    @GetMapping("/{playlistId}/tracks")
+    public ResponseEntity<List<String>> getTracksInPlaylist(@PathVariable String playlistId) {
+        return ResponseEntity.ok(playlistService.getTracksInPlaylist(playlistId));
+    }
+    
+    /**
+     * 📜 플레이리스트 상세 정보 조회 (곡 리스트 포함)
+     */
+    @GetMapping("/{playlistId}/detail")
+    public ResponseEntity<Map<String, Object>> getPlaylistDetail(
+            @PathVariable String playlistId,
+            HttpSession session) {
+        return ResponseEntity.ok(playlistService.getPlaylistDetail(session.getId(), playlistId));
+    }
 }
+
