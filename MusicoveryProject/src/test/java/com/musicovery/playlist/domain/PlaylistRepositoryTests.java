@@ -26,6 +26,17 @@ public class PlaylistRepositoryTests {
 		playlist.setPlaylistTitle("예시로 만든 첫 플레이리스트입니다.");
 		playlist.setPlaylistComment("장르는 발라드로, 노래방 가기 전 들었으면 하는 플리를 만들어 보았습니다.");
 		playlist.setPlaylistPhoto("");
+		
+		playlist.setBpmCheckbox(null);
+		playlist.setConceptCheckbox(null);
+		playlist.setMoodCheckbox(null);
+		playlist.setMusicCheckbox(null);
+		playlist.setPlaylistBPM(null);
+		playlist.setPlaylistConcept(null);
+		playlist.setPlaylistDate(null);
+		playlist.setPlaylistMOOD("무드1");
+		playlist.setPlaylistSearch("검색1");
+		
 		playlist.setUserId("추예진@gmail.com");
 		
 		log.info("플리 테이블에 첫번째 데이터 입력");
@@ -37,6 +48,17 @@ public class PlaylistRepositoryTests {
 		playlist2.setPlaylistTitle("예시로 만든 두번째 플레이리스트입니다.");
 		playlist2.setPlaylistComment("장르는 인디로, 버스에서 들었으면 하는 플리를 만들어 보았습니다.");
 		playlist2.setPlaylistPhoto("");
+		
+		playlist.setBpmCheckbox(null);
+		playlist.setConceptCheckbox(null);
+		playlist.setMoodCheckbox(null);
+		playlist.setMusicCheckbox(null);
+		playlist.setPlaylistBPM(null);
+		playlist.setPlaylistConcept(null);
+		playlist.setPlaylistDate(null);
+		playlist.setPlaylistMOOD("무드2");
+		playlist.setPlaylistSearch("검색2");
+		
 		playlist2.setUserId("구운감자@gmail.com");
 		
 		log.info("플리 테이블에 두번째 데이터 입력");
@@ -49,6 +71,17 @@ public class PlaylistRepositoryTests {
 		playlist3.setPlaylistTitle("예시로 만든 세번째 플레이리스트입니다.");
 		playlist3.setPlaylistComment("삭제용 플리입니다.");
 		playlist3.setPlaylistPhoto("");
+		
+		playlist.setBpmCheckbox(null);
+		playlist.setConceptCheckbox(null);
+		playlist.setMoodCheckbox(null);
+		playlist.setMusicCheckbox(null);
+		playlist.setPlaylistBPM(null);
+		playlist.setPlaylistConcept(null);
+		playlist.setPlaylistDate(null);
+		playlist.setPlaylistMOOD("무드3");
+		playlist.setPlaylistSearch("검색3");
+		
 		playlist3.setUserId("구운고구마@gmail.com");
 		
 		log.info("플리 테이블에 세번째 데이터 입력");
@@ -85,6 +118,23 @@ public class PlaylistRepositoryTests {
 	
 	//플리 수정
 	//@Test
+<<<<<<< HEAD
+	public void playlistUpdateTest() {
+		Optional<Playlist> playlistOptional = playlistRepository.findById(1L);
+		
+		if(playlistOptional.isPresent()) {
+			Playlist playlist = playlistOptional.get();
+			
+			playlist.setPlaylistTitle("수정이 된 플레이리스트입니다.");
+			playlist.setPlaylistComment("장르는 힙합으로, 버스에서 내렸을 때 들을 플리를 만들어보았습니다.");
+			playlist.setUserId("탄감자@gmail.com");
+			
+			log.info("플리 테이블 데이터 수정 완료.");
+			playlistRepository.save(playlist);
+		}
+	}
+	
+=======
 //	public void playlistUpdateTest() {
 //		Optional<Playlist> playlistOptional = playlistRepository.findById(2L);
 //		
@@ -100,6 +150,7 @@ public class PlaylistRepositoryTests {
 //		}
 //	}
 //	
+>>>>>>> refs/remotes/origin/main
 	//플리 삭제
 	//@Test
 	public void playlistDeleteTest() {
