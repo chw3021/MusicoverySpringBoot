@@ -22,7 +22,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 
-
 @RestController
 @RequestMapping("/playlist")
 @RequiredArgsConstructor
@@ -35,13 +34,12 @@ public class PlaylistController {
      */
     @PostMapping("/create")
     public ResponseEntity<Playlist> createPlaylist(
-    		@RequestHeader("Authorization") String bearerToken,
+            @RequestHeader("Authorization") String bearerToken,
             @RequestParam String name,
             @RequestParam String description) {
         Playlist playlist = playlistService.createPlaylist(bearerToken, name, description);
         return ResponseEntity.ok(playlist);
     }
-
 
     /**
      * 📝 플레이리스트 수정
@@ -59,7 +57,7 @@ public class PlaylistController {
      */
     @DeleteMapping("/delete")
     public ResponseEntity<String> deletePlaylist(
-    		@RequestHeader("Authorization") String bearerToken,
+            @RequestHeader("Authorization") String bearerToken,
             @RequestParam String playlistId) {
         playlistService.deletePlaylist(bearerToken, playlistId);
         return ResponseEntity.ok("삭제 완료");
@@ -68,7 +66,7 @@ public class PlaylistController {
     /**
      * 🔍 플레이리스트 상세 조회
      */
-    @GetMapping("/{playlistId}")
+    @GetMapping("/detail/{playlistId}")
     public ResponseEntity<Playlist> getPlaylist(@PathVariable String playlistId) {
         return ResponseEntity.ok(playlistService.getPlaylist(playlistId));
     }
@@ -76,24 +74,26 @@ public class PlaylistController {
     /**
      * 🎵 플레이리스트의 트랙 ID 목록 조회
      */
-    @GetMapping("/{playlistId}/tracks")
+    @GetMapping("/tracks/{playlistId}")
     public ResponseEntity<List<String>> getTracksInPlaylist(@PathVariable String playlistId) {
         return ResponseEntity.ok(playlistService.getTracksInPlaylist(playlistId));
     }
-    
+
     /**
      * 📜 플레이리스트 상세 정보 조회 (곡 리스트 포함)
      */
-    @GetMapping("/{playlistId}/detail")
+    @GetMapping("/detail/{playlistId}/full")
     public ResponseEntity<Map<String, Object>> getPlaylistDetail(
             @PathVariable String playlistId,
             HttpSession session) {
         return ResponseEntity.ok(playlistService.getPlaylistDetail(session.getId(), playlistId));
     }
 
-    @GetMapping("/{userId}")
+    /**
+     * 사용자별 플레이리스트 조회
+     */
+    @GetMapping("/user/{userId}")
     public List<Playlist> getAllPlaylistsByUserId(@PathVariable String userId) {
         return playlistService.getAllPlaylistsByUserId(userId);
     }
 }
-

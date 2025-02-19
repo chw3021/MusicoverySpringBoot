@@ -37,14 +37,14 @@ public class PlaylistPostController {
         return ResponseEntity.ok(post);
     }
 
-    @PostMapping("/{postId}/like")
+    @PostMapping("/like/{postId}")
     public ResponseEntity<?> likePost(@PathVariable Long postId, HttpSession session) {
         User user = (User) session.getAttribute("user"); // 세션에서 사용자 정보를 가져옴
         playlistPostService.likePost(user, postId);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{postId}/reply")
+    @PostMapping("/reply/{postId}")
     public ResponseEntity<?> addReply(@PathVariable Long postId, @RequestParam String content, HttpSession session) {
         User user = (User) session.getAttribute("user"); // 세션에서 사용자 정보를 가져옴
         playlistPostService.addReply(user, postId, content);
