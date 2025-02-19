@@ -140,7 +140,7 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
         }
 
         // 🎵 Spotify API 호출
-        return spotifyApiUtil.callSpotifyApi(sessionId, new SpotifyApiRequestDTO("PUT", url), requestBody);
+        return spotifyApiUtil.callSpotifyApi(sessionId, new SpotifyApiRequestDTO(url, "PUT"), requestBody);
     }
 
 }

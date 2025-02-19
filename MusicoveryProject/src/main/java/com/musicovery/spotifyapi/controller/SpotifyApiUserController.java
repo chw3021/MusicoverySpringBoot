@@ -1,8 +1,8 @@
 package com.musicovery.spotifyapi.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +20,9 @@ public class SpotifyApiUserController {
     }
 
     @GetMapping("/userInfo")
-    public ResponseEntity<String> getUserInfo(@CookieValue(value = "MUSICOVERY_ACCESS_TOKEN", required = false) String accessToken) {
+    public ResponseEntity<String> getUserInfo(@RequestHeader("Authorization") String bearerToken) {
+        // Bearer 토큰에서 실제 토큰 추출
+        String accessToken = bearerToken.replace("Bearer ", "");
         String userInfo = spotifyApiUserService.getUserInfo(accessToken);
         return ResponseEntity.ok(userInfo);
     }

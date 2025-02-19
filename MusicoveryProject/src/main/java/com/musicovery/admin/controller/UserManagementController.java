@@ -13,10 +13,10 @@ import com.musicovery.admin.service.UserManagementService;
 
 @RestController
 @RequestMapping("/admin/users")
-public class UserController {
+public class UserManagementController {
 	private final UserManagementService userService;
 
-	public UserController(UserManagementService userService) {
+	public UserManagementController(UserManagementService userService) {
 		this.userService = userService;
 	}
 
