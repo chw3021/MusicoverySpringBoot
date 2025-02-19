@@ -1,17 +1,21 @@
 package com.musicovery.playlist.entity;
 
+import java.util.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "PLAYLIST")
+@Table(name = "playlist")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,5 +37,7 @@ public class Playlist {
     @Column(nullable = false)
     private String userId;  // 사용자 ID (이메일)
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date playlistDate;  // 사용자 ID (이메일)
 }
 
