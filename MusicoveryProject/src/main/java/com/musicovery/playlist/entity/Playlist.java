@@ -1,5 +1,7 @@
 package com.musicovery.playlist.entity;
 
+import java.util.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -33,5 +35,7 @@ public class Playlist {
     @Column(nullable = false)
     private String userId;  // 사용자 ID (이메일)
 
+    
+    private Date playlistDate;
 }
 

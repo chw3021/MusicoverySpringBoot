@@ -27,8 +27,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     public Playlist createPlaylist(String accessToken, String name, String description) {
         // Spotify API를 호출하여 플레이리스트 생성
         String spotifyPlaylistId = spotifyApiPlaylistService.createPlaylist(accessToken, name, description);
+    }
 
-<<<<<<< HEAD
 
 	@Override 
 	public Playlist playlistDetail(Playlist playlist) {
@@ -55,17 +55,9 @@ public class PlaylistServiceImpl implements PlaylistService {
 		updatePlaylist.setPlaylistTitle(playlist.getPlaylistTitle());
 		updatePlaylist.setPlaylistComment(playlist.getPlaylistComment());
 		updatePlaylist.setUserId(playlist.getUserId());
-		updatePlaylist.setBpmCheckbox(playlist.getBpmCheckbox());
-		updatePlaylist.setConceptCheckbox(playlist.getConceptCheckbox());
-		updatePlaylist.setMoodCheckbox(playlist.getMoodCheckbox());
-		updatePlaylist.setMusicCheckbox(playlist.getMusicCheckbox());
-		updatePlaylist.setPlaylistBPM(playlist.getPlaylistBPM());
-		updatePlaylist.setPlaylistConcept(playlist.getPlaylistConcept());
 		updatePlaylist.setPlaylistDate(playlist.getPlaylistDate());
 		updatePlaylist.setPlaylistId(playlist.getPlaylistId());
-		updatePlaylist.setPlaylistMOOD(playlist.getPlaylistMOOD());
 		updatePlaylist.setPlaylistPhoto(playlist.getPlaylistPhoto());
-		updatePlaylist.setPlaylistSearch(playlist.getPlaylistSearch());
 		
 		
 		if(!playlist.getPlaylistPhoto().isEmpty()) {
@@ -77,17 +69,11 @@ public class PlaylistServiceImpl implements PlaylistService {
 	public void playlistDelete(Playlist playlist) {
 		playlistRepository.deleteById(playlist.getPlaylistId());
 	}
-=======
-        // 생성된 플레이리스트 정보를 DB에 저장
-        Playlist playlist = new Playlist(spotifyPlaylistId, name, description, null, accessToken);
-        return playlistRepository.save(playlist);
-    }
->>>>>>> refs/remotes/origin/main
 
-<<<<<<< HEAD
-	
-	
-=======
+//        // 생성된 플레이리스트 정보를 DB에 저장
+//        Playlist playlist = new Playlist(spotifyPlaylistId, name, description, null, accessToken);
+//        return playlistRepository.save(playlist);
+//    }
     /**
      * 📝 플레이리스트 수정 + Spotify API 동기화
      */
@@ -101,7 +87,6 @@ public class PlaylistServiceImpl implements PlaylistService {
 
             // Spotify API에도 반영
             spotifyApiPlaylistService.updatePlaylist(accessToken, playlistId, name, description);
->>>>>>> refs/remotes/origin/main
 
             return playlistRepository.save(playlist);
         } else {
@@ -147,4 +132,14 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         return response;
     }
+	@Override
+	public List<Playlist> playlistList(Playlist playlist) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void playlistInsert(Playlist playlist) {
+		// TODO Auto-generated method stub
+		
+	}
 }
