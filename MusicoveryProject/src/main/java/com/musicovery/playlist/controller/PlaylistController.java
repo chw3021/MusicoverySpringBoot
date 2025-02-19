@@ -90,5 +90,10 @@ public class PlaylistController {
             HttpSession session) {
         return ResponseEntity.ok(playlistService.getPlaylistDetail(session.getId(), playlistId));
     }
+
+    @GetMapping("/{userId}")
+    public List<Playlist> getAllPlaylistsByUserId(@PathVariable String userId) {
+        return playlistService.getAllPlaylistsByUserId(userId);
+    }
 }
 
