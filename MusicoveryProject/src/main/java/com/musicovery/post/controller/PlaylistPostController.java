@@ -3,6 +3,9 @@ package com.musicovery.post.controller;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.musicovery.post.dto.PlaylistPostDTO;
 import com.musicovery.post.entity.PlaylistPost;
 import com.musicovery.post.service.PlaylistPostService;
 import com.musicovery.user.entity.User;
@@ -24,7 +28,8 @@ import lombok.RequiredArgsConstructor;
 public class PlaylistPostController {
 
     private final PlaylistPostService playlistPostService;
-
+    private final PagedResourcesAssembler<PlaylistPostDTO> pagedResourcesAssembler;
+    
     @PostMapping("/create")
     public ResponseEntity<?> createPost(@RequestParam String title, @RequestParam String description, @RequestParam String playlistId, HttpSession session) {
         User user = (User) session.getAttribute("user"); // 세션에서 사용자 정보를 가져옴
@@ -51,11 +56,11 @@ public class PlaylistPostController {
         List<PlaylistPost> ranking = playlistPostService.getRanking();
         return ResponseEntity.ok(ranking);
     }
-
     @GetMapping("/list")
-    public ResponseEntity<Page<PlaylistPost>> getPlaylistPosts(@RequestParam int page, @RequestParam int size) {
-        Page<PlaylistPost> posts = playlistPostService.getPlaylistPosts(page, size);
-        return ResponseEntity.ok(posts);
+    public ResponseEntity<PagedModel<EntityModel<PlaylistPostDTO>>> getPlaylistPosts(@RequestParam int page, @RequestParam int size) {
+        Page<PlaylistPostDTO> posts = playlistPostService.getPlaylistPosts(page, size);
+        PagedModel<EntityModel<PlaylistPostDTO>> pagedModel = pagedResourcesAssembler.toModel(posts);
+        return ResponseEntity.ok(pagedModel);
     }
 }
 
