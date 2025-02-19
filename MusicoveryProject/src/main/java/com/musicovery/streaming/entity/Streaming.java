@@ -34,4 +34,7 @@ public class Streaming {
 
     @Column(nullable = false)
     private boolean isPremiumOnly; // Premium 계정 여부
+    
+    @Column(nullable = false)
+    private boolean isPublic; // 공개 여부
 }

@@ -10,4 +10,5 @@ public class StreamingDTO {
     private String playlistName;
     private boolean isLive;
     private boolean isPremiumOnly;
+    private boolean isPublic;
 }
