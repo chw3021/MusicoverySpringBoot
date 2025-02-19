@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.musicovery.playlist.domain.PlaylistDTO;
 import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.repository.PlaylistRepository;
 import com.musicovery.spotifyapi.service.SpotifyApiPlaylistService;
@@ -38,28 +39,24 @@ public class PlaylistServiceImpl implements PlaylistService {
         return playlistRepository.save(playlist);
     }
 
-    /**
-     * 📝 플레이리스트 수정 + Spotify API 동기화
-     */
     @Override
-    public Playlist updatePlaylist(String accessToken, Playlist playlist, String name, String description) {
-        Optional<Playlist> optionalPlaylist = playlistRepository.findById(playlist.getPlaylistId());
+    public Playlist updatePlaylist(String accessToken, PlaylistDTO playlistDTO) {
+        Optional<Playlist> optionalPlaylist = playlistRepository.findById(playlistDTO.getPlaylistId());
         if (optionalPlaylist.isPresent()) {
 
-    		Playlist updatePlaylist = optionalPlaylist.get();
-    		
-    		updatePlaylist.setPlaylistTitle(playlist.getPlaylistTitle());
-    		updatePlaylist.setPlaylistComment(playlist.getPlaylistComment());
-    		updatePlaylist.setUserId(playlist.getUserId());
-    		updatePlaylist.setPlaylistDate(playlist.getPlaylistDate());
-    		updatePlaylist.setPlaylistId(playlist.getPlaylistId());
-    		updatePlaylist.setPlaylistPhoto(playlist.getPlaylistPhoto());
+            Playlist updatePlaylist = optionalPlaylist.get();
+            
+            updatePlaylist.setPlaylistTitle(playlistDTO.getPlaylistTitle());
+            updatePlaylist.setPlaylistComment(playlistDTO.getPlaylistComment());
+            updatePlaylist.setUserId(playlistDTO.getUserId());
+            updatePlaylist.setPlaylistDate(playlistDTO.getPlaylistDate());
+            updatePlaylist.setPlaylistId(playlistDTO.getPlaylistId());
+            updatePlaylist.setPlaylistPhoto(playlistDTO.getPlaylistPhoto());
 
             // Spotify API에도 반영
-            spotifyApiPlaylistService.updatePlaylist(accessToken, playlist.getPlaylistId(), name, description);
+            spotifyApiPlaylistService.updatePlaylist(accessToken, playlistDTO.getPlaylistId(), playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment());
 
-
-            return playlistRepository.save(playlist);
+            return playlistRepository.save(updatePlaylist);
         } else {
             throw new RuntimeException("플레이리스트가 존재하지 않습니다.");
         }
