@@ -35,6 +35,8 @@ public class StreamingController {
 
     @GetMapping("/live")
     public List<Streaming> getLiveStreams() {
-        return streamingService.getLiveStreams();
+        List<Streaming> liveStreams = streamingService.getLiveStreams();
+        //System.out.println("📡 현재 라이브 스트리밍 데이터: " + liveStreams);
+        return liveStreams;
     }
 }

@@ -18,14 +18,15 @@ public class StreamingServiceImpl implements StreamingService {
         this.streamingRepository = streamingRepository;
     }
 
-    @Override
     public Streaming startStreaming(StreamingDTO streamingDTO) {
         Streaming streaming = Streaming.builder()
-                .hostUserId(streamingDTO.getHostUserId())
-                .playlistName(streamingDTO.getPlaylistName())
-                .isLive(true) // 스트리밍 시작
-                .isPremiumOnly(streamingDTO.isPremiumOnly())
-                .build();
+            .hostUserId(streamingDTO.getHostUserId())
+            .playlistName(streamingDTO.getPlaylistName())
+            .isLive(true)
+            .isPremiumOnly(streamingDTO.isPremiumOnly())
+            .isPublic(streamingDTO.isPublic())
+            .build();
+        
         return streamingRepository.save(streaming);
     }
 
