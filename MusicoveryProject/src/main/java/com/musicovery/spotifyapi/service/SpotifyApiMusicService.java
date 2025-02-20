@@ -22,4 +22,5 @@ public interface SpotifyApiMusicService {
 	 * @return 
 	 */
 	String playMusic(String accessToken, String musicId);
+	String searchTrack(String query);
 }
