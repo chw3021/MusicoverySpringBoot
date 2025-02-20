@@ -36,7 +36,7 @@ public class MusicRecommendationController {
     @PostMapping("/keyword")
     public ResponseEntity<String> getKeywordBasedRecommendations(@RequestBody KeywordRecommendationRequest request) {
         return ResponseEntity.ok(recommendationService.getKeywordBasedRecommendations(
-                request.getGenre(), request.getBpm(), request.getMood(), request.getLyrics()
+                request.getGenre(), request.getMood(), request.getBpm()
         ));
     }
 

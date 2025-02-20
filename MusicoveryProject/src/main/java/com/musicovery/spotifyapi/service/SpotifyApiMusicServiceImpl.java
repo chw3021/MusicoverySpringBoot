@@ -1,4 +1,6 @@
 package com.musicovery.spotifyapi.service;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,18 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
         this.spotifyAuthService = spotifyAuthService;
         this.restTemplate = new RestTemplate();
     }
-
+    
+    @Override
+    public String searchTrack(String query) {
+        String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
+        String url = String.format("%s/search?q=%s&type=track&limit=1", baseUrl, encodedQuery);
+        
+        SpotifyApiRequestDTO request = new SpotifyApiRequestDTO(url, "GET");
+        String response = spotifyApiUtil.callSpotifyApi(request, null);
+        
+        
+        return response;
+    }
 
     /**
      * 🔍 음악 검색 (Spotify API 호출)

@@ -49,23 +49,23 @@ public class UserServiceImpl implements UserService {
 		return user; // JWT 토큰 발급 로직 추가 가능
 	}
 
-	@Override
-	public User spotifyLogin(UserDTO userDTO) {
-	    return userRepository.findById(userDTO.getUserId())
-	        .orElseGet(() -> {
-	            User newUser = User.builder()
-                    .userId(userDTO.getUserId())
-                    .email(userDTO.getEmail())
-                    .passwd(passwordEncoder.encode(userDTO.getPasswd())) // 비밀번호 설정
-                    .address(userDTO.getAddress())
-                    .bio(userDTO.getBio())
-                    .phone(userDTO.getPhone())
-                    .nickname(userDTO.getNickname())
-                    .profileImageUrl(userDTO.getProfileImageUrl())
-                    .spotifyConnected(true)
-                    .isActive(true)
-                    .build();
-	            return userRepository.save(newUser);
-	        });
-	}
+//	@Override
+//	public User spotifyLogin(UserDTO userDTO) {
+//	    return userRepository.findById(userDTO.getUserId())
+//	        .orElseGet(() -> {
+//	            User newUser = User.builder()
+//                    .userId(userDTO.getUserId())
+//                    .email(userDTO.getEmail())
+//                    .passwd(passwordEncoder.encode(userDTO.getPasswd())) // 비밀번호 설정
+//                    .address(userDTO.getAddress())
+//                    .bio(userDTO.getBio())
+//                    .phone(userDTO.getPhone())
+//                    .nickname(userDTO.getNickname())
+//                    .profileImageUrl(userDTO.getProfileImageUrl())
+//                    .spotifyConnected(true)
+//                    .isActive(true)
+//                    .build();
+//	            return userRepository.save(newUser);
+//	        });
+//	}
 }

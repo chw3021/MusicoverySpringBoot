@@ -53,7 +53,6 @@ public class SpotifyApiUtil {
 			throw new UnsupportedOperationException("지원하지 않는 HTTP 메서드: " + api.getMethod());
 		}
 
-		log.info("응답 코드: " + response.getStatusCode());
 		return response.getBody();
 	}
 
@@ -82,7 +81,6 @@ public class SpotifyApiUtil {
 	            throw new UnsupportedOperationException("지원하지 않는 HTTP 메서드: " + api.getMethod());
 	    }
 
-	    log.info("응답 코드: " + response.getStatusCode());
 	    return response.getBody();
 	}
 }
