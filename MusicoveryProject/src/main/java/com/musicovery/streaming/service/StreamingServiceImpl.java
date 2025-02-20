@@ -21,7 +21,7 @@ public class StreamingServiceImpl implements StreamingService {
             Streaming streaming = new Streaming();
             streaming.setId(streamingDTO.getId());  
             streaming.setPlaylistName(streamingDTO.getPlaylistName());
-            streaming.setHostUserId(Long.parseLong(streamingDTO.getHostUserId())); 
+            streaming.setHostUserId(streamingDTO.getHostUserId()); 
             streaming.setLive(true);  
             streaming.setPremiumOnly(false);  
             streaming.setPublic(streamingDTO.isPublic());
@@ -41,7 +41,7 @@ public class StreamingServiceImpl implements StreamingService {
 
     public Streaming startStreaming(StreamingDTO streamingDTO) {
         Streaming streaming = Streaming.builder()
-            .hostUserId(Long.parseLong(streamingDTO.getHostUserId())) // ✅ 문자열을 Long 타입으로 변환
+            .hostUserId(streamingDTO.getHostUserId()) // ✅ 문자열을 Long 타입으로 변환
             .playlistName(streamingDTO.getPlaylistName()) // ✅ 변수명 수정
             .isLive(true)
             .isPremiumOnly(streamingDTO.isPremiumOnly())

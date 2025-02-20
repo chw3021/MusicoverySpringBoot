@@ -28,7 +28,7 @@ public class Streaming {
     private String playlistName;
 
     @Column(name = "host_user_id", nullable = false)
-    private Long hostUserId;
+    private String hostUserId;
 
     @Column(name = "is_live", nullable = false)
     private boolean isLive;
