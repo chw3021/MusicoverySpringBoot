@@ -1,14 +1,18 @@
 package com.musicovery.streaming.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Getter
-@Setter
+import lombok.Data;
+
+@Data
 public class StreamingDTO {
-    private Long hostUserId;
+    private Long id;
     private String playlistName;
+    private String hostUserId;
     private boolean isLive;
     private boolean isPremiumOnly;
+    
+    @JsonProperty
     private boolean isPublic;
+
 }

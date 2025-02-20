@@ -10,36 +10,32 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "streaming")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder // ✅ Lombok Builder 추가!
 public class Streaming {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-	//  @ManyToOne
-	//  @JoinColumn(name = "host_user_id")
-	//private User user; // 스트리밍 호스트 사용자 ID
-    
-    @Column(nullable = false)
-    private Long hostUserId; // 스트리밍 호스트 사용자 ID
+    @Column(name = "playlist_name", nullable = false)
+    private String playlistName;
 
-  
-    @Column(nullable = false)
-    private String playlistName; // 스트리밍 플레이리스트 이름
+    @Column(name = "host_user_id", nullable = false)
+    private Long hostUserId;
 
-    @Column(nullable = false)
-    private boolean isLive; // 현재 스트리밍 중 여부
+    @Column(name = "is_live", nullable = false)
+    private boolean isLive;
 
-    @Column(nullable = false)
-    private boolean isPremiumOnly; // Premium 계정 여부
-    
-    @Column(nullable = false)
-    private boolean isPublic; // 공개 여부
+    @Column(name = "is_premium_only", nullable = false)
+    private boolean isPremiumOnly;
+
+    @Column(name = "is_public", nullable = false)
+    private boolean isPublic;
 }
