@@ -32,10 +32,11 @@ public class UserAuthController {
 		User user = userService.login(userDTO);
 		return ResponseEntity.ok(user);
 	}
-	// Spotify 로그인/회원가입
-	@PostMapping("/spotify-login")
-	public ResponseEntity<User> spotifyLogin(@RequestBody UserDTO userDTO) {
-	    User user = userService.spotifyLogin(userDTO);
-	    return ResponseEntity.ok(user);
-	}
+	
+//	// Spotify 로그인/회원가입
+//	@PostMapping("/spotify-login")
+//	public ResponseEntity<User> spotifyLogin(@RequestBody UserDTO userDTO) {
+//	    User user = userService.spotifyLogin(userDTO);
+//	    return ResponseEntity.ok(user);
+//	}
 }
