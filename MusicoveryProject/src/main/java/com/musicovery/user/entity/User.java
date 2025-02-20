@@ -1,11 +1,10 @@
 package com.musicovery.user.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -22,9 +21,9 @@ import lombok.NoArgsConstructor;
 @Table(name = "user")
 public class User {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(updatable = false, nullable = false)
-	private Long userId;
+    @Column(updatable = false, nullable = false, unique = true)
+	@Builder.Default
+    private String userId = UUID.randomUUID().toString();
 
 	@Column(unique = true, nullable = false)
 	private String email;
