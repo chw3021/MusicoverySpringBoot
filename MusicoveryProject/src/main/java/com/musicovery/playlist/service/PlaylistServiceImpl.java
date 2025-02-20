@@ -35,7 +35,7 @@ public class PlaylistServiceImpl implements PlaylistService {
         Date currentDate = new Date();
 
         // 생성된 플레이리스트 정보를 DB에 저장
-        Playlist playlist = new Playlist(spotifyPlaylistId, name, description, null, accessToken, currentDate);
+        Playlist playlist = new Playlist(spotifyPlaylistId, name, description, null, accessToken, currentDate, false);
         return playlistRepository.save(playlist);
     }
 
@@ -52,6 +52,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             updatePlaylist.setPlaylistDate(playlistDTO.getPlaylistDate());
             updatePlaylist.setPlaylistId(playlistDTO.getPlaylistId());
             updatePlaylist.setPlaylistPhoto(playlistDTO.getPlaylistPhoto());
+            updatePlaylist.setIsPublic(playlistDTO.getIsPublic());
 
             // Spotify API에도 반영
             spotifyApiPlaylistService.updatePlaylist(accessToken, playlistDTO.getPlaylistId(), playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment());

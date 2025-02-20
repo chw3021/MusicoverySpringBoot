@@ -40,5 +40,7 @@ public class Playlist {
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date playlistDate;  // 사용자 ID (이메일)
+    
+    private Boolean isPublic;
 }
 

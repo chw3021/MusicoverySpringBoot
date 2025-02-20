@@ -18,4 +18,5 @@ public class PlaylistDTO {
     private String playlistPhoto;
     private String userId;
     private Date playlistDate;
+    private Boolean isPublic;
 }
