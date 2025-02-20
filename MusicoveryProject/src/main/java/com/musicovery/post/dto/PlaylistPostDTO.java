@@ -2,6 +2,8 @@ package com.musicovery.post.dto;
 
 import java.util.Date;
 
+import com.musicovery.user.entity.User;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +17,7 @@ public class PlaylistPostDTO {
     private Long id;
     private String title;
     private String description;
-    private String user;
+    private User user;
     private Date createdDate;
     private int likeCount;
     private int replyCount;
