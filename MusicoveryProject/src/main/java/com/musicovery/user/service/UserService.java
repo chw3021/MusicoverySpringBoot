@@ -8,4 +8,6 @@ public interface UserService {
 	User SignupUser(UserSignupDTO userSignupDTO); // 회원가입
 
 	User login(UserDTO userDTO); // 로그인
+
+	User spotifyLogin(UserDTO userDTO);
 }

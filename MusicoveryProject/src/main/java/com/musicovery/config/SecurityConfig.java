@@ -21,18 +21,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/**").permitAll() // 인증 없이 접근 가능
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .permitAll()
-                .disable()
-            )
-            .logout(logout -> logout
-                .permitAll()
-            );
+	        .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화 (필요에 따라 활성화)
+	        .authorizeHttpRequests(authorize -> authorize
+	            .requestMatchers("/**").permitAll() // 인증 없이 접근 가능
+	            .anyRequest().authenticated()
+	        )
+	        .formLogin(form -> form.disable()) // 폼 로그인 비활성화
+	        .httpBasic(httpBasic -> httpBasic.disable()); // HTTP Basic 인증 비활성화
+
 
         return http.build();
     }
