@@ -17,19 +17,4 @@ public class UserDTO {
 	
 	private String passwd;
 	
-	private String profileImageUrl;
-
-	private String bio;
-	
-	private String nickname;
-
-	private String phone;
-
-	private String address;
-
-	private boolean isActive = true;
-	
-	private boolean spotifyConnected;
-	
-	private boolean googleConnected;
 }

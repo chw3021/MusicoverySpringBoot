@@ -9,5 +9,5 @@ public interface UserService {
 
 	User login(UserDTO userDTO); // 로그인
 
-	User spotifyLogin(UserDTO userDTO);
+//	User spotifyLogin(UserDTO userDTO);
 }
