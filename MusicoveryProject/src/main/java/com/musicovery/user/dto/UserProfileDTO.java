@@ -10,9 +10,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserProfileDTO {
-	
+
 	private String nickname;
-	
+
 	private String profileImageUrl;
 
 	private String bio;

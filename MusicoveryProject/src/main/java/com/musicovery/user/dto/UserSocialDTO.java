@@ -10,8 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserSocialDTO {
-	
+
 	private boolean spotifyConnected;
-	
+
 	private boolean googleConnected;
 }

@@ -25,30 +25,28 @@ public class UserAuthController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<UserDTO> signup(@RequestBody UserSignupDTO userSignupDTO) {
-	    UserDTO userDTO = userService.signup(userSignupDTO);
-	    return ResponseEntity.ok(userDTO);
+		UserDTO userDTO = userService.signup(userSignupDTO);
+		return ResponseEntity.ok(userDTO);
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<UserDTO> login(@RequestBody UserDTO userDTO) {
-	    UserDTO loggedInUser = userService.login(userDTO);
-	    return ResponseEntity.ok(loggedInUser);
+		UserDTO loggedInUser = userService.login(userDTO);
+		return ResponseEntity.ok(loggedInUser);
 	}
 
-	
 	@PutMapping("/profile/{userId}")
-	public ResponseEntity<UserDTO> updateProfile(
-	        @PathVariable String userId, 
-	        @RequestBody UserProfileDTO userProfileDTO) {
-	    
-	    UserDTO updatedUser = userService.updateProfile(userId, userProfileDTO);
-	    return ResponseEntity.ok(updatedUser);
+	public ResponseEntity<UserDTO> updateProfile(@PathVariable String userId,
+			@RequestBody UserProfileDTO userProfileDTO) {
+
+		UserDTO updatedUser = userService.updateProfile(userId, userProfileDTO);
+		return ResponseEntity.ok(updatedUser);
 	}
-	
+
 	// Spotify 로그인/회원가입
 	@PostMapping("/spotify-login")
 	public ResponseEntity<User> spotifyLogin(@RequestBody SpotifyUserDTO userDTO) {
-	    User user = userService.spotifyLogin(userDTO);
-	    return ResponseEntity.ok(user);
+		User user = userService.spotifyLogin(userDTO);
+		return ResponseEntity.ok(user);
 	}
 }

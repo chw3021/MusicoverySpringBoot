@@ -21,10 +21,10 @@ import lombok.NoArgsConstructor;
 @Table(name = "user")
 public class User {
 	@Id
-    @Column(updatable = false, nullable = false, unique = true)
+	@Column(updatable = false, nullable = false, unique = true)
 	@Builder.Default
-    private String userId = UUID.randomUUID().toString();
-	
+	private String userId = UUID.randomUUID().toString();
+
 //	@Id
 //	private String userId;
 

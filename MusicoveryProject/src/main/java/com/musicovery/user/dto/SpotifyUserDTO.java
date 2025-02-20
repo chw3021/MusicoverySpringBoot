@@ -19,11 +19,11 @@ public class SpotifyUserDTO {
 	// JSON 응답에서 제외 (보안 목적)
 	@JsonIgnore
 	private String passwd;
-	
+
 	private String profileImageUrl;
 
 	private String bio;
-	
+
 	private String nickname;
 
 	private String phone;
@@ -31,8 +31,8 @@ public class SpotifyUserDTO {
 	private String address;
 
 	private boolean isActive = true;
-	
+
 	private boolean spotifyConnected;
-	
+
 	private boolean googleConnected;
 }

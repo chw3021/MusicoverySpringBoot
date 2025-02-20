@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserSignupDTO extends UserDTO {
-	
+
 	private String nickname;
 
 	private String phone;
