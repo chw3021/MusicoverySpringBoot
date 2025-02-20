@@ -1,5 +1,6 @@
 package com.musicovery.user.service;
 
+import com.musicovery.user.dto.SpotifyUserDTO;
 import com.musicovery.user.dto.UserDTO;
 import com.musicovery.user.dto.UserSignupDTO;
 import com.musicovery.user.entity.User;
@@ -9,5 +10,5 @@ public interface UserService {
 
 	User login(UserDTO userDTO); // 로그인
 
-//	User spotifyLogin(UserDTO userDTO);
+	User spotifyLogin(SpotifyUserDTO userDTO);
 }

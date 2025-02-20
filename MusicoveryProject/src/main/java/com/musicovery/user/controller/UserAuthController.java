@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.musicovery.user.dto.SpotifyUserDTO;
 import com.musicovery.user.dto.UserDTO;
 import com.musicovery.user.dto.UserSignupDTO;
 import com.musicovery.user.entity.User;
@@ -34,9 +35,9 @@ public class UserAuthController {
 	}
 	
 //	// Spotify 로그인/회원가입
-//	@PostMapping("/spotify-login")
-//	public ResponseEntity<User> spotifyLogin(@RequestBody UserDTO userDTO) {
-//	    User user = userService.spotifyLogin(userDTO);
-//	    return ResponseEntity.ok(user);
-//	}
+	@PostMapping("/spotify-login")
+	public ResponseEntity<User> spotifyLogin(@RequestBody SpotifyUserDTO userDTO) {
+	    User user = userService.spotifyLogin(userDTO);
+	    return ResponseEntity.ok(user);
+	}
 }

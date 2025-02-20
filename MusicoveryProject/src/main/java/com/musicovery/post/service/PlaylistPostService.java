@@ -47,8 +47,8 @@ public class PlaylistPostService {
         post.setTitle(title);
         post.setDescription(description);
         post.setPlaylistId(playlistId);
-        //post.setUser(user);
-        post.setUser(user.getUserId());
+        post.setUser(user);
+        //post.setUser(user.getUserId());
         post.setLikeCount(0);
         post.setReplyCount(0);
         playlistPostRepository.save(post);
