@@ -12,4 +12,5 @@ public class StreamingDTO {
     private boolean isLive;
     private boolean isPremiumOnly;
     private boolean isPublic;
+    //
 }
