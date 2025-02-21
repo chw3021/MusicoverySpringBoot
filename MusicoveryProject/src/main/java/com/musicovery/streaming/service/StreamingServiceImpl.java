@@ -26,7 +26,6 @@ public class StreamingServiceImpl implements StreamingService {
     public boolean createStreaming(StreamingDTO streamingDTO) {
         try {
             Streaming streaming = new Streaming();
-            streaming.setId(streamingDTO.getId());
             streaming.setPlaylist(playlistService.getPlaylist(streamingDTO.getPlaylistId()));
             streaming.setHostUser(streamingDTO.getHostUser());
             streaming.setLive(true);
@@ -35,9 +34,12 @@ public class StreamingServiceImpl implements StreamingService {
 
             streamingRepository.save(streaming);
 
-            // 플레이리스트의 isPublic 상태를 true로 변경
-            playlistService.updatePlaylistPublicStatus(streaming.getPlaylist().getPlaylistId(), true);
-
+         // 플레이리스트의 isPublic 상태를 비공식 스트리밍으로 변경할 필요가 있는지 확인
+            if (streamingDTO.isPublic()) {
+                playlistService.updatePlaylistPublicStatus(streaming.getPlaylist().getPlaylistId(), true);
+            } else {
+                playlistService.updatePlaylistPublicStatus(streaming.getPlaylist().getPlaylistId(), false);
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
