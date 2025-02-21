@@ -24,7 +24,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화 (필요에 따라 활성화)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/login", "/oauth2/**").permitAll() // 인증 없이 접근 가능
+                .requestMatchers("/**", "/login", "/oauth2/**").permitAll() // 인증 없이 접근 가능
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2Login -> oauth2Login
