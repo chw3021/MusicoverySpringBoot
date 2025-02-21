@@ -4,7 +4,6 @@ import java.util.List;
 
 public interface SpotifyApiPlaylistService {
 
-	String createPlaylist(String accessToken, String playlistName, String description);
 
 	String updatePlaylist(String accessToken, String playlistId, String name, String description);
 
@@ -15,4 +14,9 @@ public interface SpotifyApiPlaylistService {
 	String addTrackToPlaylist(String accessToken, String playlistId, String trackUri);
 	
 	List<String> getTracksInPlaylist(String playlistId);
+
+	/**
+	 * 📂 플레이리스트 생성
+	 */
+	String createPlaylist(String accessToken, String name, String description, List<String> tracks);
 }

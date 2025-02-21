@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.musicovery.playlist.domain.PlaylistDTO;
+import com.musicovery.playlist.dto.PlaylistDTO;
 import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.service.PlaylistService;
+import com.musicovery.user.entity.User;
+import com.musicovery.user.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class PlaylistController {
 
     private final PlaylistService playlistService;
+    private final UserService userService; 
 
     /**
      * 📂 플레이리스트 생성
@@ -35,12 +38,10 @@ public class PlaylistController {
     @PostMapping("/create")
     public ResponseEntity<Playlist> createPlaylist(
             @RequestHeader("Authorization") String bearerToken,
-            @RequestParam String name,
-            @RequestParam String description) {
-        Playlist playlist = playlistService.createPlaylist(bearerToken, name, description);
+            @RequestBody PlaylistDTO playlistDTO) {
+        Playlist playlist = playlistService.createPlaylist(bearerToken, playlistDTO);
         return ResponseEntity.ok(playlist);
     }
-
     /**
      * 📝 플레이리스트 수정
      */
@@ -93,7 +94,8 @@ public class PlaylistController {
      * 사용자별 플레이리스트 조회
      */
     @GetMapping("/user/{userId}")
-    public List<Playlist> getAllPlaylistsByUserId(@PathVariable String userId) {
-        return playlistService.getAllPlaylistsByUserId(userId);
+    public List<Playlist> getAllPlaylistsByUser(@PathVariable String userId) {
+        User user = userService.findByUserId(userId); // userId를 통해 User 객체 조회
+        return playlistService.getAllPlaylistsByUser(user);
     }
 }

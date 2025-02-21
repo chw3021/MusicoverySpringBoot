@@ -24,13 +24,24 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
      * 📂 플레이리스트 생성
      */
     @Override
-    public String createPlaylist(String accessToken, String name, String description) {
+    public String createPlaylist(String accessToken, String name, String description, List<String> tracks) {
         String url = "https://api.spotify.com/v1/me/playlists";
         String requestBody = "{ \"name\": \"" + name + "\", \"description\": \"" + description + "\", \"public\": true }";
 
-        return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO("POST", url), requestBody);
+        String playlistId = spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO("POST", url), requestBody);
+
+        // 트랙 추가
+        addTracksToPlaylist(accessToken, playlistId, tracks);
+
+        return playlistId;
     }
 
+    private void addTracksToPlaylist(String accessToken, String playlistId, List<String> tracks) {
+        String url = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
+        String requestBody = "{ \"uris\": " + tracks.toString() + " }";
+
+        spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO("POST", url), requestBody);
+    }
     /**
      * 📝 플레이리스트 수정
      */

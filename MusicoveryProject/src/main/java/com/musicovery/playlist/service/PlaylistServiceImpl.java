@@ -8,11 +8,13 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.musicovery.playlist.domain.PlaylistDTO;
+import com.musicovery.playlist.dto.PlaylistDTO;
 import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.repository.PlaylistRepository;
 import com.musicovery.spotifyapi.service.SpotifyApiPlaylistService;
+import com.musicovery.user.entity.User;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,20 +27,18 @@ public class PlaylistServiceImpl implements PlaylistService {
     /**
      * 📂 플레이리스트 생성 + Spotify API 동기화
      */
-
     @Override
-    public Playlist createPlaylist(String accessToken, String name, String description) {
+    public Playlist createPlaylist(String accessToken, PlaylistDTO playlistDTO) {
         // Spotify API를 호출하여 플레이리스트 생성
-        String spotifyPlaylistId = spotifyApiPlaylistService.createPlaylist(accessToken, name, description);
+        String spotifyPlaylistId = spotifyApiPlaylistService.createPlaylist(accessToken, playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment(), playlistDTO.getTracks());
 
         // 현재 시간 생성
         Date currentDate = new Date();
 
         // 생성된 플레이리스트 정보를 DB에 저장
-        Playlist playlist = new Playlist(spotifyPlaylistId, name, description, null, accessToken, currentDate, false);
+        Playlist playlist = new Playlist(spotifyPlaylistId, playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment(), playlistDTO.getPlaylistPhoto(), playlistDTO.getUser(), currentDate, playlistDTO.getIsPublic());
         return playlistRepository.save(playlist);
     }
-
     @Override
     public Playlist updatePlaylist(String accessToken, PlaylistDTO playlistDTO) {
         Optional<Playlist> optionalPlaylist = playlistRepository.findById(playlistDTO.getPlaylistId());
@@ -48,7 +48,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             
             updatePlaylist.setPlaylistTitle(playlistDTO.getPlaylistTitle());
             updatePlaylist.setPlaylistComment(playlistDTO.getPlaylistComment());
-            updatePlaylist.setUserId(playlistDTO.getUserId());
+            updatePlaylist.setUser(playlistDTO.getUser());
             updatePlaylist.setPlaylistDate(playlistDTO.getPlaylistDate());
             updatePlaylist.setPlaylistId(playlistDTO.getPlaylistId());
             updatePlaylist.setPlaylistPhoto(playlistDTO.getPlaylistPhoto());
@@ -110,7 +110,15 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public List<Playlist> getAllPlaylistsByUserId(String userId) {
-        return playlistRepository.findAllByUserId(userId);
+    public List<Playlist> getAllPlaylistsByUser(User user) {
+        return playlistRepository.findAllByUser(user);
+    }
+
+    @Override
+    public void updatePlaylistPublicStatus(String playlistId, boolean isPublic) {
+        Playlist playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new EntityNotFoundException("Playlist not found with id: " + playlistId));
+        playlist.setIsPublic(isPublic);
+        playlistRepository.save(playlist);
     }
 }

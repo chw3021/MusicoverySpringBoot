@@ -8,6 +8,7 @@ import com.musicovery.user.entity.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
 	Optional<User> findByEmail(String email); // 이메일로 회원 찾기
+	Optional<User> findByUserId(String userId); // 이메일로 회원 찾기
 
 	boolean existsByEmail(String email); // 이메일 중복 확인
 

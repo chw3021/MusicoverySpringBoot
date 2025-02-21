@@ -21,19 +21,19 @@ public class SpotifyApiPlaylistController {
     public SpotifyApiPlaylistController(SpotifyApiPlaylistService spotifyApiPlaylistService) {
         this.spotifyApiPlaylistService = spotifyApiPlaylistService;
     }
-
-    /**
-     * 📂 플레이리스트 생성 API
-     */
-    @PostMapping("/playlist")
-    public ResponseEntity<String> createPlaylist(
-            @RequestHeader("Authorization") String bearerToken,
-            @RequestParam String name,
-            @RequestParam String description) {
-        String accessToken = bearerToken.replace("Bearer ", "");
-        String result = spotifyApiPlaylistService.createPlaylist(accessToken, name, description);
-        return ResponseEntity.ok(result);
-    }
+//
+//    /**
+//     * 📂 플레이리스트 생성 API
+//     */
+//    @PostMapping("/playlist")
+//    public ResponseEntity<String> createPlaylist(
+//            @RequestHeader("Authorization") String bearerToken,
+//            @RequestParam String name,
+//            @RequestParam String description) {
+//        String accessToken = bearerToken.replace("Bearer ", "");
+//        String result = spotifyApiPlaylistService.createPlaylist(accessToken, name, description);
+//        return ResponseEntity.ok(result);
+//    }
     
     /**
      * 📝 플레이리스트 수정 API
