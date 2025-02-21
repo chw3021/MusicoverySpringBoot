@@ -16,6 +16,8 @@ public class StreamingServiceImpl implements StreamingService {
     @Autowired
     private StreamingRepository streamingRepository;
 
+
+
     public boolean createStreaming(StreamingDTO streamingDTO) {
         try {
             Streaming streaming = new Streaming();
@@ -25,6 +27,7 @@ public class StreamingServiceImpl implements StreamingService {
             streaming.setLive(true);  
             streaming.setPremiumOnly(false);  
             streaming.setPublic(streamingDTO.isPublic());
+            streaming.setNickname(streamingDTO.getNickname()); // ✅ 닉네임 추가
 
             streamingRepository.save(streaming);
             return true;
@@ -46,6 +49,7 @@ public class StreamingServiceImpl implements StreamingService {
             .isLive(true)
             .isPremiumOnly(streamingDTO.isPremiumOnly())
             .isPublic(streamingDTO.isPublic())
+            .nickname(streamingDTO.getNickname())// 닉네임
             .build();
 
         return streamingRepository.save(streaming);
@@ -61,6 +65,7 @@ public class StreamingServiceImpl implements StreamingService {
                     .playlistName(s.getPlaylistName())
                     .isLive(false) // ✅ 스트리밍 종료
                     .isPremiumOnly(s.isPremiumOnly())
+                    .nickname(s.getNickname())// 닉네임
                     .isPublic(s.isPublic())
                     .build();
             

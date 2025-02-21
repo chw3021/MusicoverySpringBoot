@@ -10,4 +10,5 @@ public class StreamingDTO {
     private boolean isLive;
     private boolean isPremiumOnly;
     private boolean isPublic;
+    private String nickname;     // ✅ 닉네임 추가
 }

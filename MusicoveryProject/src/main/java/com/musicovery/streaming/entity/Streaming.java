@@ -38,4 +38,7 @@ public class Streaming {
 
     @Column(name = "is_public", nullable = false)
     private boolean isPublic;
+    
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
 }
