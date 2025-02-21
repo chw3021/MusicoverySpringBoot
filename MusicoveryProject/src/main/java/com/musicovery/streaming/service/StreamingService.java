@@ -11,4 +11,6 @@ public interface StreamingService {
     List<Streaming> getLiveStreams();
     boolean createStreaming(StreamingDTO streamingDTO);
     
+	boolean stopStreamingByPlaylist(String playlistId);
+    
 }

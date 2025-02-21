@@ -20,6 +20,17 @@ public class StreamingServiceImpl implements StreamingService {
         this.streamingRepository = streamingRepository;
         this.playlistService = playlistService;
     }
+    
+    @Override
+    public boolean stopStreamingByPlaylist(String playlistId) {
+        Optional<Streaming> streaming = streamingRepository.findByPlaylist_PlaylistId(playlistId);
+        if (streaming.isPresent()) {
+            streamingRepository.delete(streaming.get());
+            playlistService.updatePlaylistPublicStatus(playlistId, false); // 비공개로 변경
+            return true;
+        }
+        return false;
+    }
 
 
     @Override

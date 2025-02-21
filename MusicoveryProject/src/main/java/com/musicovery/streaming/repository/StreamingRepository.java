@@ -1,6 +1,7 @@
 package com.musicovery.streaming.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +14,9 @@ public interface StreamingRepository extends JpaRepository<Streaming, Long> {
 
 
     // ✅ user_id로 nickname 조회
-    @Query("SELECT u.nickname FROM User u WHERE u.userId = :userId")
+    @Query("SELECT u.nickname FROM User u WHERE u.userId = :userId") 
     String findNicknameByUserId(@Param("userId") String userId);
+    
+    Optional<Streaming> findByPlaylist_PlaylistId(String playlistId);
+    
 }

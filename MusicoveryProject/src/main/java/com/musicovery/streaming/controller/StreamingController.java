@@ -43,9 +43,14 @@ public class StreamingController {
         return streamingService.startStreaming(streamingDTO);
     }
 
-    @PostMapping("/stop/{streamingId}")
-    public void stopStreaming(@PathVariable Long streamingId) {
-        streamingService.stopStreaming(streamingId);
+    @PostMapping("/stop/{playlistId}")
+    public ResponseEntity<?> stopStreaming(@PathVariable String playlistId) {
+        boolean deleted = streamingService.stopStreamingByPlaylist(playlistId);
+        if (deleted) {
+            return ResponseEntity.ok("스트리밍 삭제 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("스트리밍 삭제 실패");
+        }
     }
 
     @GetMapping("/live")
