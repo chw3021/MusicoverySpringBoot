@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserAuthController {
 	private final UserService userService;
+	
 
 	@PostMapping("/signup")
 	public ResponseEntity<UserDTO> signup(@RequestBody UserSignupDTO userSignupDTO) {
@@ -49,4 +50,15 @@ public class UserAuthController {
 		User user = userService.spotifyLogin(userDTO);
 		return ResponseEntity.ok(user);
 	}
+	
+	
+	
+	
+    // 현재 로그인한 사용자 정보 가져오기
+	/*
+	 * @GetMapping("/{userId}") public ResponseEntity<User> getUser(@PathVariable
+	 * String userId) { User user = userService.getUserById(userId); return
+	 * ResponseEntity.ok(user); }
+	 */
+
 }

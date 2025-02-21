@@ -97,4 +97,13 @@ public class UserServiceImpl implements UserService {
 		});
 	}
 	
+	
+	
+	
+
+ 
+	//채팅방구현위해 추가   
+	
+  
+ 
 }

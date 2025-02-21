@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.musicovery.exception.ResourceNotFoundException;
 import com.musicovery.playlist.service.PlaylistService;
 import com.musicovery.streaming.dto.StreamingDTO;
 import com.musicovery.streaming.entity.Streaming;
@@ -15,11 +16,24 @@ public class StreamingServiceImpl implements StreamingService {
 
     private final StreamingRepository streamingRepository;
     private final PlaylistService playlistService;
+    
+    
+    @Override
+    public Streaming getStreamingById(Long streamId) {
+        return streamingRepository.findById(streamId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 ID의 스트리밍을 찾을 수 없습니다: " + streamId));
+    }
+    
+    
+    
+    
+    
 
     public StreamingServiceImpl(StreamingRepository streamingRepository, PlaylistService playlistService) {
         this.streamingRepository = streamingRepository;
         this.playlistService = playlistService;
     }
+    
     
     @Override
     public boolean stopStreamingByPlaylist(String playlistId) {

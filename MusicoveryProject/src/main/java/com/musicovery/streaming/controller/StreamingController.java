@@ -23,6 +23,21 @@ public class StreamingController {
 	@Autowired
     private final StreamingService streamingService;
    
+	
+	@GetMapping("/{streamId}")
+	public ResponseEntity<?> getStreamingById(@PathVariable Long streamId) {
+	    Streaming streaming = streamingService.getStreamingById(streamId);
+	    if (streaming != null) {
+	        return ResponseEntity.ok(streaming);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("스트리밍 정보를 찾을 수 없습니다.");
+	    }
+	}
+	
+	
+	
+	
+	
     // 스트리밍 데이터 저장 API
 	@PostMapping("/create")
     public ResponseEntity<?> createStreaming(@RequestBody StreamingDTO streamingDTO) {
@@ -59,4 +74,5 @@ public class StreamingController {
         //System.out.println("📡 현재 라이브 스트리밍 데이터: " + liveStreams);
         return liveStreams;
     }
+    
 }

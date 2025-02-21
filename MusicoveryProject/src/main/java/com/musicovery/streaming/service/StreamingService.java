@@ -12,5 +12,10 @@ public interface StreamingService {
     boolean createStreaming(StreamingDTO streamingDTO);
     
 	boolean stopStreamingByPlaylist(String playlistId);
+	
+	
+	
+	Streaming getStreamingById(Long streamId);
+	
     
 }
