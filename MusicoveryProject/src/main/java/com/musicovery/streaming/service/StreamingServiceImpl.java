@@ -3,53 +3,55 @@ package com.musicovery.streaming.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.musicovery.playlist.service.PlaylistService;
 import com.musicovery.streaming.dto.StreamingDTO;
 import com.musicovery.streaming.entity.Streaming;
 import com.musicovery.streaming.repository.StreamingRepository;
 
 @Service
 public class StreamingServiceImpl implements StreamingService {
-    
-    @Autowired
-    private StreamingRepository streamingRepository;
+
+    private final StreamingRepository streamingRepository;
+    private final PlaylistService playlistService;
+
+    public StreamingServiceImpl(StreamingRepository streamingRepository, PlaylistService playlistService) {
+        this.streamingRepository = streamingRepository;
+        this.playlistService = playlistService;
+    }
 
 
-
+    @Override
     public boolean createStreaming(StreamingDTO streamingDTO) {
         try {
             Streaming streaming = new Streaming();
-            streaming.setId(streamingDTO.getId());  
-            streaming.setPlaylistName(streamingDTO.getPlaylistName());
-            streaming.setHostUserId(streamingDTO.getHostUserId()); 
-            streaming.setLive(true);  
-            streaming.setPremiumOnly(false);  
+            streaming.setId(streamingDTO.getId());
+            streaming.setPlaylist(playlistService.getPlaylist(streamingDTO.getPlaylistId()));
+            streaming.setHostUser(streamingDTO.getHostUser());
+            streaming.setLive(true);
+            streaming.setPremiumOnly(false);
             streaming.setPublic(streamingDTO.isPublic());
-            streaming.setNickname(streamingDTO.getNickname()); // ✅ 닉네임 추가
 
             streamingRepository.save(streaming);
+
+            // 플레이리스트의 isPublic 상태를 true로 변경
+            playlistService.updatePlaylistPublicStatus(streaming.getPlaylist().getPlaylistId(), true);
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
-    
-
-    public StreamingServiceImpl(StreamingRepository streamingRepository) {
-        this.streamingRepository = streamingRepository;
-    }
 
     public Streaming startStreaming(StreamingDTO streamingDTO) {
         Streaming streaming = Streaming.builder()
-            .hostUserId(streamingDTO.getHostUserId()) // ✅ 문자열을 Long 타입으로 변환
-            .playlistName(streamingDTO.getPlaylistName()) // ✅ 변수명 수정
+            .hostUser(streamingDTO.getHostUser()) // ✅ 문자열을 Long 타입으로 변환
+            .playlist(playlistService.getPlaylist(streamingDTO.getPlaylistId())) // ✅ 변수명 수정
             .isLive(true)
             .isPremiumOnly(streamingDTO.isPremiumOnly())
             .isPublic(streamingDTO.isPublic())
-            .nickname(streamingDTO.getNickname())// 닉네임
             .build();
 
         return streamingRepository.save(streaming);
@@ -61,11 +63,10 @@ public class StreamingServiceImpl implements StreamingService {
         streaming.ifPresent(s -> {
             Streaming updatedStreaming = Streaming.builder()
                     .id(s.getId())  // ✅ ID 유지
-                    .hostUserId(s.getHostUserId())
-                    .playlistName(s.getPlaylistName())
+                    .hostUser(s.getHostUser())
+                    .playlist(s.getPlaylist())
                     .isLive(false) // ✅ 스트리밍 종료
                     .isPremiumOnly(s.isPremiumOnly())
-                    .nickname(s.getNickname())// 닉네임
                     .isPublic(s.isPublic())
                     .build();
             

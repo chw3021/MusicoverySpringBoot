@@ -11,6 +11,8 @@ import com.musicovery.user.dto.UserSignupDTO;
 import com.musicovery.user.entity.User;
 import com.musicovery.user.repository.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
@@ -75,6 +77,13 @@ public class UserServiceImpl implements UserService {
 		// 엔티티 → DTO
 		return modelMapper.map(updatedUser, UserDTO.class);
 	}
+	
+
+    @Override
+    public User findByUserId(String userId) {
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+    }
 
 	@Override
 	public User spotifyLogin(SpotifyUserDTO userDTO) {
@@ -87,4 +96,5 @@ public class UserServiceImpl implements UserService {
 			return userRepository.save(newUser);
 		});
 	}
+	
 }

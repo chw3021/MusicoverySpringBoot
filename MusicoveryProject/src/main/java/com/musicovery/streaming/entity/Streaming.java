@@ -1,10 +1,16 @@
 package com.musicovery.streaming.entity;
 
+import com.musicovery.playlist.entity.Playlist;
+import com.musicovery.user.entity.User;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,11 +30,13 @@ public class Streaming {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "playlist_name", nullable = false)
-    private String playlistName;
+    @OneToOne
+    @JoinColumn(name = "playlist_id")
+    private Playlist playlist;
 
-    @Column(name = "host_user_id", nullable = false)
-    private String hostUserId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User hostUser;
 
     @Column(name = "is_live", nullable = false)
     private boolean isLive;

@@ -14,4 +14,6 @@ public interface UserService {
 	UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO);
 
 	User spotifyLogin(SpotifyUserDTO userDTO);
+
+	User findByUserId(String userId);
 }
