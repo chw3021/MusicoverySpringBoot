@@ -18,5 +18,5 @@ public interface SpotifyApiPlaylistService {
 	/**
 	 * 📂 플레이리스트 생성
 	 */
-	String createPlaylist(String accessToken, String name, String description, List<String> tracks);
+	String createPlaylist(String accessToken, String userId, String name, String description, List<String> tracks);
 }

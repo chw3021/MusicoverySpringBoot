@@ -15,20 +15,30 @@ import com.musicovery.spotifyapi.dto.SpotifyApiRequestDTO;
 public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService {
 
     private final SpotifyApiUtil spotifyApiUtil;
+    private final ObjectMapper objectMapper;
 
-    public SpotifyApiPlaylistServiceImpl(SpotifyApiUtil spotifyApiUtil) {
+    public SpotifyApiPlaylistServiceImpl(SpotifyApiUtil spotifyApiUtil,ObjectMapper objectMapper) {
         this.spotifyApiUtil = spotifyApiUtil;
+        this.objectMapper = objectMapper;
     }
 
     /**
      * 📂 플레이리스트 생성
      */
     @Override
-    public String createPlaylist(String accessToken, String name, String description, List<String> tracks) {
-        String url = "https://api.spotify.com/v1/me/playlists";
+    public String createPlaylist(String accessToken, String userId, String name, String description, List<String> tracks) {
+        String url = "https://api.spotify.com/v1/users/" + userId + "/playlists";
         String requestBody = "{ \"name\": \"" + name + "\", \"description\": \"" + description + "\", \"public\": true }";
 
-        String playlistId = spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO("POST", url), requestBody);
+        JsonNode jsonNode = null;
+		try {
+			jsonNode = objectMapper.readTree(spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "POST"), requestBody));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(jsonNode);
+        String playlistId = jsonNode.get("id").asText();
 
         // 트랙 추가
         addTracksToPlaylist(accessToken, playlistId, tracks);
@@ -40,7 +50,7 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
         String url = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
         String requestBody = "{ \"uris\": " + tracks.toString() + " }";
 
-        spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO("POST", url), requestBody);
+        spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "POST"), requestBody);
     }
     /**
      * 📝 플레이리스트 수정
@@ -50,7 +60,7 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
         String url = "https://api.spotify.com/v1/playlists/" + playlistId;
         String requestBody = "{ \"name\": \"" + name + "\", \"description\": \"" + description + "\" }";
 
-        return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO("PUT", url), requestBody);
+        return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "PUT"), requestBody);
     }
 
     /**
@@ -61,7 +71,7 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
         String url = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
         String requestBody = "{ \"tracks\": [{ \"uri\": \"" + trackUri + "\" }] }";
 
-        return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO("DELETE", url), requestBody);
+        return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "DELETE"), requestBody);
     }
 
     /**
@@ -71,7 +81,7 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
     public String deletePlaylist(String accessToken, String playlistId) {
         String url = "https://api.spotify.com/v1/playlists/" + playlistId + "/followers";
 
-        return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO("DELETE", url), null);
+        return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "DELETE"), null);
     }
 
     /**
@@ -83,7 +93,7 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
         String trackUri = "spotify:track:" + trackId; // Track ID를 URI로 변환
         String requestBody = "{ \"uris\": [\"" + trackUri + "\"] }";
 
-        return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO("POST", url), requestBody);
+        return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "POST"), requestBody);
     }
     
 
@@ -96,7 +106,7 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
         List<String> trackIds = new ArrayList<>();
 
         // 첫 번째 요청 보내기 (플레이리스트의 첫 페이지)
-        String response = spotifyApiUtil.callSpotifyApi("", new SpotifyApiRequestDTO("GET", url), null);
+        String response = spotifyApiUtil.callSpotifyApi("", new SpotifyApiRequestDTO(url, "GET"), null);
         
         // 응답에서 트랙 ID를 추출
         trackIds.addAll(extractTrackIdsFromResponse(response));
@@ -104,7 +114,7 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
         // 페이지네이션 처리: 여러 페이지가 있을 경우 계속해서 트랙을 가져옴
         String nextUrl = getNextPageUrl(response);
         while (nextUrl != null) {
-            response = spotifyApiUtil.callSpotifyApi("", new SpotifyApiRequestDTO("GET", nextUrl), null);
+            response = spotifyApiUtil.callSpotifyApi("", new SpotifyApiRequestDTO(nextUrl, "GET"), null);
             trackIds.addAll(extractTrackIdsFromResponse(response));
             nextUrl = getNextPageUrl(response); // 다음 페이지 URL 추출
         }
