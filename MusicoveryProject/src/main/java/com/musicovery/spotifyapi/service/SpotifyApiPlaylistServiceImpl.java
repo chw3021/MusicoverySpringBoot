@@ -11,7 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musicovery.spotifyapi.common.SpotifyApiUtil;
 import com.musicovery.spotifyapi.dto.SpotifyApiRequestDTO;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService {
 
     private final SpotifyApiUtil spotifyApiUtil;
@@ -37,7 +40,6 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(jsonNode);
         String playlistId = jsonNode.get("id").asText();
 
         // 트랙 추가
@@ -49,7 +51,8 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
     private void addTracksToPlaylist(String accessToken, String playlistId, List<String> tracks) {
         String url = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
         String requestBody = "{ \"uris\": " + tracks.toString() + " }";
-
+        log.info("tracks", tracks);
+        log.info("requestBody",requestBody);
         spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "POST"), requestBody);
     }
     /**
