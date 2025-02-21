@@ -17,8 +17,10 @@ import com.musicovery.user.service.UserService;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PlaylistServiceImpl implements PlaylistService {
 
@@ -32,8 +34,9 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     public Playlist createPlaylist(String accessToken, PlaylistDTO playlistDTO) {
         // Spotify API를 호출하여 플레이리스트 생성
-        String spotifyPlaylistId = spotifyApiPlaylistService.createPlaylist(accessToken, playlistDTO.getUserId(), playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment(), playlistDTO.getTracks());
+        log.debug("playlistDTO",playlistDTO);
 
+        String spotifyPlaylistId = spotifyApiPlaylistService.createPlaylist(accessToken, playlistDTO.getUserId(), playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment(), playlistDTO.getTracks());
         // 현재 시간 생성
         Date currentDate = new Date();
 
