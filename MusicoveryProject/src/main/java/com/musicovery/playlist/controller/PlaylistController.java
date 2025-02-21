@@ -39,7 +39,8 @@ public class PlaylistController {
     public ResponseEntity<Playlist> createPlaylist(
             @RequestHeader("Authorization") String bearerToken,
             @RequestBody PlaylistDTO playlistDTO) {
-        Playlist playlist = playlistService.createPlaylist(bearerToken, playlistDTO);
+        String accessToken = bearerToken.replace("Bearer ", "");
+        Playlist playlist = playlistService.createPlaylist(accessToken, playlistDTO);
         return ResponseEntity.ok(playlist);
     }
     /**

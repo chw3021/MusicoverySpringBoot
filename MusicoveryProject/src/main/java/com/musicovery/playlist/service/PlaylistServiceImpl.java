@@ -13,6 +13,7 @@ import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.repository.PlaylistRepository;
 import com.musicovery.spotifyapi.service.SpotifyApiPlaylistService;
 import com.musicovery.user.entity.User;
+import com.musicovery.user.service.UserService;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     private final PlaylistRepository playlistRepository;
     private final SpotifyApiPlaylistService spotifyApiPlaylistService;
+    private final UserService userService;
 
     /**
      * 📂 플레이리스트 생성 + Spotify API 동기화
@@ -30,13 +32,13 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     public Playlist createPlaylist(String accessToken, PlaylistDTO playlistDTO) {
         // Spotify API를 호출하여 플레이리스트 생성
-        String spotifyPlaylistId = spotifyApiPlaylistService.createPlaylist(accessToken, playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment(), playlistDTO.getTracks());
+        String spotifyPlaylistId = spotifyApiPlaylistService.createPlaylist(accessToken, playlistDTO.getUserId(), playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment(), playlistDTO.getTracks());
 
         // 현재 시간 생성
         Date currentDate = new Date();
 
         // 생성된 플레이리스트 정보를 DB에 저장
-        Playlist playlist = new Playlist(spotifyPlaylistId, playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment(), playlistDTO.getPlaylistPhoto(), playlistDTO.getUser(), currentDate, playlistDTO.getIsPublic());
+        Playlist playlist = new Playlist(spotifyPlaylistId, playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment(), playlistDTO.getPlaylistPhoto(), userService.findByUserId(playlistDTO.getUserId()), currentDate, playlistDTO.getIsPublic());
         return playlistRepository.save(playlist);
     }
     @Override
@@ -48,7 +50,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             
             updatePlaylist.setPlaylistTitle(playlistDTO.getPlaylistTitle());
             updatePlaylist.setPlaylistComment(playlistDTO.getPlaylistComment());
-            updatePlaylist.setUser(playlistDTO.getUser());
+            updatePlaylist.setUser(userService.findByUserId(playlistDTO.getUserId()));
             updatePlaylist.setPlaylistDate(playlistDTO.getPlaylistDate());
             updatePlaylist.setPlaylistId(playlistDTO.getPlaylistId());
             updatePlaylist.setPlaylistPhoto(playlistDTO.getPlaylistPhoto());

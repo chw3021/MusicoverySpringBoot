@@ -3,8 +3,6 @@ package com.musicovery.playlist.dto;
 import java.util.Date;
 import java.util.List;
 
-import com.musicovery.user.entity.User;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +17,7 @@ public class PlaylistDTO {
     private String playlistTitle;
     private String playlistComment;
     private String playlistPhoto;
-    private User user;
+    private String userId;
     private Date playlistDate;
     private Boolean isPublic;
     private List<String> tracks;

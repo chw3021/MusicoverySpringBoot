@@ -46,5 +46,8 @@ public class Streaming {
 
     @Column(name = "is_public", nullable = false)
     private boolean isPublic;
+<<<<<<< HEAD
    
+=======
+>>>>>>> refs/remotes/origin/main
 }
