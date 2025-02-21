@@ -10,4 +10,5 @@ public interface StreamingService {
     void stopStreaming(Long streamingId);
     List<Streaming> getLiveStreams();
     boolean createStreaming(StreamingDTO streamingDTO);
+    
 }
