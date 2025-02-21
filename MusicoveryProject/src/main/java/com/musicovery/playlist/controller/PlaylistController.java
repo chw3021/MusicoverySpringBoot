@@ -1,8 +1,11 @@
 package com.musicovery.playlist.controller;
 
+import java.io.IOException;
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,14 +16,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.musicovery.file.service.FileStorageService;
 import com.musicovery.playlist.dto.PlaylistDTO;
 import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.service.PlaylistService;
 import com.musicovery.user.entity.User;
 import com.musicovery.user.service.UserService;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 
@@ -31,15 +35,45 @@ public class PlaylistController {
 
     private final PlaylistService playlistService;
     private final UserService userService; 
+    private final FileStorageService fileStorageService;
 
     /**
      * 📂 플레이리스트 생성
      */
+
+
     @PostMapping("/create")
     public ResponseEntity<Playlist> createPlaylist(
             @RequestHeader("Authorization") String bearerToken,
-            @RequestBody PlaylistDTO playlistDTO) {
+            @RequestParam("playlistTitle") String playlistTitle,
+            @RequestParam("playlistComment") String playlistComment,
+            @RequestParam("playlistDate") String playlistDate,
+            @RequestParam("isPublic") boolean isPublic,
+            @RequestParam("userId") String userId,
+            @RequestParam("tracks") List<String> tracks,
+            @RequestParam(value = "playlistPhoto", required = false) MultipartFile playlistPhoto) {
+
         String accessToken = bearerToken.replace("Bearer ", "");
+        PlaylistDTO playlistDTO = new PlaylistDTO();
+        playlistDTO.setPlaylistTitle(playlistTitle);
+        playlistDTO.setPlaylistComment(playlistComment);
+        playlistDTO.setPlaylistDate(Date.valueOf(playlistDate));
+        playlistDTO.setIsPublic(isPublic);
+        playlistDTO.setUserId(userId);
+        playlistDTO.setTracks(tracks);
+
+        // 파일 처리 로직
+        if (playlistPhoto != null && !playlistPhoto.isEmpty()) {
+            try {
+                String fileName = fileStorageService.storeFile(playlistPhoto);
+                String filePath = "/images/" + fileName; // 정적 리소스 경로 설정
+                playlistDTO.setPlaylistPhoto(filePath); // 파일 경로 DTO에 저장
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
         Playlist playlist = playlistService.createPlaylist(accessToken, playlistDTO);
         return ResponseEntity.ok(playlist);
     }
@@ -66,29 +100,14 @@ public class PlaylistController {
     }
 
     /**
-     * 🔍 플레이리스트 상세 조회
-     */
-    @GetMapping("/detail/{playlistId}")
-    public ResponseEntity<Playlist> getPlaylist(@PathVariable String playlistId) {
-        return ResponseEntity.ok(playlistService.getPlaylist(playlistId));
-    }
-
-    /**
      * 🎵 플레이리스트의 트랙 ID 목록 조회
      */
-    @GetMapping("/tracks/{playlistId}")
-    public ResponseEntity<List<String>> getTracksInPlaylist(@PathVariable String playlistId) {
-        return ResponseEntity.ok(playlistService.getTracksInPlaylist(playlistId));
-    }
-
-    /**
-     * 📜 플레이리스트 상세 정보 조회 (곡 리스트 포함)
-     */
-    @GetMapping("/detail/{playlistId}/full")
-    public ResponseEntity<Map<String, Object>> getPlaylistDetail(
-            @PathVariable String playlistId,
-            HttpSession session) {
-        return ResponseEntity.ok(playlistService.getPlaylistDetail(session.getId(), playlistId));
+    @GetMapping("/detail/{playlistId}")
+    public ResponseEntity<Map<String, Object>> getTracksInPlaylist(
+            @RequestHeader("Authorization") String bearerToken,
+            @PathVariable String playlistId) {
+        String accessToken = bearerToken.replace("Bearer ", "");
+        return ResponseEntity.ok(playlistService.getPlaylistDetail(accessToken, playlistId));
     }
 
     /**

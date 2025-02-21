@@ -47,12 +47,22 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
 
         return playlistId;
     }
-
     private void addTracksToPlaylist(String accessToken, String playlistId, List<String> tracks) {
         String url = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
-        String requestBody = "{ \"uris\": " + tracks.toString() + " }";
-        log.info("tracks", tracks);
-        log.info("requestBody",requestBody);
+        
+        // 요청 본문 생성
+        StringBuilder requestBodyBuilder = new StringBuilder();
+        requestBodyBuilder.append("{ \"uris\": [");
+        for (int i = 0; i < tracks.size(); i++) {
+            requestBodyBuilder.append("\"").append(tracks.get(i)).append("\"");
+            if (i < tracks.size() - 1) {
+                requestBodyBuilder.append(", ");
+            }
+        }
+        requestBodyBuilder.append("] }");
+        
+        String requestBody = requestBodyBuilder.toString();
+        log.info("requestBody: " + requestBody);
         spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "POST"), requestBody);
     }
     /**
@@ -104,27 +114,24 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
      * 🎵 플레이리스트에 속한 모든 곡들의 ID를 가져오는 메서드
      */
     @Override
-    public List<String> getTracksInPlaylist(String playlistId) {
+    public String getTracksInPlaylist(String accessToken, String playlistId) {
         String url = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
-        List<String> trackIds = new ArrayList<>();
+        StringBuilder fullResponse = new StringBuilder();
 
-        // 첫 번째 요청 보내기 (플레이리스트의 첫 페이지)
-        String response = spotifyApiUtil.callSpotifyApi("", new SpotifyApiRequestDTO(url, "GET"), null);
-        
-        // 응답에서 트랙 ID를 추출
-        trackIds.addAll(extractTrackIdsFromResponse(response));
+        // 첫 번째 요청 보내기 (첫 페이지)
+        String response = spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "GET"), null);
+        fullResponse.append(response);
 
-        // 페이지네이션 처리: 여러 페이지가 있을 경우 계속해서 트랙을 가져옴
+        // 페이지네이션 처리 (여러 페이지 데이터를 하나로 합침)
         String nextUrl = getNextPageUrl(response);
         while (nextUrl != null) {
-            response = spotifyApiUtil.callSpotifyApi("", new SpotifyApiRequestDTO(nextUrl, "GET"), null);
-            trackIds.addAll(extractTrackIdsFromResponse(response));
-            nextUrl = getNextPageUrl(response); // 다음 페이지 URL 추출
+            response = spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(nextUrl, "GET"), null);
+            fullResponse.append(response);
+            nextUrl = getNextPageUrl(response);
         }
 
-        return trackIds;
+        return fullResponse.toString(); // 전체 JSON 반환
     }
-    
 
     /**
      * API 응답에서 트랙 ID 목록 추출

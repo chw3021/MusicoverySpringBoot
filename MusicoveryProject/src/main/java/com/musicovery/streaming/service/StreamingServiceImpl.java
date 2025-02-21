@@ -34,10 +34,10 @@ public class StreamingServiceImpl implements StreamingService {
 
 
     @Override
-    public boolean createStreaming(StreamingDTO streamingDTO) {
+    public boolean createStreaming(String accessToken, StreamingDTO streamingDTO) {
         try {
             Streaming streaming = new Streaming();
-            streaming.setPlaylist(playlistService.getPlaylist(streamingDTO.getPlaylistId()));
+            streaming.setPlaylist(playlistService.getPlaylist(accessToken, streamingDTO.getPlaylistId()));
             streaming.setHostUser(streamingDTO.getHostUser());
             streaming.setIsLive(true);
             streaming.setIsPremiumOnly(false);
@@ -59,10 +59,11 @@ public class StreamingServiceImpl implements StreamingService {
         }
     }
 
-    public Streaming startStreaming(StreamingDTO streamingDTO) {
+    @Override
+    public Streaming startStreaming(String accessToken, StreamingDTO streamingDTO) {
         Streaming streaming = Streaming.builder()
             .hostUser(streamingDTO.getHostUser()) // ✅ 문자열을 Long 타입으로 변환
-            .playlist(playlistService.getPlaylist(streamingDTO.getPlaylistId())) // ✅ 변수명 수정
+            .playlist(playlistService.getPlaylist(accessToken, streamingDTO.getPlaylistId())) // ✅ 변수명 수정
             .isLive(true)
             .isPremiumOnly(streamingDTO.getIsPremiumOnly())
             .isPublic(streamingDTO.getIsPublic())
@@ -101,4 +102,5 @@ public class StreamingServiceImpl implements StreamingService {
     public List<Streaming> getLiveStreams() {
         return streamingRepository.findByIsLiveTrue();
     }
+
 }

@@ -1,12 +1,12 @@
 package com.musicovery.playlist.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import com.musicovery.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,7 +42,7 @@ public class Playlist {
     @Lob
     private String playlistPhoto;  // 대표 사진 (URL 저장 가능)
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;  // 사용자 ID (이메일)
 
@@ -50,5 +51,8 @@ public class Playlist {
     private Date playlistDate;  // 사용자 ID (이메일)
     
     private Boolean isPublic;
+    
+    @Transient // DB에 저장하지 않음
+    private List<String> trackIds;
 }
 
