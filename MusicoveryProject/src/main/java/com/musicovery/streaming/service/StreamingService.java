@@ -6,10 +6,10 @@ import com.musicovery.streaming.dto.StreamingDTO;
 import com.musicovery.streaming.entity.Streaming;
 
 public interface StreamingService {
-    Streaming startStreaming(StreamingDTO streamingDTO);
     void stopStreaming(Long streamingId);
     List<Streaming> getLiveStreams();
-    boolean createStreaming(StreamingDTO streamingDTO);
+	boolean createStreaming(String accessToken, StreamingDTO streamingDTO);
+	Streaming startStreaming(String accessToken, StreamingDTO streamingDTO);
     
 	boolean stopStreamingByPlaylist(String playlistId);
 	

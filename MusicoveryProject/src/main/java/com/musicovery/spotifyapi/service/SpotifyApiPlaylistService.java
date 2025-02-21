@@ -13,10 +13,14 @@ public interface SpotifyApiPlaylistService {
 
 	String addTrackToPlaylist(String accessToken, String playlistId, String trackUri);
 	
-	List<String> getTracksInPlaylist(String playlistId);
 
 	/**
 	 * 📂 플레이리스트 생성
 	 */
 	String createPlaylist(String accessToken, String userId, String name, String description, List<String> tracks);
+
+	/**
+	 * 🎵 플레이리스트에 속한 모든 곡들의 ID를 가져오는 메서드
+	 */
+	String getTracksInPlaylist(String accessToken, String playlistId);
 }

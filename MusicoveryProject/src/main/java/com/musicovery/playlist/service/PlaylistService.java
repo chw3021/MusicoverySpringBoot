@@ -16,11 +16,14 @@ public interface PlaylistService {
 	Playlist createPlaylist(String accessToken, PlaylistDTO playlistDTO);
     Playlist updatePlaylist(String accessToken, PlaylistDTO playlistDTO);
     void deletePlaylist(String accessToken, String playlistId);
-    List<String> getTracksInPlaylist(String playlistId);
+	Playlist getPlaylist(String accessToken, String playlistId);
     Map<String, Object> getPlaylistDetail(String accessToken, String playlistId);  // 상세 정보 추가
 
-	Playlist getPlaylist(String playlistId);
 	
-    void updatePlaylistPublicStatus(String playlistId, boolean isPublic);
+    void updatePlaylistPublicStatus(String playlistId, Boolean isPublic);
+	/**
+	 * 🔍 플레이리스트 조회
+	 */
+	String getTracksInPlaylist(String accessToken, String playlistId);
 
 }

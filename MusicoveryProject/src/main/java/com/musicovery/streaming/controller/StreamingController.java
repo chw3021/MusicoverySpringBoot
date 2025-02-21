@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,8 +41,11 @@ public class StreamingController {
 	
     // 스트리밍 데이터 저장 API
 	@PostMapping("/create")
-    public ResponseEntity<?> createStreaming(@RequestBody StreamingDTO streamingDTO) {
-        boolean success = streamingService.createStreaming(streamingDTO);
+    public ResponseEntity<?> createStreaming(
+            @RequestHeader("Authorization") String bearerToken,
+            @RequestBody StreamingDTO streamingDTO) {
+        String accessToken = bearerToken.replace("Bearer ", "");
+        boolean success = streamingService.createStreaming(accessToken, streamingDTO);
         if (success) {
             return ResponseEntity.ok("스트리밍 생성 성공");
         } else {
@@ -54,8 +58,11 @@ public class StreamingController {
     }
 
     @PostMapping("/start")
-    public Streaming startStreaming(@RequestBody StreamingDTO streamingDTO) {
-        return streamingService.startStreaming(streamingDTO);
+    public Streaming startStreaming(
+            @RequestHeader("Authorization") String bearerToken,
+            @RequestBody StreamingDTO streamingDTO) {
+        String accessToken = bearerToken.replace("Bearer ", "");
+        return streamingService.startStreaming(accessToken, streamingDTO);
     }
 
     @PostMapping("/stop/{playlistId}")

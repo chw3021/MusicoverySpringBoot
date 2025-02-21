@@ -29,22 +29,30 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final SpotifyApiPlaylistService spotifyApiPlaylistService;
     private final UserService userService;
 
+
     /**
      * 📂 플레이리스트 생성 + Spotify API 동기화
      */
     @Override
     public Playlist createPlaylist(String accessToken, PlaylistDTO playlistDTO) {
         // Spotify API를 호출하여 플레이리스트 생성
-        log.debug("playlistDTO",playlistDTO);
-
         String spotifyPlaylistId = spotifyApiPlaylistService.createPlaylist(accessToken, playlistDTO.getUserId(), playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment(), playlistDTO.getTracks());
         // 현재 시간 생성
         Date currentDate = new Date();
 
         // 생성된 플레이리스트 정보를 DB에 저장
-        Playlist playlist = new Playlist(spotifyPlaylistId, playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment(), playlistDTO.getPlaylistPhoto(), userService.findByUserId(playlistDTO.getUserId()), currentDate, playlistDTO.getIsPublic());
+        Playlist playlist = Playlist.builder()
+                .playlistId(spotifyPlaylistId)
+                .playlistTitle(playlistDTO.getPlaylistTitle())
+                .playlistComment(playlistDTO.getPlaylistComment())
+                .playlistPhoto(playlistDTO.getPlaylistPhoto())
+                .user(userService.findByUserId(playlistDTO.getUserId()))
+                .playlistDate(currentDate)
+                .isPublic(playlistDTO.getIsPublic())
+                .build();
         return playlistRepository.save(playlist);
     }
+    
     @Override
     public Playlist updatePlaylist(String accessToken, PlaylistDTO playlistDTO) {
         Optional<Playlist> optionalPlaylist = playlistRepository.findById(playlistDTO.getPlaylistId());
@@ -82,33 +90,32 @@ public class PlaylistServiceImpl implements PlaylistService {
      * 🔍 플레이리스트 조회
      */
     @Override
-    public Playlist getPlaylist(String playlistId) {
-        return playlistRepository.findById(playlistId)
+    public Playlist getPlaylist(String accessToken, String playlistId) {
+        Playlist playlist = playlistRepository.findById(playlistId)
                 .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
+
+        return playlist;
     }
 
     /**
      * 🎵 플레이리스트 내 트랙 조회
      */
     @Override
-    public List<String> getTracksInPlaylist(String playlistId) {
-        return spotifyApiPlaylistService.getTracksInPlaylist(playlistId);
+    public String getTracksInPlaylist(String accessToken, String playlistId) {
+        return spotifyApiPlaylistService.getTracksInPlaylist(accessToken, playlistId);
     }
     
-
     @Override
     public Map<String, Object> getPlaylistDetail(String accessToken, String playlistId) {
-        Playlist playlist = getPlaylist(playlistId);
-        List<String> trackIds = getTracksInPlaylist(playlistId);
+        Playlist playlist = getPlaylist(accessToken, playlistId);
+        String trackDataJson = getTracksInPlaylist(accessToken, playlistId); // JSON 전체 반환
 
         Map<String, Object> response = new HashMap<>();
         response.put("playlist", playlist);
-        response.put("tracks", trackIds);
+        response.put("tracks", trackDataJson); // JSON 그대로 반환
 
         return response;
     }
-
-
 
     @Override
     public List<Playlist> getAllPlaylists() {
@@ -122,11 +129,11 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional
-    public void updatePlaylistPublicStatus(String playlistId, boolean isPublic) {
+    public void updatePlaylistPublicStatus(String playlistId, Boolean isPublic) {
         Playlist playlist = playlistRepository.findByPlaylistId(playlistId)
                 .orElseThrow(() -> new EntityNotFoundException("Playlist not found with id: " + playlistId));
         playlist.setIsPublic(isPublic);
         playlistRepository.save(playlist);
-        System.out.println("playlist.isPublic() "+playlist.getIsPublic());
     }
+
 }

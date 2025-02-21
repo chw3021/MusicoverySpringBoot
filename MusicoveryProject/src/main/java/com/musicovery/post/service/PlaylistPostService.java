@@ -42,7 +42,7 @@ public class PlaylistPostService {
     }
     
     @Transactional
-    public PlaylistPost createPost(User user, String title, String description, String playlistId) {
+    public PlaylistPost createPost(String accessToken, User user, String title, String description, String playlistId) {
         PlaylistPost post = new PlaylistPost();
         post.setTitle(title);
         post.setDescription(description);
@@ -54,7 +54,7 @@ public class PlaylistPostService {
         playlistPostRepository.save(post);
 
         // Spotify API에서 플레이리스트 ID로 음악 리스트 불러오기
-        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(playlistId);
+        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(accessToken, playlistId);
 
         // 음악들에 대해 가중치 증가
         for (String trackId : trackIds) {
@@ -64,7 +64,7 @@ public class PlaylistPostService {
     }
 
     @Transactional
-    public void likePost(User user, Long postId) {
+    public void likePost(String accessToken, User user, Long postId) {
         PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow();
         if (likeRepository.existsByUserAndPlaylistPost(user, post)) {
             likeRepository.deleteByUserAndPlaylistPost(user, post);
@@ -82,7 +82,7 @@ public class PlaylistPostService {
         String playlistId = post.getPlaylistId();
         
         // Spotify API에서 플레이리스트 ID로 음악 리스트 불러오기
-        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(playlistId);
+        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(accessToken, playlistId);
 
         // 좋아요 처리 후 음악들에 대한 가중치 증가
         for (String trackId : trackIds) {
@@ -91,7 +91,7 @@ public class PlaylistPostService {
     }
 
     @Transactional
-    public void addReply(User user, Long postId, String content) {
+    public void addReply(String accessToken, User user, Long postId, String content) {
         PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow();
         Reply reply = new Reply();
         reply.setUser(user);
@@ -105,7 +105,7 @@ public class PlaylistPostService {
         String playlistId = post.getPlaylistId();
 
         // 댓글 처리 후 음악들에 대한 가중치 증가
-        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(playlistId);
+        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(accessToken, playlistId);
         for (String trackId : trackIds) {
             weightService.increaseWeightForCommentedPlaylist(user.getUserId(), trackId);
         }

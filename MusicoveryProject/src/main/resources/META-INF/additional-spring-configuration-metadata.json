@@ -43,5 +43,10 @@
     "name": "gemini.api.key",
     "type": "java.lang.String",
     "description": "A description for 'gemini.api.key'"
+  },
+  {
+    "name": "file.upload-dir",
+    "type": "java.lang.String",
+    "description": "A description for 'file.upload-dir'"
   }
 ]}
