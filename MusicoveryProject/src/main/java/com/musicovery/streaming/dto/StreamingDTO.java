@@ -9,7 +9,7 @@ public class StreamingDTO {
     private Long id;
     private String playlistId;
     private User hostUser;
-    private boolean isLive;
-    private boolean isPremiumOnly;
-    private boolean isPublic;
+    private Boolean isLive;
+    private Boolean isPremiumOnly;
+    private Boolean isPublic;
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.musicovery.playlist.dto.PlaylistDTO;
 import com.musicovery.playlist.entity.Playlist;
@@ -120,10 +121,12 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
+    @Transactional
     public void updatePlaylistPublicStatus(String playlistId, boolean isPublic) {
-        Playlist playlist = playlistRepository.findById(playlistId)
+        Playlist playlist = playlistRepository.findByPlaylistId(playlistId)
                 .orElseThrow(() -> new EntityNotFoundException("Playlist not found with id: " + playlistId));
         playlist.setIsPublic(isPublic);
         playlistRepository.save(playlist);
+        System.out.println("playlist.isPublic() "+playlist.getIsPublic());
     }
 }

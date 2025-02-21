@@ -39,11 +39,11 @@ public class Streaming {
     private User hostUser;
 
     @Column(name = "is_live", nullable = false)
-    private boolean isLive;
+    private Boolean isLive;
 
     @Column(name = "is_premium_only", nullable = false)
-    private boolean isPremiumOnly;
+    private Boolean isPremiumOnly;
 
     @Column(name = "is_public", nullable = false)
-    private boolean isPublic;
+    private Boolean isPublic;
 }

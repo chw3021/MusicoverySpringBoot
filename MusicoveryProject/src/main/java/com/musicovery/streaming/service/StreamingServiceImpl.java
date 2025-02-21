@@ -39,14 +39,15 @@ public class StreamingServiceImpl implements StreamingService {
             Streaming streaming = new Streaming();
             streaming.setPlaylist(playlistService.getPlaylist(streamingDTO.getPlaylistId()));
             streaming.setHostUser(streamingDTO.getHostUser());
-            streaming.setLive(true);
-            streaming.setPremiumOnly(false);
-            streaming.setPublic(streamingDTO.isPublic());
+            streaming.setIsLive(true);
+            streaming.setIsPremiumOnly(false);
+            System.out.println("streamingDTO.getIsPublic() "+streamingDTO.getIsPublic());
+            streaming.setIsPublic(streamingDTO.getIsPublic());
 
             streamingRepository.save(streaming);
 
          // 플레이리스트의 isPublic 상태를 비공식 스트리밍으로 변경할 필요가 있는지 확인
-            if (streamingDTO.isPublic()) {
+            if (streamingDTO.getIsPublic()) {
                 playlistService.updatePlaylistPublicStatus(streaming.getPlaylist().getPlaylistId(), true);
             } else {
                 playlistService.updatePlaylistPublicStatus(streaming.getPlaylist().getPlaylistId(), false);
@@ -63,8 +64,8 @@ public class StreamingServiceImpl implements StreamingService {
             .hostUser(streamingDTO.getHostUser()) // ✅ 문자열을 Long 타입으로 변환
             .playlist(playlistService.getPlaylist(streamingDTO.getPlaylistId())) // ✅ 변수명 수정
             .isLive(true)
-            .isPremiumOnly(streamingDTO.isPremiumOnly())
-            .isPublic(streamingDTO.isPublic())
+            .isPremiumOnly(streamingDTO.getIsPremiumOnly())
+            .isPublic(streamingDTO.getIsPublic())
             .build();
 
         return streamingRepository.save(streaming);
@@ -79,8 +80,8 @@ public class StreamingServiceImpl implements StreamingService {
                     .hostUser(s.getHostUser())
                     .playlist(s.getPlaylist())
                     .isLive(false) // ✅ 스트리밍 종료
-                    .isPremiumOnly(s.isPremiumOnly())
-                    .isPublic(s.isPublic())
+                    .isPremiumOnly(s.getIsPremiumOnly())
+                    .isPublic(s.getIsPublic())
                     .build();
             
             streamingRepository.save(updatedStreaming);
