@@ -62,7 +62,6 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
         requestBodyBuilder.append("] }");
         
         String requestBody = requestBodyBuilder.toString();
-        log.info("requestBody: " + requestBody);
         spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "POST"), requestBody);
     }
     /**
@@ -75,6 +74,28 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
 
         return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "PUT"), requestBody);
     }
+
+	/**
+	 * 📝 플레이리스트 트랙 수정
+	 */
+	@Override
+	public String updatePlaylistTracks(String accessToken, String playlistId, List<String> tracks) {
+		String url = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
+		// 요청 본문 생성
+		StringBuilder requestBodyBuilder = new StringBuilder();
+		requestBodyBuilder.append("{ \"uris\": [");
+		for (int i = 0; i < tracks.size(); i++) {
+			requestBodyBuilder.append("\"").append(tracks.get(i)).append("\"");
+			if (i < tracks.size() - 1) {
+				requestBodyBuilder.append(", ");
+			}
+		}
+		requestBodyBuilder.append("] }");
+
+		String requestBody = requestBodyBuilder.toString();
+		spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "PUT"), requestBody);
+		return playlistId;
+	}
 
     /**
      * ❌ 플레이리스트에서 노래 삭제 (Track URI 기반)

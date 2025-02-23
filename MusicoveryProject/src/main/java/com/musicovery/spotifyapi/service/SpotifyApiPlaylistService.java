@@ -23,4 +23,9 @@ public interface SpotifyApiPlaylistService {
 	 * 🎵 플레이리스트에 속한 모든 곡들의 ID를 가져오는 메서드
 	 */
 	String getTracksInPlaylist(String accessToken, String playlistId);
+
+	/**
+	 * 📝 플레이리스트 수정
+	 */
+	String updatePlaylistTracks(String accessToken, String playlistId, List<String> tracks);
 }

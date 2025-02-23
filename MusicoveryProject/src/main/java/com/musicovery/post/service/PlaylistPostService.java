@@ -54,7 +54,7 @@ public class PlaylistPostService {
         playlistPostRepository.save(post);
 
         // Spotify API에서 플레이리스트 ID로 음악 리스트 불러오기
-        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(accessToken, playlistId);
+		List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(accessToken, playlistId);
 
         // 음악들에 대해 가중치 증가
         for (String trackId : trackIds) {

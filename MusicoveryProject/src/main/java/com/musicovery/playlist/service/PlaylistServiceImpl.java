@@ -67,9 +67,12 @@ public class PlaylistServiceImpl implements PlaylistService {
             updatePlaylist.setPlaylistId(playlistDTO.getPlaylistId());
             updatePlaylist.setPlaylistPhoto(playlistDTO.getPlaylistPhoto());
             updatePlaylist.setIsPublic(playlistDTO.getIsPublic());
+			spotifyApiPlaylistService.updatePlaylistTracks(accessToken, playlistDTO.getPlaylistId(),
+					playlistDTO.getTracks());
 
             // Spotify API에도 반영
-            spotifyApiPlaylistService.updatePlaylist(accessToken, playlistDTO.getPlaylistId(), playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment());
+			spotifyApiPlaylistService.updatePlaylist(accessToken, playlistDTO.getPlaylistId(),
+					playlistDTO.getPlaylistTitle(), playlistDTO.getPlaylistComment());
 
             return playlistRepository.save(updatePlaylist);
         } else {
