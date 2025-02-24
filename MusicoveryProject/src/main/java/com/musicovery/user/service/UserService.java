@@ -1,6 +1,5 @@
 package com.musicovery.user.service;
 
-import com.musicovery.user.dto.SpotifyTokenDTO;
 import com.musicovery.user.dto.SpotifyUserDTO;
 import com.musicovery.user.dto.UserDTO;
 import com.musicovery.user.dto.UserProfileDTO;

@@ -14,6 +14,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat") // WebSocket 엔드포인트 설정
                 .setAllowedOrigins("http://localhost:3000") // 프론트엔드의 주소 허용
+        		//.setAllowedOrigins("http://192.168.130.10:3000") // 프론트엔드의 주소 허용
                 .withSockJS(); // SockJS 지원
     }
 

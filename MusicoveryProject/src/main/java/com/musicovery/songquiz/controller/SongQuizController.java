@@ -1,12 +1,9 @@
 package com.musicovery.songquiz.controller;
 
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musicovery.songquiz.dto.SongQuizDTO;
@@ -19,17 +16,14 @@ public class SongQuizController {
 
     private final SongQuizService songQuizService;
 
+    @Autowired
     public SongQuizController(SongQuizService songQuizService) {
         this.songQuizService = songQuizService;
     }
 
-    @PostMapping("/submit")
-    public SongQuiz submitQuiz(@RequestBody SongQuizDTO songQuizDTO) {
-        return songQuizService.submitQuiz(songQuizDTO);
-    }
-
-    @GetMapping("/history/{userId}")
-    public List<SongQuiz> getQuizHistory(@PathVariable Long userId) {
-        return songQuizService.getUserQuizHistory(userId);
+    @GetMapping("/lyrics")
+    public SongQuizDTO getLyrics(@RequestParam String artist, @RequestParam String title) {
+        SongQuiz song = new SongQuiz(artist, title);
+        return songQuizService.getLyrics(song);
     }
 }
