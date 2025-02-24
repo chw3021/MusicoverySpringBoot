@@ -41,7 +41,7 @@ public interface PlaylistPostRepository extends JpaRepository<PlaylistPost, Long
 
     // 네이티브 쿼리 버전 추가
     @Query(value = """
-        SELECT id, title, description, user, 
+        SELECT id, title, description, user_id, 
                created_date as createdDate, 
                like_count as likeCount, 
                reply_count as replyCount, 

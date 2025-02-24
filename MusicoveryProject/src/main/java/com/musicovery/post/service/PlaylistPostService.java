@@ -90,6 +90,8 @@ public class PlaylistPostService {
         PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow();
         return post.getLikeCount();
     }
+    
+    
     @Transactional
     public void addReply(String accessToken, User user, Long postId, String content) {
         PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow();
@@ -108,6 +110,8 @@ public class PlaylistPostService {
             weightService.increaseWeightForCommentedPlaylist(user.getUserId(), trackId);
         }
     }
+    
+    
     public List<ReplyDTO> getRepliesByPostId(Long postId) {
         List<Reply> replies = replyRepository.findByPlaylistPostId(postId);
         return replies.stream()
