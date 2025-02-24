@@ -45,7 +45,7 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
     /**
      * 🔍 음악 검색 (Spotify API 호출)
      */
-    public String searchMusic(String keyword, String type) {
+    public String search(String keyword, String type) {
 		String accessToken = spotifyAuthService.getAccessToken();
         String url = baseUrl + "/search?q=" + keyword + "&type=" + type;
 

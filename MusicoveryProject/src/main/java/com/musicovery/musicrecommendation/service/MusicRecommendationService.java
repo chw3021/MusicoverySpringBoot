@@ -115,6 +115,6 @@ public class MusicRecommendationService {
      * 🎼 가사 기반 추천 (사용자가 입력한 가사와 유사한 분위기의 노래 추천)
      */
     public String getLyricsBasedRecommendation(String lyricsSnippet) {
-        return spotifyApiMusicService.searchMusic(lyricsSnippet, "track");
+        return spotifyApiMusicService.search(lyricsSnippet, "track");
     }
 }
