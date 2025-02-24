@@ -21,6 +21,6 @@ public class UserSignupDTO extends UserDTO {
 
 	public UserSignupDTO() {
 		super();
-		this.setUserId(UUID.randomUUID().toString());
+		this.setId(UUID.randomUUID().toString());
 	}
 }

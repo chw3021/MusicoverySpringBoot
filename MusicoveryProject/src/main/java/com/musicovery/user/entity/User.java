@@ -21,12 +21,17 @@ import lombok.NoArgsConstructor;
 public class User {
 	@Id
 	@Column(updatable = false, nullable = false, unique = true)
+	private String id;
+	
+	// 스포티파이 api용 id
+	@Column(nullable = false, unique = true)
 	private String userId;
 
 	@Column(unique = true, nullable = false)
 	private String email;
 
-	@Column(nullable = false)
+	// 비밀번호가 없을 수 있으므로 nullable = true
+	@Column(nullable = true)
 	private String passwd;
 
 	@Column(unique = true, nullable = false)
@@ -41,11 +46,14 @@ public class User {
 
 	private String bio;
 
+	// 소셜 연동 여부 기본값 false
 	@Column(nullable = false)
-	private boolean spotifyConnected;
+	@Builder.Default
+	private boolean spotifyConnected = false;
 
 	@Column(nullable = false)
-	private boolean googleConnected;
+	@Builder.Default
+	private boolean googleConnected = false;
 
 	@Column(nullable = false)
 	@Builder.Default
