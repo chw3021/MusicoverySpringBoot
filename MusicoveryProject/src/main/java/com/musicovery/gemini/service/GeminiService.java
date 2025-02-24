@@ -70,4 +70,47 @@ public class GeminiService {
             throw new RuntimeException("추천 목록 생성 실패", e);
         }
     }
+    
+    
+    
+    
+    
+    
+    public String getLyrics(String artist, String title) {
+        // 가사를 요청하기 위한 프롬프트 생성
+        String prompt = String.format("다음 노래의 가사만 제공해주세요: \"%s\"의 \"%s\"", artist, title);
+        log.info("가사 요청 프롬프트: {}", prompt);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(GEMINI_API_URL)
+                .queryParam("key", apiKey);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("contents", Arrays.asList(Map.of("parts", Arrays.asList(Map.of("text", prompt)))));
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(builder.toUriString(), request, String.class);
+
+        // 응답 본문을 로그에 출력하여 확인
+        log.info("Gemini API 응답 본문: {}", response.getBody());
+
+        // JSON 파싱 및 가사 추출
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode root = mapper.readTree(response.getBody());
+            String content = root.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText();
+
+            // 가사만 추출
+            return content;
+        } catch (JsonProcessingException e) {
+            log.error("JSON 파싱 에러", e);
+            throw new RuntimeException("가사 추출 실패", e);
+        }
+    }
+    
+    
+    
+    
 }
