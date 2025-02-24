@@ -1,5 +1,6 @@
 package com.musicovery.post.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.musicovery.musicrecommendation.service.WeightService;
+import com.musicovery.playlist.service.PlaylistService;
 import com.musicovery.post.dto.PlaylistPostDTO;
 import com.musicovery.post.dto.ReplyDTO;
 import com.musicovery.post.entity.Like;
@@ -31,15 +33,17 @@ public class PlaylistPostService {
     private final SpotifyApiPlaylistService spotifyApiPlaylistService;
     private final LikeRepository likeRepository;
     private final ReplyRepository replyRepository;
+    private final PlaylistService playlistService;
 
     public PlaylistPostService(WeightService weightService, PlaylistPostRepository playlistPostRepository, 
                                SpotifyApiPlaylistService spotifyApiPlaylistService, LikeRepository likeRepository,
-                               ReplyRepository replyRepository) {
+                               ReplyRepository replyRepository, PlaylistService playlistService) {
         this.weightService = weightService;
         this.playlistPostRepository = playlistPostRepository;
         this.spotifyApiPlaylistService = spotifyApiPlaylistService;
         this.likeRepository = likeRepository;
         this.replyRepository = replyRepository;
+        this.playlistService = playlistService;
     }
 
     @Transactional
@@ -48,7 +52,9 @@ public class PlaylistPostService {
         post.setTitle(title);
         post.setDescription(description);
         post.setUser(user);
+        post.setPlaylist(playlistService.getPlaylist(accessToken, playlistId));
         post.setLikeCount(0);
+        post.setCreatedDate(new Date());
         post.setReplyCount(0);
         playlistPostRepository.save(post);
 
