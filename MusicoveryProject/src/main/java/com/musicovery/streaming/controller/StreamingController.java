@@ -1,6 +1,7 @@
 package com.musicovery.streaming.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,17 @@ public class StreamingController {
 	@Autowired
     private final StreamingService streamingService;
    
+	
+	
+    @PostMapping("/{streamId}/lastMessage")
+    public ResponseEntity<?> updateLastMessage(@PathVariable Long streamId, @RequestBody Map<String, String> payload) {
+        String lastMessage = payload.get("lastMessage");
+        
+        // 데이터베이스에서 해당 스트리밍의 마지막 메시지를 업데이트하는 로직 추가
+        streamingService.updateLastMessage(streamId, lastMessage);
+        
+        return ResponseEntity.ok().build();
+    }
 	
 	@GetMapping("/{streamId}")
 	public ResponseEntity<?> getStreamingById(@PathVariable Long streamId) {

@@ -17,5 +17,5 @@ public interface StreamingService {
 	
 	Streaming getStreamingById(Long streamId);
 	
-    
+	void updateLastMessage(Long streamId, String lastMessage);
 }
