@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,14 +35,23 @@ public class PlaylistPostController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createPost(
-            @RequestHeader("Authorization") String bearerToken, @PathVariable String userId,
+            @RequestHeader("Authorization") String bearerToken, @RequestParam String userId,
             @RequestParam String title, @RequestParam String description, @RequestParam String playlistId) {
-        User user = userService.findByUserId(userId); // userId를 통해 User 객체 조회
+        User user = userService.findByUserId(userId);
         String accessToken = bearerToken.replace("Bearer ", "");
         PlaylistPost post = playlistPostService.createPost(accessToken, user, title, description, playlistId);
         return ResponseEntity.ok(post);
     }
 
+
+    @PutMapping("/update/{postId}")
+    public ResponseEntity<?> updatePost(
+            @RequestHeader("Authorization") String bearerToken, @PathVariable Long postId,
+            @RequestParam String title, @RequestParam String description, @RequestParam String playlistId) {
+        String accessToken = bearerToken.replace("Bearer ", "");
+        PlaylistPost post = playlistPostService.updatePost(accessToken, postId, title, description, playlistId);
+        return ResponseEntity.ok(post);
+    }
 
     @PostMapping("/like/{postId}")
     public ResponseEntity<?> likePost(
