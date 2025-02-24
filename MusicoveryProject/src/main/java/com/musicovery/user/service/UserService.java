@@ -14,7 +14,7 @@ public interface UserService {
 	
 	UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO);
 
-	UserDTO spotifyLogin(SpotifyUserDTO userDTO);
+	User spotifyLogin(SpotifyUserDTO userDTO);
 
 	User findByUserId(String userId);
 
@@ -25,5 +25,7 @@ public interface UserService {
 
 	// Access Token으로 Spotify 사용자 정보 가져오기
 	SpotifyUserDTO getSpotifyUserProfile(String accessToken);
+
+	UserDTO spotifyLoginDTO(SpotifyUserDTO spotifyUserDTO);
 
 }

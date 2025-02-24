@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
 
 	// oauth 2.0 로그인 및 회원가입
 	@Override
-	public UserDTO spotifyLogin(SpotifyUserDTO spotifyUserDTO) {
+	public UserDTO spotifyLoginDTO(SpotifyUserDTO spotifyUserDTO) {
 		// 이메일로 기존 유저 확인
 		User user = userRepository.findByEmail(spotifyUserDTO.getEmail()).orElseGet(() -> {
 			// 기존 유저가 없다면 신규 가입
@@ -139,7 +139,18 @@ public class UserServiceImpl implements UserService {
 		return modelMapper.map(user, UserDTO.class);
 	}
 
-	// 채팅방구현위해 추가
+	@Override
+	public User spotifyLogin(SpotifyUserDTO userDTO) {
+		return userRepository.findByUserId(userDTO.getUserId()).orElseGet(() -> {
+			User newUser = User.builder().userId(userDTO.getUserId()).email(userDTO.getEmail())
+					.passwd(passwordEncoder.encode(userDTO.getPasswd()))
+					.bio(userDTO.getBio()).phone(userDTO.getPhone())
+					.nickname(userDTO.getNickname()).profileImageUrl(userDTO.getProfileImageUrl())
+					.spotifyConnected(true).isActive(true).build();
+			return userRepository.save(newUser);
+		});
+	}
+	
 
 	@Value("${spotify.client.id}")
 	private String clientId;
