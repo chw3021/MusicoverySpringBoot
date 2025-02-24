@@ -24,7 +24,7 @@ public class User {
 	private String id;
 	
 	// 스포티파이 api용 id
-	@Column(nullable = false, unique = true)
+	@Column(nullable = true, unique = true)
 	private String userId;
 
 	@Column(unique = true, nullable = false)
