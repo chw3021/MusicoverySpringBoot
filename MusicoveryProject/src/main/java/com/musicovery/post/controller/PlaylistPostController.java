@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musicovery.post.dto.PlaylistPostDTO;
+import com.musicovery.post.dto.ReplyDTO;
 import com.musicovery.post.entity.PlaylistPost;
 import com.musicovery.post.service.PlaylistPostService;
 import com.musicovery.user.entity.User;
 import com.musicovery.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/post")
 @RequiredArgsConstructor
@@ -31,10 +31,10 @@ public class PlaylistPostController {
     private final PlaylistPostService playlistPostService;
     private final PagedResourcesAssembler<PlaylistPostDTO> pagedResourcesAssembler;
     private final UserService userService; 
-    
+
     @PostMapping("/create")
     public ResponseEntity<?> createPost(
-            @RequestHeader("Authorization") String bearerToken,@PathVariable String userId,
+            @RequestHeader("Authorization") String bearerToken, @PathVariable String userId,
             @RequestParam String title, @RequestParam String description, @RequestParam String playlistId) {
         User user = userService.findByUserId(userId); // userId를 통해 User 객체 조회
         String accessToken = bearerToken.replace("Bearer ", "");
@@ -42,10 +42,11 @@ public class PlaylistPostController {
         return ResponseEntity.ok(post);
     }
 
+
     @PostMapping("/like/{postId}")
     public ResponseEntity<?> likePost(
             @RequestHeader("Authorization") String bearerToken,
-            @PathVariable String userId,
+            @RequestParam String userId,
             @PathVariable Long postId) {
         User user = userService.findByUserId(userId); // userId를 통해 User 객체 조회
         String accessToken = bearerToken.replace("Bearer ", "");
@@ -53,15 +54,28 @@ public class PlaylistPostController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/like/{postId}")
+    public ResponseEntity<Integer> getLikeCount(@PathVariable Long postId) {
+        int likeCount = playlistPostService.getLikeCount(postId);
+        return ResponseEntity.ok(likeCount);
+    }
+    
+    
     @PostMapping("/reply/{postId}")
     public ResponseEntity<?> addReply(
             @RequestHeader("Authorization") String bearerToken,
-            @PathVariable String userId,
+            @RequestParam String userId,
             @PathVariable Long postId, @RequestParam String content) {
         User user = userService.findByUserId(userId); // userId를 통해 User 객체 조회
         String accessToken = bearerToken.replace("Bearer ", "");
         playlistPostService.addReply(accessToken, user, postId, content);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/reply/{postId}")
+    public ResponseEntity<List<ReplyDTO>> getReplies(@PathVariable Long postId) {
+        List<ReplyDTO> replies = playlistPostService.getRepliesByPostId(postId);
+        return ResponseEntity.ok(replies);
     }
 
     @GetMapping("/ranking")
