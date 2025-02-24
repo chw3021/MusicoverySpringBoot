@@ -1,13 +1,13 @@
 package com.musicovery.user.dto;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class UserSignupDTO extends UserDTO {
 
@@ -19,4 +19,8 @@ public class UserSignupDTO extends UserDTO {
 
 	private boolean isActive = true;
 
+	public UserSignupDTO() {
+		super();
+		this.setId(UUID.randomUUID().toString());
+	}
 }

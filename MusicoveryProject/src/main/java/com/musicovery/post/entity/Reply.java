@@ -1,5 +1,7 @@
 package com.musicovery.post.entity;
 
+import java.time.LocalDateTime;
+
 import com.musicovery.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -30,6 +32,8 @@ public class Reply {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    
+    private LocalDateTime createdDate;
 
     @ManyToOne
     @JoinColumn(name = "playlist_post_id")

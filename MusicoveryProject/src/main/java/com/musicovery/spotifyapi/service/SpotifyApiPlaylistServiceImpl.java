@@ -132,7 +132,7 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
     
 
     /**
-     * 🎵 플레이리스트에 속한 모든 곡들의 ID를 가져오는 메서드
+     * 🎵 플레이리스트에 속한 모든 곡들의 전체 정보를 가져오는 메서드
      */
     @Override
     public String getTracksInPlaylist(String accessToken, String playlistId) {
@@ -154,6 +154,28 @@ public class SpotifyApiPlaylistServiceImpl implements SpotifyApiPlaylistService 
         return fullResponse.toString(); // 전체 JSON 반환
     }
 
+    /**
+     * 🎵 플레이리스트에 속한 모든 곡들의 ID를 가져오는 메서드
+     */
+    @Override
+    public List<String> getTracksIdInPlaylist(String accessToken, String playlistId) {
+        String url = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
+        StringBuilder fullResponse = new StringBuilder();
+
+        // 첫 번째 요청 보내기 (첫 페이지)
+        String response = spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "GET"), null);
+        fullResponse.append(response);
+
+        // 페이지네이션 처리 (여러 페이지 데이터를 하나로 합침)
+        String nextUrl = getNextPageUrl(response);
+        while (nextUrl != null) {
+            response = spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(nextUrl, "GET"), null);
+            fullResponse.append(response);
+            nextUrl = getNextPageUrl(response);
+        }
+
+        return extractTrackIdsFromResponse(fullResponse.toString()); // 전체 JSON 반환
+    }
     /**
      * API 응답에서 트랙 ID 목록 추출
      */
