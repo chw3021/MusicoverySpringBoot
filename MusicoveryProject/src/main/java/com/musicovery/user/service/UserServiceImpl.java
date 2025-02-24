@@ -26,22 +26,37 @@ public class UserServiceImpl implements UserService {
 		this.modelMapper = modelMapper;
 	}
 
+	// 기본 회원가입
 	@Override
 	public UserDTO signup(UserSignupDTO userSignupDTO) {
+		// 이미 존재하는 이메일인지 확인
 		if (userRepository.existsByEmail(userSignupDTO.getEmail())) {
 			throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
 		}
 
+		// 이미 존재하는 닉네임인지 확인
 		if (userRepository.existsByNickname(userSignupDTO.getNickname())) {
 			throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
 		}
 
-		User user = modelMapper.map(userSignupDTO, User.class); // DTO → 엔티티
-		user.setPasswd(passwordEncoder.encode(userSignupDTO.getPasswd())); // 비밀번호 암호화
+		// DTO -> 엔티티
+		User user = modelMapper.map(userSignupDTO, User.class);
+
+		user.setId(userSignupDTO.getId());
+		
+		if (userSignupDTO.getUserId() != null) {
+			user.setUserId(userSignupDTO.getUserId());
+		}
+		
+		// 비밀번호가 null이 아닌 경우에만 암호화
+		if (userSignupDTO.getPasswd() != null) {
+			user.setPasswd(passwordEncoder.encode(userSignupDTO.getPasswd()));
+		}
 
 		User savedUser = userRepository.save(user);
 
-		return modelMapper.map(savedUser, UserDTO.class); // 엔티티 → DTO
+		// 엔티티 -> DTO
+		return modelMapper.map(savedUser, UserDTO.class);
 	}
 
 	@Override
@@ -77,33 +92,35 @@ public class UserServiceImpl implements UserService {
 		// 엔티티 → DTO
 		return modelMapper.map(updatedUser, UserDTO.class);
 	}
-	
-
-    @Override
-    public User findByUserId(String userId) {
-        return userRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-    }
 
 	@Override
-	public User spotifyLogin(SpotifyUserDTO userDTO) {
-		return userRepository.findById(userDTO.getUserId()).orElseGet(() -> {
-			User newUser = User.builder().userId(userDTO.getUserId()).email(userDTO.getEmail())
-					.passwd(passwordEncoder.encode(userDTO.getPasswd())) // 비밀번호 설정
-					.address(userDTO.getAddress()).bio(userDTO.getBio()).phone(userDTO.getPhone())
-					.nickname(userDTO.getNickname()).profileImageUrl(userDTO.getProfileImageUrl())
-					.spotifyConnected(true).isActive(true).build();
+	public User findByUserId(String userId) {
+		return userRepository.findByUserId(userId)
+				.orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+	}
+
+	// oauth 2.0 로그인 및 회원가입
+	@Override
+	public User spotifyLogin(SpotifyUserDTO spotifyUserDTO) {
+		// 이메일로 기존 유저 확인
+		return userRepository.findByEmail(spotifyUserDTO.getEmail()).orElseGet(() -> {
+			// 기존 유저가 없다면 신규 가입
+			User newUser = User.builder()
+					.id(spotifyUserDTO.getUserId()) // DTO에서 생성된 userId 그대로 사용
+					.userId(spotifyUserDTO.getUserId())
+					.email(spotifyUserDTO.getEmail())
+					.nickname(spotifyUserDTO.getNickname())
+					// .address(spotifyUserDTO.getAddress())
+					.bio(spotifyUserDTO.getBio())
+					.phone(spotifyUserDTO.getPhone())
+					.profileImageUrl(spotifyUserDTO.getProfileImageUrl())
+					.spotifyConnected(true)
+					.isActive(true)
+					.build();
 			return userRepository.save(newUser);
 		});
 	}
-	
-	
-	
-	
 
- 
-	//채팅방구현위해 추가   
-	
-  
- 
+	// 채팅방구현위해 추가
+
 }

@@ -12,6 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SpotifyUserDTO {
+	private String id;
+	
 	private String userId;
 
 	private String email;
@@ -28,7 +30,8 @@ public class SpotifyUserDTO {
 
 	private String phone;
 
-	private String address;
+	// 스포티파이 api에서는 주소를 제공해주지 않는다고함
+	//private String address;
 
 	private boolean isActive = true;
 
