@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
 	@Value("${spotify.client.secret}")
 	private String clientSecret;
 
-	@Value("${spotify.redirect.uri}")
+	@Value("${spotify.api.redirect_uri}")
 	private String redirectUri;
 
 	@Override
