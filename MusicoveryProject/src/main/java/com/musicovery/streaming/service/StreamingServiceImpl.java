@@ -24,7 +24,19 @@ public class StreamingServiceImpl implements StreamingService {
                 .orElseThrow(() -> new ResourceNotFoundException("해당 ID의 스트리밍을 찾을 수 없습니다: " + streamId));
     }
     
-    
+    @Override
+    public void updateLastMessage(Long streamId, String lastMessage) {
+        // 해당 streamId로 스트리밍 정보를 조회
+        Optional<Streaming> streamingOptional = streamingRepository.findById(streamId);
+        
+        if (streamingOptional.isPresent()) {
+            Streaming streaming = streamingOptional.get();
+            streaming.setLastMessage(lastMessage); // 마지막 메시지 업데이트
+            streamingRepository.save(streaming); // 업데이트된 엔티티 저장
+        } else {
+            throw new RuntimeException("스트리밍 정보를 찾을 수 없습니다.");
+        }
+    }
     
     
     

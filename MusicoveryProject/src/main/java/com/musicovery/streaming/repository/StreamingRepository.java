@@ -10,8 +10,8 @@ import com.musicovery.user.entity.User;
 
 public interface StreamingRepository extends JpaRepository<Streaming, Long> {
     List<Streaming> findByIsLiveTrue(); // 현재 라이브 중인 스트리밍 목록 가져오기
-
-
+    List<Streaming> findByHostUser_UserId(String hostUserId); // 수정된 메서드 이름
+    
 	/*
 	 * // ✅ user_id로 nickname 조회
 	 * 
@@ -19,7 +19,7 @@ public interface StreamingRepository extends JpaRepository<Streaming, Long> {
 	 * findNicknameByUserId(@Param("userId") Long streamId);
 	 */  
     Optional<Streaming> findByPlaylist_PlaylistId(String playlistId);
-
+    Optional<Streaming> findLastMessageById(Long streamId);
     Optional<Streaming> findByHostUser(User user); // User 객체를 인자로 받는 메소드로 수정
     
     

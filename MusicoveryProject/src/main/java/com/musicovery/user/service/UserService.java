@@ -17,6 +17,5 @@ public interface UserService {
 
 	User findByUserId(String userId);
 
-	 //채팅방구현 위해 추가
 
 }

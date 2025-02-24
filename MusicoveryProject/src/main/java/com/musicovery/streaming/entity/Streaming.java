@@ -46,4 +46,6 @@ public class Streaming {
 
     @Column(name = "is_public", nullable = false)
     private Boolean isPublic;
+    
+    private String lastMessage;
 }
