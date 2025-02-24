@@ -90,8 +90,9 @@ public class PlaylistController {
             @RequestParam("playlistDate") String playlistDate,
             @RequestParam("isPublic") boolean isPublic,
             @RequestParam("userId") String userId,
-			@RequestParam("tracks") List<String> tracks, // String으로 받음
-            @RequestParam(value = "playlistPhoto", required = false) MultipartFile playlistPhoto) {
+            @RequestParam("tracks") List<String> tracks, // String으로 받음
+            @RequestParam(value = "playlistPhoto", required = false) MultipartFile playlistPhoto,
+            @RequestParam(value = "existingPlaylistPhoto", required = false) String existingPlaylistPhoto) {
 
         String accessToken = bearerToken.replace("Bearer ", "");
         PlaylistDTO playlistDTO = new PlaylistDTO();
@@ -101,7 +102,7 @@ public class PlaylistController {
         playlistDTO.setPlaylistDate(Date.valueOf(playlistDate));
         playlistDTO.setIsPublic(isPublic);
         playlistDTO.setUserId(userId);
-		playlistDTO.setTracks(tracks); // DTO에 설정
+        playlistDTO.setTracks(tracks); // DTO에 설정
 
         // 파일 처리 로직
         if (playlistPhoto != null && !playlistPhoto.isEmpty()) {
@@ -113,11 +114,15 @@ public class PlaylistController {
                 e.printStackTrace();
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        } else {
+            playlistDTO.setPlaylistPhoto(existingPlaylistPhoto); // 기존 이미지 사용
         }
 
         Playlist updatedPlaylist = playlistService.updatePlaylist(accessToken, playlistDTO);
         return ResponseEntity.ok(updatedPlaylist);
     }
+
+
 
     /**
      * 🗑 플레이리스트 삭제
@@ -126,10 +131,10 @@ public class PlaylistController {
     public ResponseEntity<String> deletePlaylist(
             @RequestHeader("Authorization") String bearerToken,
             @RequestParam String playlistId) {
-        playlistService.deletePlaylist(bearerToken, playlistId);
+        String accessToken = bearerToken.replace("Bearer ", "");
+        playlistService.deletePlaylist(accessToken, playlistId);
         return ResponseEntity.ok("삭제 완료");
     }
-
     /**
      * 🎵 플레이리스트의 트랙 ID 목록 조회
      */

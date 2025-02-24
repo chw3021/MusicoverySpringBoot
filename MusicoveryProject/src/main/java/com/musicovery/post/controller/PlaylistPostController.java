@@ -69,9 +69,15 @@ public class PlaylistPostController {
         List<PlaylistPost> ranking = playlistPostService.getRanking();
         return ResponseEntity.ok(ranking);
     }
+
     @GetMapping("/list")
-    public ResponseEntity<PagedModel<EntityModel<PlaylistPostDTO>>> getPlaylistPosts(@RequestParam int page, @RequestParam int size) {
-        Page<PlaylistPostDTO> posts = playlistPostService.getPlaylistPosts(page, size);
+    public ResponseEntity<PagedModel<EntityModel<PlaylistPostDTO>>> getPlaylistPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword) {
+        Page<PlaylistPostDTO> posts = playlistPostService.getPlaylistPosts(page, size, sort, searchType, keyword);
         PagedModel<EntityModel<PlaylistPostDTO>> pagedModel = pagedResourcesAssembler.toModel(posts);
         return ResponseEntity.ok(pagedModel);
     }

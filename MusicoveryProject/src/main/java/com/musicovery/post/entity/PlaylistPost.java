@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.user.entity.User;
 
 import jakarta.persistence.CascadeType;
@@ -38,8 +39,9 @@ public class PlaylistPost {
     @Column(length = 500)
     private String description;
 
-    @Column(name = "playlist_id")
-    private String playlistId; // Spotify 플레이리스트 ID
+    @ManyToOne
+    @JoinColumn(name = "playlist_id")
+    private Playlist playlist; // Spotify 플레이리스트 ID
     
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -65,4 +67,6 @@ public class PlaylistPost {
     @Column(name = "created_date")  // 실제 컬럼명 매핑
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
+    
+    private Boolean isNotice;
 }

@@ -46,7 +46,7 @@ public class PlaylistPostService {
         PlaylistPost post = new PlaylistPost();
         post.setTitle(title);
         post.setDescription(description);
-        post.setPlaylistId(playlistId);
+        //post.setPlaylistId(playlistId);
         post.setUser(user);
         //post.setUser(user.getUserId());
         post.setLikeCount(0);
@@ -54,7 +54,7 @@ public class PlaylistPostService {
         playlistPostRepository.save(post);
 
         // Spotify API에서 플레이리스트 ID로 음악 리스트 불러오기
-		List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(accessToken, playlistId);
+		List<String> trackIds = spotifyApiPlaylistService.getTracksIdInPlaylist(accessToken, playlistId);
 
         // 음악들에 대해 가중치 증가
         for (String trackId : trackIds) {
@@ -79,10 +79,10 @@ public class PlaylistPostService {
         playlistPostRepository.save(post);
         
 
-        String playlistId = post.getPlaylistId();
+        //String playlistId = post.getPlaylistId();
         
         // Spotify API에서 플레이리스트 ID로 음악 리스트 불러오기
-        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(accessToken, playlistId);
+        List<String> trackIds = spotifyApiPlaylistService.getTracksIdInPlaylist(accessToken, post.getPlaylist().getPlaylistId());
 
         // 좋아요 처리 후 음악들에 대한 가중치 증가
         for (String trackId : trackIds) {
@@ -102,31 +102,67 @@ public class PlaylistPostService {
         post.setReplyCount(post.getReplyCount() + 1);
         playlistPostRepository.save(post);
         
-        String playlistId = post.getPlaylistId();
+        //String playlistId = post.getPlaylistId();
 
         // 댓글 처리 후 음악들에 대한 가중치 증가
-        List<String> trackIds = spotifyApiPlaylistService.getTracksInPlaylist(accessToken, playlistId);
+        List<String> trackIds = spotifyApiPlaylistService.getTracksIdInPlaylist(accessToken, post.getPlaylist().getPlaylistId());
         for (String trackId : trackIds) {
             weightService.increaseWeightForCommentedPlaylist(user.getUserId(), trackId);
         }
     }
     
 
-    public Page<PlaylistPostDTO> getPlaylistPosts(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate"));
-        
-        return playlistPostRepository.findAllWithProjection(pageable)
-            .map(post -> PlaylistPostDTO.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .description(post.getDescription())
-                .user(post.getUser())
-                .createdDate(post.getCreatedDate())
-                .likeCount(post.getLikeCount())
-                .replyCount(post.getReplyCount())
-                .viewCount(post.getViewCount())
-                .build());
+
+    public Page<PlaylistPostDTO> getPlaylistPosts(int page, int size, String sort, String searchType, String keyword) {
+        Sort.Direction direction = Sort.Direction.DESC;
+        String sortField = "createdDate";
+
+        if (sort != null) {
+            if (sort.equals("oldest")) {
+                direction = Sort.Direction.ASC;
+            } else if (sort.equals("popular")) {
+                sortField = "viewCount";
+            }
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+        Page<PlaylistPostDTO> posts;
+        if (keyword != null && !keyword.isEmpty()) {
+            // 검색 조건이 있을 때는 기존 방식 사용
+            Page<PlaylistPost> postEntities;
+            if (searchType.equals("title")) {
+                postEntities = playlistPostRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+            } else if (searchType.equals("description")) {
+                postEntities = playlistPostRepository.findByDescriptionContainingIgnoreCase(keyword, pageable);
+            } else if (searchType.equals("author")) {
+                postEntities = playlistPostRepository.findByUser_NicknameContainingIgnoreCase(keyword, pageable);
+            } else {
+                postEntities = playlistPostRepository.findAll(pageable);
+            }
+            posts = postEntities.map(post -> PlaylistPostDTO.builder()
+                    .id(post.getId())
+                    .title(post.getTitle())
+                    .description(post.getDescription())
+                    .user(post.getUser())
+                    .createdDate(post.getCreatedDate())
+                    .likeCount(post.getLikeCount())
+                    .replyCount(post.getReplyCount())
+                    .viewCount(post.getViewCount())
+                    .isNotice(post.getIsNotice())
+                    .build());
+        } else {
+            // 검색 조건이 없을 때는 프로젝션 쿼리 사용
+            if ("popular".equals(sort)) {
+                posts = playlistPostRepository.findAllWithProjectionByViewCount(pageable);
+            } else {
+                posts = playlistPostRepository.findAllWithProjection(pageable);
+            }
+        }
+
+        return posts;
     }
+    
     
     public List<PlaylistPost> getRanking() {
         return playlistPostRepository.findAllByOrderByLikeCountDesc();
