@@ -23,7 +23,10 @@ public class SongQuizController {
 
     @GetMapping("/lyrics")
     public SongQuizDTO getLyrics(@RequestParam String artist, @RequestParam String title) {
-        SongQuiz song = new SongQuiz(artist, title);
+        SongQuiz song = SongQuiz.builder()
+        		.artist(artist)
+        		.title(title)
+        		.build();
         return songQuizService.getLyrics(song);
     }
 }
