@@ -1,9 +1,13 @@
 package com.musicovery.user.service;
 
+
+
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +29,10 @@ import com.musicovery.user.entity.User;
 import com.musicovery.user.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -39,50 +45,75 @@ public class UserServiceImpl implements UserService {
 		this.modelMapper = modelMapper;
 	}
 
-	// 기본 회원가입
+	
 	@Override
 	public UserDTO signup(UserSignupDTO userSignupDTO) {
-		// 이미 존재하는 이메일인지 확인
-		if (userRepository.existsByEmail(userSignupDTO.getEmail())) {
-			throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
-		}
+	    // 이미 존재하는 이메일인지 확인
+	    if (userRepository.existsByEmail(userSignupDTO.getEmail())) {
+	        throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+	    }
 
-		// 이미 존재하는 닉네임인지 확인
-		if (userRepository.existsByNickname(userSignupDTO.getNickname())) {
-			throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
-		}
+	    // 이미 존재하는 닉네임인지 확인
+	    if (userRepository.existsByNickname(userSignupDTO.getNickname())) {
+	        throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+	    }
 
-		// DTO -> 엔티티
-		User user = modelMapper.map(userSignupDTO, User.class);
+	    // DTO -> 엔티티
+	    User user = modelMapper.map(userSignupDTO, User.class);
 
-		user.setId(userSignupDTO.getId());
+	    // UUID로 ID 생성
+	    user.setId(UUID.randomUUID().toString());
 
-		if (userSignupDTO.getUserId() != null) {
-			user.setUserId(userSignupDTO.getUserId());
-		}
+	    // 비밀번호 암호화
+	    if (userSignupDTO.getPasswd() != null) {
+	        user.setPasswd(passwordEncoder.encode(userSignupDTO.getPasswd()));
+	    }
 
-		// 비밀번호가 null이 아닌 경우에만 암호화
-		if (userSignupDTO.getPasswd() != null) {
-			user.setPasswd(passwordEncoder.encode(userSignupDTO.getPasswd()));
-		}
+	    User savedUser = userRepository.save(user);
 
-		User savedUser = userRepository.save(user);
-
-		// 엔티티 -> DTO
-		return modelMapper.map(savedUser, UserDTO.class);
+	    // 엔티티 -> DTO
+	    return modelMapper.map(savedUser, UserDTO.class);
 	}
 
+
+//	@Override
+//	public UserDTO login(UserDTO userDTO) {
+//		User user = userRepository.findByEmail(userDTO.getEmail())
+//				.orElseThrow(() -> new IllegalArgumentException("이메일이 존재하지 않습니다."));
+//
+//		if (userDTO.getPasswd() == null || !passwordEncoder.matches(userDTO.getPasswd(), user.getPasswd())) {
+//			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+//		}
+//		
+//		
+//
+//		return modelMapper.map(user, UserDTO.class); // 엔티티 → DTO
+//	}
+	
 	@Override
 	public UserDTO login(UserDTO userDTO) {
-		User user = userRepository.findByEmail(userDTO.getEmail())
-				.orElseThrow(() -> new IllegalArgumentException("이메일이 존재하지 않습니다."));
+	    // 이메일로 유저 조회
+	    User user = userRepository.findByEmail(userDTO.getEmail())
+	            .orElseThrow(() -> new IllegalArgumentException("이메일이 존재하지 않습니다."));
 
-		if (userDTO.getPasswd() == null || !passwordEncoder.matches(userDTO.getPasswd(), user.getPasswd())) {
-			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-		}
+	    // 디버깅용 로그
+	    log.debug("로그인 시도 - 이메일: {}", userDTO.getEmail());
+	    log.debug("입력한 비밀번호: {}", userDTO.getPasswd());
+	    log.debug("DB 저장된 비밀번호: {}", user.getPasswd());
 
-		return modelMapper.map(user, UserDTO.class); // 엔티티 → DTO
+	    // 비밀번호 일치 확인
+	    if (userDTO.getPasswd() == null || !passwordEncoder.matches(userDTO.getPasswd(), user.getPasswd())) {
+	        log.error("비밀번호 불일치 - 이메일: {}", userDTO.getEmail());
+	        throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+	    }
+
+	    // 로그인 성공 로그
+	    log.info("로그인 성공 - 이메일: {}", userDTO.getEmail());
+
+	    // 엔티티 → DTO
+	    return modelMapper.map(user, UserDTO.class);
 	}
+
 
 	@Override
 	public UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO) {
@@ -111,7 +142,7 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByUserId(userId)
 				.orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 	}
-	
+
 //	@Override
 //	public UserDTO findByUserId(String userId) {
 //	    User user = userRepository.findByUserId(userId)
@@ -143,14 +174,12 @@ public class UserServiceImpl implements UserService {
 	public User spotifyLogin(SpotifyUserDTO userDTO) {
 		return userRepository.findByUserId(userDTO.getUserId()).orElseGet(() -> {
 			User newUser = User.builder().userId(userDTO.getUserId()).email(userDTO.getEmail())
-					.passwd(passwordEncoder.encode(userDTO.getPasswd()))
-					.bio(userDTO.getBio()).phone(userDTO.getPhone())
+					.passwd(passwordEncoder.encode(userDTO.getPasswd())).bio(userDTO.getBio()).phone(userDTO.getPhone())
 					.nickname(userDTO.getNickname()).profileImageUrl(userDTO.getProfileImageUrl())
 					.spotifyConnected(true).isActive(true).build();
 			return userRepository.save(newUser);
 		});
 	}
-	
 
 	@Value("${spotify.client.id}")
 	private String clientId;
