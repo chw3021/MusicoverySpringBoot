@@ -10,5 +10,5 @@ public interface CustomerSupportService {
     CustomerSupport respondToInquiry(Long inquiryId, String response);
 	List<CustomerSupport> getUserInquiries(String email);
 	CustomerSupport createInquiry(CustomerSupport inquiry);
-	Page<CustomerSupport> getAllInquiriesPaged(int page, int size);
+	Page<CustomerSupport> getInquiries(Integer page, Integer size, Boolean responded);
 }

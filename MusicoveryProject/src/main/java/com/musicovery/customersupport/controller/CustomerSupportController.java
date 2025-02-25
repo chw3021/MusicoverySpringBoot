@@ -52,14 +52,20 @@ public class CustomerSupportController {
         return customerSupportService.getUserInquiries(userId);
     }
 
-    @GetMapping("/inquiries/paged")
-    public Page<CustomerSupport> getAllInquiriesPaged(
-            @RequestParam int page,
-            @RequestParam int size
+
+    //전체 문의사항 가져오기.
+    //responded가 참이면 답변완료한것만, 거짓이면 답변 안된것만
+    //파라미터를 아예 안줬으면 전체 문의사항
+    @GetMapping("/inquiriesAll")
+    public Page<CustomerSupport> getInquiries(
+            @RequestParam Integer page,
+            @RequestParam Integer size,
+            @RequestParam(required = false) Boolean responded
     ) {
-        return customerSupportService.getAllInquiriesPaged(page, size);
+        return customerSupportService.getInquiries(page, size, responded);
     }
 
+    //해당 문의사항의 ID값을 받아와서 답변등록하기
     @PostMapping("/respond/{inquiryId}")
     public CustomerSupport respondToInquiry(@PathVariable Long inquiryId, @RequestBody String response) {
         return customerSupportService.respondToInquiry(inquiryId, response);
