@@ -1,11 +1,16 @@
 package com.musicovery.user.entity;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
+import com.musicovery.friends.entity.Friends;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -81,4 +86,11 @@ public class User {
 			id = UUID.randomUUID().toString();
 		}
 	}
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Friends> friends;
+
+    @OneToMany(mappedBy = "friend", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Friends> friendOf;
 }
