@@ -1,5 +1,6 @@
 package com.musicovery.friends.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.musicovery.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -29,6 +30,7 @@ public class Friends {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     @ManyToOne

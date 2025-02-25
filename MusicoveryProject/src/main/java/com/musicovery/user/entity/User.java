@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.musicovery.friends.entity.Friends;
 
 import jakarta.persistence.CascadeType;
@@ -89,8 +90,10 @@ public class User {
 
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Friends> friends;
 
     @OneToMany(mappedBy = "friend", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Friends> friendOf;
 }
