@@ -61,7 +61,6 @@ public class PlaylistController {
         playlistDTO.setUserId(userId);
         playlistDTO.setTracks(tracks);
 
-        // 파일 처리 로직
         if (playlistPhoto != null && !playlistPhoto.isEmpty()) {
             try {
                 String fileName = fileStorageService.storeFile(playlistPhoto);
@@ -71,8 +70,11 @@ public class PlaylistController {
                 e.printStackTrace();
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        } else {
+            // playlistPhoto가 null인 경우 기본 이미지 경로 설정
+            playlistDTO.setPlaylistPhoto("/images/default.png"); // 기본 이미지 경로 설정
         }
-
+        
         Playlist playlist = playlistService.createPlaylist(accessToken, playlistDTO);
         return ResponseEntity.ok(playlist);
     }

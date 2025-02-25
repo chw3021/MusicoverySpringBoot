@@ -1,12 +1,16 @@
 package com.musicovery.customersupport.entity;
-
 import java.time.LocalDateTime;
 
+import com.musicovery.user.entity.User;
+
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,8 +31,10 @@ public class CustomerSupport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long userId; // 문의한 사용자 ID
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @AttributeOverride(name = "id", column = @Column(name = "user_id"))
+    private User user; // 문의한 사용자
 
     @Column(nullable = false, length = 500)
     private String question; // 문의 내용

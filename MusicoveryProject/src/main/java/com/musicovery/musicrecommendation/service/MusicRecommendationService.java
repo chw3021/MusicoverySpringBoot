@@ -37,6 +37,9 @@ public class MusicRecommendationService {
         List<String> trackIds = recommendedTracks.stream()
                 .map(Recommendation::getMusicId)
                 .collect(Collectors.toList());
+        if(trackIds.size()<=0) {
+        	return null;
+        }
         
         // 3️⃣ 추천된 곡 정보를 반환
         return spotifyApiMusicService.getTracksByIds(trackIds);
@@ -103,12 +106,30 @@ public class MusicRecommendationService {
                 targetTempo, 10
         );
     }
-    
+
     /**
-     * 🎲 깜짝 추천 (완전 랜덤 추천)
+     * 🍀 완전 무작위 추천 (키워드 없이)
      */
-    public String getSurpriseRecommendation() {
-        return spotifyApiMusicService.getRecommendedTracks(null, null, null, null, null, null, null, null, null, null, 10);
+    public String getRandomRecommendations() {
+        // Gemini로부터 추천 목록 받기
+        List<SongRecommendation> recommendations = geminiService.getRandomRecommendations();
+
+        // Spotify API를 통해 실제 트랙 정보 검색하고 결과를 String 리스트로 변환
+        List<String> tracks = recommendations.stream()
+            .map(rec -> {
+                String query = rec.getTitle() + " " + rec.getArtist();
+                return spotifyApiMusicService.searchTrack(query);
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        // ObjectMapper를 사용하여 JSON 문자열로 변환
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(tracks);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("추천 목록 변환 실패", e);
+        }
     }
     
     /**

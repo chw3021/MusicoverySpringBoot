@@ -1,16 +1,9 @@
 package com.musicovery.customersupport.dto;
 
-import java.time.LocalDateTime;
+import lombok.Data;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
+@Data
 public class CustomerSupportDTO {
-    private Long userId;
+    private String userId;
     private String question;
-    private String response;
-    private LocalDateTime createdAt;
-    private LocalDateTime respondedAt;
 }
