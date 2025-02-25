@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.musicovery.customersupport.entity.CustomerSupport;
 
+
 public interface CustomerSupportRepository extends JpaRepository<CustomerSupport, Long> {
-    List<CustomerSupport> findByUserId(Long userId);
+    List<CustomerSupport> findByUser_Id(String userId);
 }

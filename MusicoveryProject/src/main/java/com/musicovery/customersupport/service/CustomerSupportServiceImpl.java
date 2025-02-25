@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.musicovery.customersupport.dto.CustomerSupportDTO;
 import com.musicovery.customersupport.entity.CustomerSupport;
 import com.musicovery.customersupport.repository.CustomerSupportRepository;
 
@@ -20,18 +19,13 @@ public class CustomerSupportServiceImpl implements CustomerSupportService {
     }
 
     @Override
-    public CustomerSupport createInquiry(CustomerSupportDTO customerSupportDTO) {
-        CustomerSupport inquiry = CustomerSupport.builder()
-                .userId(customerSupportDTO.getUserId())
-                .question(customerSupportDTO.getQuestion())
-                .createdAt(LocalDateTime.now())
-                .build();
+    public CustomerSupport createInquiry(CustomerSupport inquiry) {
         return customerSupportRepository.save(inquiry);
     }
 
     @Override
-    public List<CustomerSupport> getUserInquiries(Long userId) {
-        return customerSupportRepository.findByUserId(userId);
+    public List<CustomerSupport> getUserInquiries(String userId) {
+        return customerSupportRepository.findByUser_Id(userId);
     }
 
     @Override
