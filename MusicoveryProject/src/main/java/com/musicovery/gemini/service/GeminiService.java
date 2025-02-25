@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GeminiService {
     private final String apiKey;
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-pro-exp-02-05:generateContent";
     private final RestTemplate restTemplate;
 
     public GeminiService(String apiKey) {
@@ -76,9 +76,21 @@ public class GeminiService {
     
     
     
+    
+    
+    
+    public static String filterLyrics(String lyrics) {
+        // 1. 줄바꿈 제거
+        String noNewlines = lyrics.replaceAll("\\n", "");
+
+        // 2. 괄호와 괄호 안의 내용 제거
+        String noParentheses = noNewlines.replaceAll("\\(.*?\\)", "");
+
+        return noParentheses;
+    }
     public String getLyrics(String artist, String title) {
         // 가사를 요청하기 위한 프롬프트 생성
-        String prompt = String.format("다음 노래의 가사만 제공해주세요: \"%s\"의 \"%s\"", artist, title);
+        String prompt = String.format("- Provide the lyrics to the following song in pure text only, without parentheses, chorus marks, or line breaks.\\n- Formatting such as italics, bold, parentheses, etc. is prohibited.\\n- Do not translate, just print the original text.: \"%s\"의 \"%s\"", artist, title);
         log.info("가사 요청 프롬프트: {}", prompt);
 
         HttpHeaders headers = new HttpHeaders();
@@ -93,20 +105,34 @@ public class GeminiService {
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(builder.toUriString(), request, String.class);
 
-        // 응답 본문을 로그에 출력하여 확인
-        log.info("Gemini API 응답 본문: {}", response.getBody());
-
-        // JSON 파싱 및 가사 추출
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode root = mapper.readTree(response.getBody());
-            String content = root.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText();
 
-            // 가사만 추출
-            return content;
+            // 응답 구조 확인 (디버깅용)
+            log.info("Gemini API 응답: {}", root.toString());
+
+            // candidates 배열이 비어 있는지 확인
+            JsonNode candidatesNode = root.path("candidates");
+            if (!candidatesNode.isArray() || candidatesNode.isEmpty()) {
+                log.warn("candidates 노드가 비어 있음.");
+                return "가사를 찾을 수 없습니다.";
+            }
+
+            // content -> parts -> text 구조 확인
+            JsonNode contentNode = candidatesNode.get(0).path("content").path("parts");
+            if (!contentNode.isArray() || contentNode.isEmpty()) {
+                log.warn("content.parts 노드가 비어 있음.");
+                return "가사를 찾을 수 없습니다.";
+            }
+
+            String lyrics = contentNode.get(0).path("text").asText("가사를 찾을 수 없습니다.");
+            log.info("가사 응답 본문: {}", filterLyrics(lyrics));
+
+            return filterLyrics(lyrics);
         } catch (JsonProcessingException e) {
             log.error("JSON 파싱 에러", e);
-            throw new RuntimeException("가사 추출 실패", e);
+            return "가사를 가져오는 중 오류가 발생했습니다.";
         }
     }
     
