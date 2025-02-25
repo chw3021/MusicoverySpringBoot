@@ -2,6 +2,7 @@ package com.musicovery.friends.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +43,12 @@ public class FriendsController {
         return friendsService.getFriendOf(friendId);
     }
 
+    @GetMapping("/pendingRequests")
+    public List<Friends> getPendingRequests(@RequestParam String userId) {
+        return friendsService.getPendingRequests(userId);
+    }
+
+
     @PostMapping("/accept")
     public Friends acceptFriendRequest(@RequestParam Long friendRequestId) {
         return friendsService.acceptFriendRequest(friendRequestId);
@@ -50,5 +57,10 @@ public class FriendsController {
     @GetMapping("/search")
     public List<User> searchUsers(@RequestParam String keyword) {
         return userService.searchUsers(keyword);
+    }
+
+    @DeleteMapping("/delete")
+    public void deleteFriend(@RequestParam String userId, @RequestParam String friendId) {
+        friendsService.deleteFriend(userId, friendId);
     }
 }

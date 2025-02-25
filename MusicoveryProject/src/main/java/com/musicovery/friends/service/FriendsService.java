@@ -8,5 +8,7 @@ public interface FriendsService {
     Friends addFriend(String userId, String friendId);
     List<Friends> getFriends(String userId);
     List<Friends> getFriendOf(String friendId);
+    List<Friends> getPendingRequests(String userId); 
     Friends acceptFriendRequest(Long friendRequestId);
+    void deleteFriend(String userId, String friendId);
 }
