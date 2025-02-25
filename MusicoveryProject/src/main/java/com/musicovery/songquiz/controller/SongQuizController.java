@@ -1,9 +1,11 @@
 package com.musicovery.songquiz.controller;
 
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -51,16 +53,12 @@ public class SongQuizController {
     
     // 유사제목 얻는 메서드
     @GetMapping("/sometitle")
-    public ResponseEntity<Map<String, String>> getSomeTitle(
-            @RequestParam String title) {
-
-        // 대체 제목 요청
-        String alternativeTitles = geminservice.getSomeTitle(title);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("sometitle", alternativeTitles);
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<List<String>> getSongAliases(@RequestParam String title) {
+        String aliasesString = geminservice.getSomeTitle(title);
+        List<String> aliasesList = Arrays.asList(aliasesString.split(",")).stream()
+                                        .map(String::trim)
+                                        .collect(Collectors.toList());
+        return ResponseEntity.ok(aliasesList);
     }
 
     
