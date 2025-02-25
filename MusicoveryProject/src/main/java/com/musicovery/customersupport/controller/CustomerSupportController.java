@@ -2,6 +2,7 @@ package com.musicovery.customersupport.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,6 +52,20 @@ public class CustomerSupportController {
         return customerSupportService.getUserInquiries(userId);
     }
 
+
+    //전체 문의사항 가져오기.
+    //responded가 참이면 답변완료한것만, 거짓이면 답변 안된것만
+    //파라미터를 아예 안줬으면 전체 문의사항
+    @GetMapping("/inquiriesAll")
+    public Page<CustomerSupport> getInquiries(
+            @RequestParam Integer page,
+            @RequestParam Integer size,
+            @RequestParam(required = false) Boolean responded
+    ) {
+        return customerSupportService.getInquiries(page, size, responded);
+    }
+
+    //해당 문의사항의 ID값을 받아와서 답변등록하기
     @PostMapping("/respond/{inquiryId}")
     public CustomerSupport respondToInquiry(@PathVariable Long inquiryId, @RequestBody String response) {
         return customerSupportService.respondToInquiry(inquiryId, response);
