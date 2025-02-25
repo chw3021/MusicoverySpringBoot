@@ -1,5 +1,7 @@
 package com.musicovery.user.service;
 
+import java.util.List;
+
 import com.musicovery.user.dto.SpotifyTokenDTO;
 import com.musicovery.user.dto.SpotifyUserDTO;
 import com.musicovery.user.dto.UserDTO;
@@ -28,5 +30,8 @@ public interface UserService {
 	SpotifyUserDTO getSpotifyUserProfile(String accessToken);
 
 	UserDTO spotifyLoginDTO(SpotifyUserDTO spotifyUserDTO);
+	
+
+    List<User> searchUsers(String keyword);
 
 }

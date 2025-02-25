@@ -6,6 +6,7 @@ package com.musicovery.user.service;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -243,4 +244,8 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+    @Override
+    public List<User> searchUsers(String keyword) {
+        return userRepository.findByEmailContainingOrUserIdContainingOrNicknameContaining(keyword, keyword, keyword);
+    }
 }
