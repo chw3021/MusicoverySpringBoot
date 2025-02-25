@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.musicovery.friends.entity.Friends;
 import com.musicovery.friends.repository.FriendsRepository;
@@ -36,7 +37,12 @@ public class FriendsServiceImpl implements FriendsService {
 
     @Override
     public List<Friends> getFriendOf(String friendId) {
-        return friendsRepository.findByFriendId(friendId);
+        return friendsRepository.findByFriendIdAndIsAcceptedFalse(friendId);
+    }
+
+    @Override
+    public List<Friends> getPendingRequests(String userId) {
+        return friendsRepository.findByUserIdAndIsAcceptedFalse(userId);
     }
 
     @Override
@@ -48,5 +54,12 @@ public class FriendsServiceImpl implements FriendsService {
             return friendsRepository.save(friend);
         }
         throw new RuntimeException("친구 요청을 찾을 수 없습니다.");
+    }
+
+    @Override
+    @Transactional
+    public void deleteFriend(String userId, String friendId) {
+        friendsRepository.deleteByUserIdAndFriendId(userId, friendId);
+        friendsRepository.deleteByFriendIdAndUserId(userId, friendId);
     }
 }
