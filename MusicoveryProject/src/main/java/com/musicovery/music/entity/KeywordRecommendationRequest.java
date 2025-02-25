@@ -9,5 +9,4 @@ public class KeywordRecommendationRequest {
     private String genre;
     private Integer bpm;
     private String mood;
-    private String lyrics;
 }

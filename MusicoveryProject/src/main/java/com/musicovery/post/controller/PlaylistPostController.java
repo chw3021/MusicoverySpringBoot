@@ -7,6 +7,7 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,12 +48,21 @@ public class PlaylistPostController {
     @PutMapping("/update/{postId}")
     public ResponseEntity<?> updatePost(
             @RequestHeader("Authorization") String bearerToken, @PathVariable Long postId,
-            @RequestParam String title, @RequestParam String description, @RequestParam String playlistId) {
+            @RequestParam String title, @RequestParam String description) {
         String accessToken = bearerToken.replace("Bearer ", "");
-        PlaylistPost post = playlistPostService.updatePost(accessToken, postId, title, description, playlistId);
+        PlaylistPost post = playlistPostService.updatePost(accessToken, postId, title, description);
         return ResponseEntity.ok(post);
     }
 
+
+    @DeleteMapping("/delete/{postId}")
+    public ResponseEntity<?> deletePost(
+            @RequestHeader("Authorization") String bearerToken, @PathVariable Long postId) {
+        String accessToken = bearerToken.replace("Bearer ", "");
+        PlaylistPost post = playlistPostService.deletePost(accessToken, postId);
+        return ResponseEntity.ok(post);
+    }
+    
     @PostMapping("/like/{postId}")
     public ResponseEntity<?> likePost(
             @RequestHeader("Authorization") String bearerToken,
