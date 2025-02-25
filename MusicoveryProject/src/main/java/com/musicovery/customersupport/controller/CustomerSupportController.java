@@ -2,6 +2,7 @@ package com.musicovery.customersupport.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +50,14 @@ public class CustomerSupportController {
     @GetMapping("/inquiries")
     public List<CustomerSupport> getUserInquiries(@RequestParam String userId) {
         return customerSupportService.getUserInquiries(userId);
+    }
+
+    @GetMapping("/inquiries/paged")
+    public Page<CustomerSupport> getAllInquiriesPaged(
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        return customerSupportService.getAllInquiriesPaged(page, size);
     }
 
     @PostMapping("/respond/{inquiryId}")

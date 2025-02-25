@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.musicovery.customersupport.entity.CustomerSupport;
@@ -26,6 +29,13 @@ public class CustomerSupportServiceImpl implements CustomerSupportService {
     @Override
     public List<CustomerSupport> getUserInquiries(String userId) {
         return customerSupportRepository.findByUser_Id(userId);
+    }
+    
+
+    @Override
+    public Page<CustomerSupport> getAllInquiriesPaged(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return customerSupportRepository.findAll(pageRequest);
     }
 
     @Override
