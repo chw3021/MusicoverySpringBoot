@@ -1,10 +1,12 @@
 package com.musicovery.user.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -31,7 +33,7 @@ public class User {
 	private String email;
 
 	// 비밀번호가 없을 수 있으므로 nullable = true
-	@Column(nullable = true)
+	@Column(nullable = false)
 	private String passwd;
 
 	@Column(unique = true, nullable = false)
@@ -70,5 +72,13 @@ public class User {
 	@PreUpdate
 	public void preUpdate() {
 		this.lastupdate = LocalDateTime.now();
+	}
+	
+	@PrePersist
+	public void prePersist() {
+		// userId가 null일 경우 UUID를 생성하여 할당
+		if (id == null) {
+			id = UUID.randomUUID().toString();
+		}
 	}
 }

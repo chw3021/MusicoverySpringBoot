@@ -1,7 +1,5 @@
 package com.musicovery.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +17,7 @@ public class SpotifyUserDTO {
 	private String email;
 
 	// JSON 응답에서 제외 (보안 목적)
-	@JsonIgnore
+
 	private String passwd;
 
 	private String profileImageUrl;
