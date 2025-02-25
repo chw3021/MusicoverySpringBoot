@@ -30,4 +30,6 @@ public class Like {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private PlaylistPost playlistPost;
+    
+    private Boolean isFirst;
 }

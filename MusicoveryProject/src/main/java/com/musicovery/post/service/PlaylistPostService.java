@@ -68,17 +68,22 @@ public class PlaylistPostService {
 
 
     @Transactional
-    public PlaylistPost updatePost(String accessToken, Long postId, String title, String description, String playlistId) {
+    public PlaylistPost updatePost(String accessToken, Long postId, String title, String description) {
         PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
         post.setTitle(title);
         post.setDescription(description);
         playlistPostRepository.save(post);
+        return post;
+    }
+    
 
-        List<String> trackIds = spotifyApiPlaylistService.getTracksIdInPlaylist(accessToken, playlistId);
 
-        for (String trackId : trackIds) {
-            weightService.increaseWeightForLikedPlaylist(post.getUser().getUserId(), trackId);
-        }
+    @Transactional
+    public PlaylistPost deletePost(String accessToken, Long postId) {
+        PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        playlistPostRepository.delete(post);
+        
         return post;
     }
     @Transactional
@@ -91,18 +96,24 @@ public class PlaylistPostService {
             Like like = new Like();
             like.setUser(user);
             like.setPlaylistPost(post);
+            
+
+            if(like.getIsFirst()==null || !like.getIsFirst()) {
+                like.setIsFirst(true);
+                // Spotify API에서 플레이리스트 ID로 음악 리스트 불러오기
+                List<String> trackIds = spotifyApiPlaylistService.getTracksIdInPlaylist(accessToken, post.getPlaylist().getPlaylistId());
+
+                // 좋아요 처리 후 음악들에 대한 가중치 증가
+                for (String trackId : trackIds) {
+                    weightService.increaseWeightForLikedPlaylist(user.getUserId(), trackId);
+                }
+            }
+            
+            
             likeRepository.save(like);
             post.setLikeCount(post.getLikeCount() + 1);
         }
         playlistPostRepository.save(post);
-
-        // Spotify API에서 플레이리스트 ID로 음악 리스트 불러오기
-        List<String> trackIds = spotifyApiPlaylistService.getTracksIdInPlaylist(accessToken, post.getPlaylist().getPlaylistId());
-
-        // 좋아요 처리 후 음악들에 대한 가중치 증가
-        for (String trackId : trackIds) {
-            weightService.increaseWeightForLikedPlaylist(user.getUserId(), trackId);
-        }
     }
 
     public int getLikeCount(Long postId) {
