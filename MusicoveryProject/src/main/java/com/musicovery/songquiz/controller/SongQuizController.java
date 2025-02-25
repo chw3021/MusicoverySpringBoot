@@ -48,4 +48,20 @@ public class SongQuizController {
 
         return ResponseEntity.ok(response);
     }
+    
+    // 유사제목 얻는 메서드
+    @GetMapping("/sometitle")
+    public ResponseEntity<Map<String, String>> getSomeTitle(
+            @RequestParam String title) {
+
+        // 대체 제목 요청
+        String alternativeTitles = geminservice.getSomeTitle(title);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("sometitle", alternativeTitles);
+
+        return ResponseEntity.ok(response);
+    }
+
+    
 }

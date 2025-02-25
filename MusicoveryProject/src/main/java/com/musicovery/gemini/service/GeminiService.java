@@ -90,7 +90,7 @@ public class GeminiService {
     }
     public String getLyrics(String artist, String title) {
         // 가사를 요청하기 위한 프롬프트 생성
-        String prompt = String.format("- Provide the lyrics to the following song in pure text only, without parentheses, chorus marks, or line breaks.\\n- Formatting such as italics, bold, parentheses, etc. is prohibited.\\n- Do not translate, just print the original text.: \"%s\"의 \"%s\"", artist, title);
+        String prompt = String.format("Instruction: The AI provides the lyrics to the following song as pure text, without parentheses, chorus marks, or line breaks.\\n- Simply prohibit the AI from formatting the lyrics with italics, bold, parentheses, etc.\\n- Provide the original EN/KO text without translation. If the original lyrics are a mix of languages, do not translate them, but provide the original mixed lyrics.: \"%s\"의 \"%s\"", artist, title);
         log.info("가사 요청 프롬프트: {}", prompt);
 
         HttpHeaders headers = new HttpHeaders();
@@ -108,7 +108,6 @@ public class GeminiService {
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode root = mapper.readTree(response.getBody());
-
             // 응답 구조 확인 (디버깅용)
             log.info("Gemini API 응답: {}", root.toString());
 
@@ -136,6 +135,55 @@ public class GeminiService {
         }
     }
     
+    
+    
+    public String getSomeTitle(String title) {
+        // 제목 변형 요청을 위한 프롬프트 생성
+        String prompt = String.format("Organize alternate titles for songs like an artist's 'Title'. Generate the original title and present all possible variations.: \"%s\"", title);
+        log.info("제목 요청 프롬프트: {}", prompt);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(GEMINI_API_URL)
+                .queryParam("key", apiKey);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("contents", Arrays.asList(Map.of("parts", Arrays.asList(Map.of("text", prompt)))));
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(builder.toUriString(), request, String.class);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode root = mapper.readTree(response.getBody());
+
+            // 응답 구조 확인 (디버깅용)
+            log.info("Gemini API 응답: {}", root.toString());
+
+            // candidates 배열이 비어 있는지 확인
+            JsonNode candidatesNode = root.path("candidates");
+            if (!candidatesNode.isArray() || candidatesNode.isEmpty()) {
+                log.warn("candidates 노드가 비어 있음.");
+                return "제목을 찾을 수 없습니다.";
+            }
+
+            // content -> parts -> text 구조 확인
+            JsonNode contentNode = candidatesNode.get(0).path("content").path("parts");
+            if (!contentNode.isArray() || contentNode.isEmpty()) {
+                log.warn("content.parts 노드가 비어 있음.");
+                return "제목을 찾을 수 없습니다.";
+            }
+
+            String alternativeTitles = contentNode.get(0).path("text").asText("제목을 찾을 수 없습니다.");
+            log.info("제목 응답 본문: {}", alternativeTitles);
+
+            return alternativeTitles;
+        } catch (JsonProcessingException e) {
+            log.error("JSON 파싱 에러", e);
+            return "제목을 가져오는 중 오류가 발생했습니다.";
+        }
+    }
     
     
     
