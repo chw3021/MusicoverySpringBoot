@@ -85,6 +85,39 @@ public class SpotifyAuthController {
         }
     }
     
+//    @GetMapping("/callback")
+//    public ResponseEntity<Map<String, String>> handleSpotifyCallback(@RequestParam("code") String code) {
+//        if (code == null || code.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "인증 코드가 없습니다."));
+//        }
+//
+//        try {
+//            // Spotify 인증 요청 및 토큰 획득
+//            AuthorizationCodeRequest authRequest = spotifyAuthService.getSpotifyApi().authorizationCode(code).build();
+//            AuthorizationCodeCredentials credentials = authRequest.execute();
+//
+//            String accessToken = credentials.getAccessToken();
+//            String refreshToken = credentials.getRefreshToken();
+//
+//            // 클라이언트에 JSON 형태로 응답
+//            Map<String, String> response = new HashMap<>();
+//            response.put("message", "Spotify 로그인 성공!");
+//            response.put("accessToken", accessToken);
+//            response.put("refreshToken", refreshToken);
+//
+//            return ResponseEntity.ok(response);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(Map.of("error", "Spotify 인증 실패: " + e.getMessage()));
+//        }
+//    }
+
+
+
+
+
+    
     @PostMapping("/refresh-token")  // GET에서 POST로 변경
     public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
         try {
