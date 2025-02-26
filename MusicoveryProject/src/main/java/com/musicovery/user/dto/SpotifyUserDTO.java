@@ -10,30 +10,18 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SpotifyUserDTO {
-	private String id;
-	
-	private String userId;
+    private String id;
+    private String userId;
+    private String email;
+    private String passwd;
+    private String profileImageUrl;
+    private String bio;
+    private String nickname;
+    private String phone;
+    private boolean isActive = true;
+    private boolean spotifyConnected;
+    private boolean googleConnected;
 
-	private String email;
-
-	// JSON 응답에서 제외 (보안 목적)
-
-	private String passwd;
-
-	private String profileImageUrl;
-
-	private String bio;
-
-	private String nickname;
-
-	private String phone;
-
-	// 스포티파이 api에서는 주소를 제공해주지 않는다고함
-	//private String address;
-
-	private boolean isActive = true;
-
-	private boolean spotifyConnected;
-
-	private boolean googleConnected;
+    // 🔥 인증 코드를 받기 위한 필드 추가
+    private String code;
 }
