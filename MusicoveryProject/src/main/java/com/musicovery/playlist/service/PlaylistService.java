@@ -13,6 +13,7 @@ public interface PlaylistService {
     // 추가할 메서드 시그니처
     List<Playlist> getAllPlaylists();    
     List<Playlist> getAllPlaylistsByUser(User user);
+    
 	Playlist createPlaylist(String accessToken, PlaylistDTO playlistDTO);
     Playlist updatePlaylist(String accessToken, PlaylistDTO playlistDTO);
     void deletePlaylist(String accessToken, String playlistId);

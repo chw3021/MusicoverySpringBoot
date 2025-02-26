@@ -48,7 +48,7 @@ public class Playlist {
 
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Date playlistDate;  // 사용자 ID (이메일)
+    private Date playlistDate;  //생성일자
     
     private Boolean isPublic;
     
