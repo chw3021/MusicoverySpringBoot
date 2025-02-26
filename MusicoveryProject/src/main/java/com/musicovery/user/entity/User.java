@@ -87,7 +87,10 @@ public class User {
 			id = UUID.randomUUID().toString();
 		}
 	}
-
+	
+	@Column(nullable = false)
+	@Builder.Default
+	private boolean isAdmin = false;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
