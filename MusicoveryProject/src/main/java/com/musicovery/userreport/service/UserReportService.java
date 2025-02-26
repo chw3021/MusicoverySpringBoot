@@ -6,7 +6,14 @@ import com.musicovery.userreport.dto.UserReportDTO;
 import com.musicovery.userreport.entity.UserReport;
 
 public interface UserReportService {
-    UserReport reportUser(UserReportDTO userReportDTO);
-    
-    List<UserReport> getReportsByUser(String reportedUserId);
+
+	List<UserReport> getReports();
+
+	UserReport reportUser(UserReportDTO userReportDTO);
+
+	List<UserReport> getReportsByReporter(String reporterUserId);
+
+	List<UserReport> getReportsByReportedUser(String reportedUserId);
+
+	UserReport updateUserReportStatus(Long reportId, String status);
 }
