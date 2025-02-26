@@ -129,7 +129,7 @@ public class GeminiService {
     
     public String getLyrics(String artist, String title) {
         // 가사를 요청하기 위한 프롬프트 생성
-        String prompt = String.format("Instruction: The AI provides the lyrics to the following song as pure text, without parentheses, chorus marks, or line breaks.\\n- Simply prohibit the AI from formatting the lyrics with italics, bold, parentheses, etc.\\n- Provide the original EN/KO text without translation. If the original lyrics are a mix of languages, do not translate them, but provide the original mixed lyrics.: \"%s\"의 \"%s\"", artist, title);
+        String prompt = String.format("Instruction: The AI provides the lyrics to the following song as pure text, without parentheses, chorus marks, or line breaks.\\n- Simply prohibit the AI from formatting the lyrics with italics, bold, parentheses, etc.\\n- Provide the original EN/KO text without translation. If the original lyrics are a mix of languages, do not translate them, but provide the original mixed lyrics.: \"%s\"의 \"%s\"의 가사", artist, title);
         log.info("가사 요청 프롬프트: {}", prompt);
 
         HttpHeaders headers = new HttpHeaders();
