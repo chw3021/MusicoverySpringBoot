@@ -1,5 +1,6 @@
 package com.musicovery.post.service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -129,6 +130,7 @@ public class PlaylistPostService {
         reply.setUser(user);
         reply.setPlaylistPost(post);
         reply.setContent(content);
+        reply.setCreatedDate(LocalDateTime.now());
         replyRepository.save(reply);
 
         post.setReplyCount(post.getReplyCount() + 1);
@@ -141,7 +143,8 @@ public class PlaylistPostService {
         }
     }
     
-    
+
+    @Transactional
     public List<ReplyDTO> getRepliesByPostId(Long postId) {
         List<Reply> replies = replyRepository.findByPlaylistPostId(postId);
         return replies.stream()
@@ -154,7 +157,18 @@ public class PlaylistPostService {
                         .build())
                 .collect(Collectors.toList());
     }
-    
+
+    @Transactional
+    public Reply deleteReply(String accessToken, Long postId, Long replyId) {
+        Reply reply = replyRepository.findById(replyId).orElseThrow(() -> new EntityNotFoundException("Reply not found"));
+
+        replyRepository.delete(reply);
+        PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow();
+        post.setReplyCount(post.getReplyCount() - 1);
+        playlistPostRepository.save(post);
+        
+        return reply;
+    }
     public Page<PlaylistPostDTO> getPlaylistPosts(int page, int size, String sort, String searchType, String keyword) {
         Sort.Direction direction = Sort.Direction.DESC;
         String sortField = "createdDate";
