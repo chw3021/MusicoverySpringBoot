@@ -147,20 +147,29 @@ public class UserServiceImpl implements UserService {
 	// oauth 2.0 로그인 및 회원가입
 	@Override
 	public UserDTO spotifyLoginDTO(SpotifyUserDTO spotifyUserDTO) {
-		// 이메일로 기존 유저 확인
-		User user = userRepository.findByEmail(spotifyUserDTO.getEmail()).orElseGet(() -> {
-			// 기존 유저가 없다면 신규 가입
-			User newUser = User.builder().id(spotifyUserDTO.getUserId()) // DTO에서 생성된 userId 그대로 사용
-					.userId(spotifyUserDTO.getUserId()).email(spotifyUserDTO.getEmail()).passwd(spotifyUserDTO.getPasswd())
-					.nickname(spotifyUserDTO.getNickname()).bio(spotifyUserDTO.getBio())
-					.phone(spotifyUserDTO.getPhone()).profileImageUrl(spotifyUserDTO.getProfileImageUrl())
-					.spotifyConnected(true).isActive(true).build();
-			return userRepository.save(newUser);
-		});
+	    // 이메일로 기존 유저 확인
+	    User user = userRepository.findByEmail(spotifyUserDTO.getEmail()).orElseGet(() -> {
+	        // 기존 유저가 없다면 신규 가입
+	        User newUser = User.builder()
+	                .id(spotifyUserDTO.getUserId())  // DTO에서 생성된 userId 그대로 사용
+	                .userId(spotifyUserDTO.getUserId())
+	                .email(spotifyUserDTO.getEmail())
+	                // 비밀번호 암호화 추가
+	                .passwd(passwordEncoder.encode(spotifyUserDTO.getPasswd()))  
+	                .nickname(spotifyUserDTO.getNickname())
+	                .bio(spotifyUserDTO.getBio())
+	                .phone(spotifyUserDTO.getPhone())
+	                .profileImageUrl(spotifyUserDTO.getProfileImageUrl())
+	                .spotifyConnected(true)
+	                .isActive(true)
+	                .build();
+	        return userRepository.save(newUser);
+	    });
 
-		// ModelMapper를 사용하여 엔티티 -> DTO 변환
-		return modelMapper.map(user, UserDTO.class);
+	    // ModelMapper를 사용하여 엔티티 -> DTO 변환
+	    return modelMapper.map(user, UserDTO.class);
 	}
+
 
 	@Override
 	public User spotifyLogin(SpotifyUserDTO userDTO) {
