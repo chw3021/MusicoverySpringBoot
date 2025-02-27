@@ -103,7 +103,9 @@ public class User {
 	@JsonIgnore
 	private Set<Friends> friendOf;
 
-	@Column(nullable = false, updatable = false)
-	@CreatedDate
-	private LocalDate createdAt; // 이 필드를 추가해야 함.
+    @Column(nullable = false, updatable = false)
+    @CreatedDate
+    @Builder.Default
+    private LocalDate createdAt = LocalDate.now(); // 이 필드를 추가해야 함.
+
 }

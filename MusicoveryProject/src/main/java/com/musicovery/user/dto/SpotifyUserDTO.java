@@ -1,5 +1,7 @@
 package com.musicovery.user.dto;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +23,7 @@ public class SpotifyUserDTO {
     private boolean isActive = true;
     private boolean spotifyConnected;
     private boolean googleConnected;
+    private LocalDate createdAt;
 
     // 🔥 인증 코드를 받기 위한 필드 추가
     private String code;
