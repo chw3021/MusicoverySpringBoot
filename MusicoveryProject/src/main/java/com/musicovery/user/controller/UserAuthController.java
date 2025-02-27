@@ -95,4 +95,5 @@ public class UserAuthController {
 		List<User> recentUsers = userService.getRecentUsers();
 		return ResponseEntity.ok(recentUsers);
 	}
+
 }

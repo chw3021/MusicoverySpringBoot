@@ -105,5 +105,5 @@ public class User {
 
 	@Column(nullable = false, updatable = false)
 	@CreatedDate
-	private LocalDate createdAt; // 이 필드를 추가해야 함.
+	private LocalDate createdAt;
 }

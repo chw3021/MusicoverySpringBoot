@@ -293,4 +293,5 @@ public class UserServiceImpl implements UserService {
 	public List<User> getRecentUsers() {
 		return userRepository.findTop3ByOrderByRegdateDesc();
 	}
+
 }

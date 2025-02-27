@@ -36,4 +36,5 @@ public interface UserRepository extends JpaRepository<User, String> {
 
 	@Query("SELECT u FROM User u ORDER BY u.regdate DESC LIMIT 3")
 	List<User> findTop3ByOrderByRegdateDesc();
+
 }
