@@ -32,11 +32,11 @@ public class FriendsServiceImpl implements FriendsService {
 
     @Override
     public List<Friends> getFriends(String userId) {
-        return friendsRepository.findByUserId(userId);
+        return friendsRepository.findByUserIdOrFriendIdAndIsAcceptedTrue(userId);
     }
 
     @Override
-    public List<Friends> getFriendOf(String friendId) {
+    public List<Friends> getFriendRequests(String friendId) {
         return friendsRepository.findByFriendIdAndIsAcceptedFalse(friendId);
     }
 

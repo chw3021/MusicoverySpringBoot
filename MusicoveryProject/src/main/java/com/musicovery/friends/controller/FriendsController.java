@@ -38,9 +38,9 @@ public class FriendsController {
         return friendsService.getFriends(userId);
     }
 
-    @GetMapping("/friendOf")
+    @GetMapping("/friendRequests")
     public List<Friends> getFriendOf(@RequestParam String friendId) {
-        return friendsService.getFriendOf(friendId);
+        return friendsService.getFriendRequests(friendId);
     }
 
     @GetMapping("/pendingRequests")
