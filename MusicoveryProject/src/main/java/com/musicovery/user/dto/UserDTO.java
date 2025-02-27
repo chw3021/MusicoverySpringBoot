@@ -16,6 +16,8 @@ public class UserDTO {
 	private String userId;
 
 	private String email;
+	
+	private String nickname;
 
 	// JSON 응답에서 제외 (보안 목적)
 
