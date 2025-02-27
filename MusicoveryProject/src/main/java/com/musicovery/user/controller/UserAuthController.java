@@ -1,5 +1,6 @@
 package com.musicovery.user.controller;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import com.musicovery.user.dto.UserDTO;
 import com.musicovery.user.dto.UserProfileDTO;
 import com.musicovery.user.dto.UserSignupDTO;
 import com.musicovery.user.entity.User;
+import com.musicovery.user.repository.UserRepository;
 import com.musicovery.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,11 +32,23 @@ public class UserAuthController {
 
 	private final UserService userService;
 	private final MailService mailService;
+	private final UserRepository userRepository;
+
+//	@PostMapping("/signup")
+//	public ResponseEntity<UserDTO> signup(@RequestBody UserSignupDTO userSignupDTO) {
+//		UserDTO userDTO = userService.signup(userSignupDTO);
+//		return ResponseEntity.ok(userDTO);
+//	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<UserDTO> signup(@RequestBody UserSignupDTO userSignupDTO) {
-		UserDTO userDTO = userService.signup(userSignupDTO);
-		return ResponseEntity.ok(userDTO);
+	public ResponseEntity<?> signup(@RequestBody UserSignupDTO userSignupDTO) {
+		try {
+			UserDTO userDTO = userService.signup(userSignupDTO);
+			return ResponseEntity.ok(userDTO);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT) // 409 Conflict
+					.body(Collections.singletonMap("message", e.getMessage()));
+		}
 	}
 
 	@PostMapping("/login")
@@ -59,13 +73,17 @@ public class UserAuthController {
 
 	@PostMapping("/signup/verify-email")
 	public ResponseEntity<?> registerUser(@RequestBody UserSignupDTO userSignupDTO) {
-		// 이메일 인증 토큰 생성
-		String token = userService.createVerificationToken(userSignupDTO.getEmail());
+		// 이메일 중복 확인
+		if (userRepository.existsByEmail(userSignupDTO.getEmail())) {
+			return ResponseEntity.status(HttpStatus.CONFLICT) // 409 Conflict
+					.body(Collections.singletonMap("message", "이미 사용중인 이메일입니다."));
+		}
 
-		// 이메일로 인증 메일 전송
+		// 중복이 아니면 이메일 인증 토큰 생성 및 메일 발송
+		String token = userService.createVerificationToken(userSignupDTO.getEmail());
 		mailService.sendVerificationEmail(userSignupDTO.getEmail(), token);
 
-		return ResponseEntity.ok("이메일 인증 메일이 발송되었습니다.");
+		return ResponseEntity.ok(Collections.singletonMap("message", "이메일 인증 메일이 발송되었습니다."));
 	}
 
 	// 이메일 인증 검증
@@ -96,4 +114,15 @@ public class UserAuthController {
 		return ResponseEntity.ok(recentUsers);
 	}
 
+	@GetMapping("/signup/check-nickname")
+	public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
+		boolean isDuplicate = userRepository.existsByNickname(nickname);
+
+		if (isDuplicate) {
+			return ResponseEntity.status(HttpStatus.CONFLICT) // 409 Conflict
+					.body(Collections.singletonMap("message", "이미 사용중인 닉네임입니다."));
+		}
+
+		return ResponseEntity.ok(Collections.singletonMap("message", "사용 가능한 닉네임입니다."));
+	}
 }
