@@ -105,5 +105,7 @@ public class User {
 
 	@Column(nullable = false, updatable = false)
 	@CreatedDate
-	private LocalDate createdAt;
+	@Builder.Default
+	private LocalDate createdAt = LocalDate.now(); // 이 필드를 추가해야 함.
+
 }

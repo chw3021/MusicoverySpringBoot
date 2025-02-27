@@ -151,7 +151,7 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByEmail(spotifyUserDTO.getEmail()).orElseGet(() -> {
 			// 기존 유저가 없다면 신규 가입
 			User newUser = User.builder().id(spotifyUserDTO.getUserId()) // DTO에서 생성된 userId 그대로 사용
-					.userId(spotifyUserDTO.getUserId()).email(spotifyUserDTO.getEmail())
+					.userId(spotifyUserDTO.getUserId()).email(spotifyUserDTO.getEmail()).passwd(spotifyUserDTO.getPasswd())
 					.nickname(spotifyUserDTO.getNickname()).bio(spotifyUserDTO.getBio())
 					.phone(spotifyUserDTO.getPhone()).profileImageUrl(spotifyUserDTO.getProfileImageUrl())
 					.spotifyConnected(true).isActive(true).build();
