@@ -13,16 +13,13 @@ public interface UserService {
 	UserDTO signup(UserSignupDTO userSignupDTO); // 회원가입
 
 	UserDTO login(UserDTO userDTO); // 로그인
-	
+
 	UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO);
 
 	User spotifyLogin(SpotifyUserDTO userDTO);
 
 	User findByUserId(String userId);
 
-
-	
-	
 	// Authorization Code로 Access Token 요청
 	SpotifyTokenDTO exchangeCodeForAccessToken(String authorizationCode);
 
@@ -30,12 +27,17 @@ public interface UserService {
 	SpotifyUserDTO getSpotifyUserProfile(String accessToken);
 
 	UserDTO spotifyLoginDTO(SpotifyUserDTO spotifyUserDTO);
-	
 
-    List<User> searchUsers(String keyword);
+	List<User> searchUsers(String keyword);
 
 	String createVerificationToken(String email);
 
 	void verifyEmail(String token);
+
+	List<Long> getWeeklyUserCounts();
+
+	long getTotalUsers(); // 총 유저 수 조회 메서드 추가
+
+	List<User> getRecentUsers(); // 최근 가입한 유저 3명 조회
 
 }

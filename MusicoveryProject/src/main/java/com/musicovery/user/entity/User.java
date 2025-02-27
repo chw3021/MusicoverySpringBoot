@@ -1,8 +1,11 @@
 package com.musicovery.user.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
+
+import org.springframework.data.annotation.CreatedDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.musicovery.friends.entity.Friends;
@@ -30,7 +33,7 @@ public class User {
 	@Id
 	@Column(updatable = false, nullable = false, unique = true)
 	private String id;
-	
+
 	// 스포티파이 api용 id
 	@Column(nullable = true, unique = true)
 	private String userId;
@@ -79,7 +82,7 @@ public class User {
 	public void preUpdate() {
 		this.lastupdate = LocalDateTime.now();
 	}
-	
+
 	@PrePersist
 	public void prePersist() {
 		// userId가 null일 경우 UUID를 생성하여 할당
@@ -87,16 +90,20 @@ public class User {
 			id = UUID.randomUUID().toString();
 		}
 	}
-	
+
 	@Column(nullable = false)
 	@Builder.Default
 	private boolean isAdmin = false;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private Set<Friends> friends;
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	private Set<Friends> friends;
 
-    @OneToMany(mappedBy = "friend", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private Set<Friends> friendOf;
+	@OneToMany(mappedBy = "friend", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	private Set<Friends> friendOf;
+
+	@Column(nullable = false, updatable = false)
+	@CreatedDate
+	private LocalDate createdAt; // 이 필드를 추가해야 함.
 }
