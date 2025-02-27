@@ -37,4 +37,6 @@ public interface PlaylistService {
 	// 🔹 최근 7일간 생성된 플레이리스트 수 조회
 	List<Long> getWeeklyPlaylists();
 
+	List<PlaylistDTO> getRecentPlaylists();
+
 }

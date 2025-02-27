@@ -160,4 +160,10 @@ public class PlaylistController {
 	public ResponseEntity<List<Long>> getWeeklyPlaylists() {
 		return ResponseEntity.ok(playlistService.getWeeklyPlaylists());
 	}
+
+	// 🔹 최근 생성된 플레이리스트 3개 반환
+	@GetMapping("/recent-playlists")
+	public List<PlaylistDTO> getRecentPlaylists() {
+		return playlistService.getRecentPlaylists();
+	}
 }

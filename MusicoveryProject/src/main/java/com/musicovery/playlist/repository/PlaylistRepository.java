@@ -27,4 +27,8 @@ public interface PlaylistRepository extends JpaRepository<Playlist, String> {
 	// 🔹 최근 7일간 매일 생성된 플레이리스트 수
 	@Query("SELECT COUNT(p) FROM Playlist p WHERE FUNCTION('DATE', p.playlistDate) = FUNCTION('DATE', :date)")
 	long countPlaylistsByDate(Date date);
+
+	// 🔹 최근 7일간 생성된 플레이리스트 3개 가져오기
+	@Query("SELECT p FROM Playlist p WHERE p.playlistDate >= :startDate ORDER BY p.playlistDate DESC")
+	List<Playlist> findRecentPlaylists(Date startDate);
 }

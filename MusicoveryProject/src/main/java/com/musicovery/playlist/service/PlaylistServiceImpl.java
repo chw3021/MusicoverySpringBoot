@@ -153,4 +153,18 @@ public class PlaylistServiceImpl implements PlaylistService {
 				}).collect(Collectors.toList());
 	}
 
+	@Override
+	public List<PlaylistDTO> getRecentPlaylists() {
+		// 🔹 7일 전 날짜 계산
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_YEAR, -7);
+		Date sevenDaysAgo = calendar.getTime();
+
+		// 최근 7일간 플레이리스트 가져와 DTO로 변환 (최대 3개)
+		return playlistRepository.findRecentPlaylists(sevenDaysAgo).stream().limit(3) // 3개 제한
+				.map(playlist -> new PlaylistDTO(playlist.getPlaylistId(), playlist.getPlaylistTitle(),
+						playlist.getPlaylistComment(), playlist.getPlaylistPhoto(), playlist.getUser().getUserId(),
+						playlist.getPlaylistDate(), playlist.getIsPublic(), playlist.getTrackIds()))
+				.collect(Collectors.toList());
+	}
 }
