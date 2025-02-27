@@ -31,11 +31,13 @@ public class GeminiService {
         this.apiKey = apiKey;
         this.restTemplate = new RestTemplate();
     }
-
+    
+    
     public List<SongRecommendation> getRecommendations(String genres, String mood, Integer bpm) {
         String prompt = String.format(
             "장르: %s, 분위기: %s, BPM: %d인 노래 20곡을 추천해주세요. " +
-            "JSON 형식으로 응답해주세요: [{\"title\": \"노래제목\", \"artist\": \"가수이름\"}]", 
+            "결과는 다음 JSON 형식으로만 응답해주세요: [{\"title\": \"노래제목\", \"artist\": \"가수이름\"}]. " +
+            "다른 설명은 필요없습니다.", 
             genres, mood, bpm
         );
         log.info(prompt);
@@ -62,7 +64,7 @@ public class GeminiService {
             String content = root.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText();
 
             // JSON 문자열에서 불필요한 부분 제거
-            content = content.replace("```json", "").replace("```", "").trim();
+            content = content.replace("```json", "").replace("```", "").trim(); 
 
             return mapper.readValue(content, new TypeReference<List<SongRecommendation>>() {});
         } catch (JsonProcessingException e) {
@@ -70,7 +72,6 @@ public class GeminiService {
             throw new RuntimeException("추천 목록 생성 실패", e);
         }
     }
-    
 
     /**
      * 🍀 키워드 없이 완전 무작위 추천

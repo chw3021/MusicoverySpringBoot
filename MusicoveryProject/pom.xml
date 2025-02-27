@@ -129,6 +129,11 @@
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
+		<!--Spring Framework에서 제공하는 이메일 전송 도구-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

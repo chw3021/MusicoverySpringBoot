@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.musicovery.post.dto.PlaylistPostDTO;
 import com.musicovery.post.dto.ReplyDTO;
 import com.musicovery.post.entity.PlaylistPost;
+import com.musicovery.post.entity.Reply;
 import com.musicovery.post.service.PlaylistPostService;
 import com.musicovery.user.entity.User;
 import com.musicovery.user.service.UserService;
@@ -92,12 +93,21 @@ public class PlaylistPostController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/reply/{postId}")
+    @GetMapping("/replies/{postId}")
     public ResponseEntity<List<ReplyDTO>> getReplies(@PathVariable Long postId) {
         List<ReplyDTO> replies = playlistPostService.getRepliesByPostId(postId);
         return ResponseEntity.ok(replies);
     }
 
+    @DeleteMapping("/replydelete/{replyId}")
+    public ResponseEntity<Reply> deleteReply(
+            @RequestHeader("Authorization") String bearerToken, @PathVariable Long replyId, @RequestParam Long postId) {
+        String accessToken = bearerToken.replace("Bearer ", "");
+    	Reply reply = playlistPostService.deleteReply(accessToken, postId, replyId);
+        return ResponseEntity.ok(reply);
+    }
+    
+    
     @GetMapping("/ranking")
     public ResponseEntity<List<PlaylistPost>> getRanking() {
         List<PlaylistPost> ranking = playlistPostService.getRanking();

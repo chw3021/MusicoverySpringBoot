@@ -64,8 +64,8 @@ public class User {
 	private boolean googleConnected = false;
 
 	@Column(nullable = false)
-	@Builder.Default
-	private boolean isActive = true;
+//	@Builder.Default
+	private boolean isActive;
 
 	@Column(nullable = false, updatable = false)
 	@Builder.Default

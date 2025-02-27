@@ -34,4 +34,8 @@ public interface UserService {
 
     List<User> searchUsers(String keyword);
 
+	String createVerificationToken(String email);
+
+	void verifyEmail(String token);
+
 }

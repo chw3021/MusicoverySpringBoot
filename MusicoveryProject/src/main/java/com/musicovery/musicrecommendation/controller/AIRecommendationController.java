@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.musicovery.musicrecommendation.service.AIRecommendationModel;
 
 @RestController
-@RequestMapping("/admin/recommendation")
+//@RequestMapping("/admin/recommendation")
+@RequestMapping("/recommendation")
 public class AIRecommendationController {
 
     private final AIRecommendationModel aiRecommendationModel;
