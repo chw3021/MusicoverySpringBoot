@@ -16,4 +16,6 @@ public interface UserReportService {
 	List<UserReport> getReportsByReportedUser(String reportedUserId);
 
 	UserReport updateUserReportStatus(Long reportId, String status);
+
+	List<UserReportDTO> getUserReports();
 }
