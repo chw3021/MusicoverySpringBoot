@@ -2,6 +2,7 @@ package com.musicovery.userreport.entity;
 
 import java.time.LocalDateTime;
 
+import com.musicovery.post.entity.PlaylistPost;
 import com.musicovery.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -37,6 +38,10 @@ public class UserReport {
 	@ManyToOne
 	@JoinColumn(name = "reported_id", nullable = false)
 	private User reportedUser; // 신고 대상 사용자
+
+	@ManyToOne
+	@JoinColumn(name = "post_id", nullable = false)
+	private PlaylistPost post; // 신고된 게시글
 
 	@Column(nullable = false, length = 500)
 	private String reason; // 신고 사유

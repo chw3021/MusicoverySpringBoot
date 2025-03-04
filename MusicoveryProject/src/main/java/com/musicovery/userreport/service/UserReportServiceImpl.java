@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.musicovery.post.entity.PlaylistPost;
+import com.musicovery.post.repository.PlaylistPostRepository;
 import com.musicovery.user.entity.User;
 import com.musicovery.user.repository.UserRepository;
 import com.musicovery.userreport.dto.UserReportDTO;
@@ -17,10 +19,13 @@ public class UserReportServiceImpl implements UserReportService {
 
 	private final UserReportRepository userReportRepository;
 	private final UserRepository userRepository;
+	private final PlaylistPostRepository playlistPostRepository;
 
-	public UserReportServiceImpl(UserReportRepository userReportRepository, UserRepository userRepository) {
+	public UserReportServiceImpl(UserReportRepository userReportRepository, UserRepository userRepository,
+			PlaylistPostRepository playlistPostRepository) {
 		this.userReportRepository = userReportRepository;
 		this.userRepository = userRepository;
+		this.playlistPostRepository = playlistPostRepository;
 	}
 
 	@Override
@@ -31,9 +36,14 @@ public class UserReportServiceImpl implements UserReportService {
 		User reportedUser = userRepository.findById(userReportDTO.getReportedUser()).orElseThrow(
 				() -> new IllegalArgumentException("피신고자 ID가 존재하지 않습니다: " + userReportDTO.getReportedUser()));
 
+		// 신고된 게시글 조회
+		PlaylistPost post = playlistPostRepository.findById(userReportDTO.getPostId())
+				.orElseThrow(() -> new IllegalArgumentException("Post ID가 존재하지 않습니다: " + userReportDTO.getPostId()));
+
 		// UserReport 엔티티 생성
 		UserReport userReport = UserReport.builder().reporter(reporter).reportedUser(reportedUser)
-				.reason(userReportDTO.getReason()).reportedAt(LocalDateTime.now()).status("신고 접수") // 초기 상태 설정
+				.reason(userReportDTO.getReason()).post(post).reportedAt(LocalDateTime.now()).status("신고 접수") // 초기 상태
+																												// 설정
 				.build();
 
 		// 저장하고 반환
@@ -69,7 +79,7 @@ public class UserReportServiceImpl implements UserReportService {
 	public List<UserReportDTO> getUserReports() {
 		return userReportRepository.findAll().stream().map(report -> {
 			UserReportDTO dto = new UserReportDTO();
-			dto.setReporter(report.getReporter().getId()); // ID 그대로 유지
+			dto.setReporter(report.getReporter().getId());
 			dto.setReportedUser(report.getReportedUser().getId());
 			dto.setReason(report.getReason());
 			dto.setReportedAt(report.getReportedAt());
