@@ -13,4 +13,5 @@ public class UserReportDTO {
     private String reason;
     private LocalDateTime reportedAt;
     private String status;
+    private Long postId;
 }

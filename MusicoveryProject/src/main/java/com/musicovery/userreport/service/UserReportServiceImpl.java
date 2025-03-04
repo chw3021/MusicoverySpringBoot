@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.musicovery.post.entity.PlaylistPost;
+import com.musicovery.post.repository.PlaylistPostRepository;
 import com.musicovery.user.entity.User;
 import com.musicovery.user.repository.UserRepository;
 import com.musicovery.userreport.dto.UserReportDTO;
@@ -16,10 +18,12 @@ public class UserReportServiceImpl implements UserReportService {
 
     private final UserReportRepository userReportRepository;
     private final UserRepository userRepository;
+    private final PlaylistPostRepository playlistPostRepository;
 
-    public UserReportServiceImpl(UserReportRepository userReportRepository, UserRepository userRepository) {
+    public UserReportServiceImpl(UserReportRepository userReportRepository, UserRepository userRepository, PlaylistPostRepository playlistPostRepository) {
         this.userReportRepository = userReportRepository;
         this.userRepository = userRepository;
+		this.playlistPostRepository = playlistPostRepository;
     }
 
 
@@ -30,12 +34,16 @@ public class UserReportServiceImpl implements UserReportService {
                 .orElseThrow(() -> new IllegalArgumentException("신고자 ID가 존재하지 않습니다: " + userReportDTO.getReporter()));
         User reportedUser = userRepository.findById(userReportDTO.getReportedUser())
                 .orElseThrow(() -> new IllegalArgumentException("피신고자 ID가 존재하지 않습니다: " + userReportDTO.getReportedUser()));
-
+        
+        PlaylistPost post = playlistPostRepository.findById(userReportDTO.getPostId())
+        		.orElseThrow(() -> new IllegalArgumentException("Post ID가 존재하지 않습니다: " + userReportDTO.getPostId()));;
+        
         // UserReport 엔티티 생성
         UserReport userReport = UserReport.builder()
                 .reporter(reporter)
                 .reportedUser(reportedUser)
                 .reason(userReportDTO.getReason())
+                .post(post)
                 .reportedAt(LocalDateTime.now())
                 .status("신고 접수") // 초기 상태 설정
                 .build();
