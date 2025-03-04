@@ -77,14 +77,30 @@ public class UserReportServiceImpl implements UserReportService {
 
 	@Override
 	public List<UserReportDTO> getUserReports() {
-		return userReportRepository.findAll().stream().map(report -> {
+		return userReportRepository.findAllWithPost().stream().map(report -> {
 			UserReportDTO dto = new UserReportDTO();
 			dto.setReporter(report.getReporter().getId());
 			dto.setReportedUser(report.getReportedUser().getId());
 			dto.setReason(report.getReason());
 			dto.setReportedAt(report.getReportedAt());
 			dto.setStatus(report.getStatus());
+
+			// 🚀 게시글 정보 추가
+			if (report.getPost() != null) {
+				dto.setPostId(report.getPost().getId());
+				dto.setPostTitle(report.getPost().getTitle());
+				dto.setPostDescription(report.getPost().getDescription());
+
+				// 🚀 플레이리스트 정보 추가
+				if (report.getPost().getPlaylist() != null) {
+					dto.setPlaylistId(report.getPost().getPlaylist().getPlaylistId()); // ✅ String으로 유지
+					dto.setPlaylistTitle(report.getPost().getPlaylist().getPlaylistTitle());
+					dto.setPlaylistDescription(report.getPost().getPlaylist().getPlaylistComment());
+				}
+			}
+
 			return dto;
 		}).collect(Collectors.toList());
 	}
+
 }

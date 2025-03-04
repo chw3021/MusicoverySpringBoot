@@ -8,10 +8,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserReportDTO {
-    private String reporter;
-    private String reportedUser;
-    private String reason;
-    private LocalDateTime reportedAt;
-    private String status;
-    private Long postId;
+	private Long id;
+	private String reporter;
+	private String reportedUser;
+	private String reason;
+	private LocalDateTime reportedAt;
+	private String status;
+	private Long postId;
+	private String postTitle;
+	private String postDescription;
+	private String playlistId;
+	private String playlistTitle;
+	private String playlistDescription;
+
 }

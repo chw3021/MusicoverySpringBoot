@@ -40,7 +40,7 @@ public class UserReport {
 	private User reportedUser; // 신고 대상 사용자
 
 	@ManyToOne
-	@JoinColumn(name = "post_id", nullable = false)
+	@JoinColumn(name = "post_id")
 	private PlaylistPost post; // 신고된 게시글
 
 	@Column(nullable = false, length = 500)
@@ -51,4 +51,5 @@ public class UserReport {
 
 	@Column(nullable = false)
 	private String status; // 상태 추가
+
 }

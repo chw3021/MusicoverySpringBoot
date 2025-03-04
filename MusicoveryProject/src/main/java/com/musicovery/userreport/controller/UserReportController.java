@@ -1,6 +1,7 @@
 package com.musicovery.userreport.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musicovery.userreport.dto.UserReportDTO;
@@ -55,15 +55,34 @@ public class UserReportController {
 	}
 
 	// 신고 상태를 업데이트하는 PUT 요청
+//	@PutMapping("/status/{reportId}")
+//	public ResponseEntity<UserReport> updateUserReportStatus(@PathVariable Long reportId, @RequestParam String status) {
+//		UserReport updatedReport = userReportService.updateUserReportStatus(reportId, status);
+//		return ResponseEntity.ok(updatedReport);
+//	}
+//	
+	// ✅ 신고 상태 업데이트 (PUT)
 	@PutMapping("/status/{reportId}")
-	public ResponseEntity<UserReport> updateUserReportStatus(@PathVariable Long reportId, @RequestParam String status) {
-		UserReport updatedReport = userReportService.updateUserReportStatus(reportId, status);
-		return ResponseEntity.ok(updatedReport);
+	public ResponseEntity<?> updateUserReportStatus(@PathVariable Long reportId,
+			@RequestBody Map<String, String> request) {
+		String status = request.get("status");
+
+		if (status == null || status.isEmpty()) {
+			return ResponseEntity.badRequest().body("🚨 상태 값이 비어 있습니다.");
+		}
+
+		try {
+			UserReport updatedReport = userReportService.updateUserReportStatus(reportId, status);
+			return ResponseEntity.ok(updatedReport);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
 	}
 
-	// ✅ UserReportDTO 기반 신고 목록 조회 API 추가
+	// ✅ 신고 목록 조회 API (UserReportDTO 기반)
 	@GetMapping("/reports")
 	public List<UserReportDTO> getUserReports() {
 		return userReportService.getUserReports();
 	}
+
 }
