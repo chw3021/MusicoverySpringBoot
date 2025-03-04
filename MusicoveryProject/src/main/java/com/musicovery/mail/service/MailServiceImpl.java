@@ -16,7 +16,7 @@ public class MailServiceImpl implements MailService {
 
 	@Override
 	public void sendVerificationEmail(String to, String token) {
-		String subject = "회원가입 이메일 인증";
+		String subject = "MusiCovery 회원가입 이메일 인증";
 		String verificationLink = "http://localhost:3000/verify?token=" + token;
 		String message = "<p>이메일 인증을 위해 아래 링크를 클릭하세요:</p>" + "<a href=\"" + verificationLink + "\">이메일 인증하기</a>";
 

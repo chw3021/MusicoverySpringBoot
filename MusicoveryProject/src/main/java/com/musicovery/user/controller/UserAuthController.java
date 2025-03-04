@@ -4,7 +4,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.musicovery.mail.service.MailService;
 import com.musicovery.user.dto.SpotifyUserDTO;
@@ -28,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserAuthController {
 
 	private final UserService userService;
@@ -58,12 +63,55 @@ public class UserAuthController {
 		return ResponseEntity.ok(loggedInUser);
 	}
 
-	@PutMapping("/profile/{userId}")
-	public ResponseEntity<UserDTO> updateProfile(@PathVariable String userId,
-			@RequestBody UserProfileDTO userProfileDTO) {
-		UserDTO updatedUser = userService.updateProfile(userId, userProfileDTO);
-		return ResponseEntity.ok(updatedUser);
+	
+//	@GetMapping("/profile")
+//    public Object getUserProfile(Authentication authentication, 
+//                                 @AuthenticationPrincipal Object principal) {
+//        if (authentication == null) {
+//            return "인증되지 않은 사용자입니다.";
+//        }
+//
+//        // 일반 로그인 사용자인 경우 (UserDetails)
+//        if (principal instanceof UserDetails) {
+//            UserDetails userDetails = (UserDetails) principal;
+//            return Map.of(
+//                "loginType", "LOCAL",
+//                "username", userDetails.getUsername()
+//            );
+//        }
+//
+//        // OAuth2 로그인 사용자인 경우 (OAuth2User)
+//        if (principal instanceof OAuth2User) {
+//            OAuth2User oauth2User = (OAuth2User) principal;
+//            return Map.of(
+//                "loginType", "OAUTH2",
+//                "attributes", oauth2User.getAttributes()
+//            );
+//        }
+//
+//        return "알 수 없는 로그인 방식입니다.";
+//    }
+
+	
+//	@PutMapping("/profile/{Id}")
+//	public ResponseEntity<UserDTO> updateProfile(
+//	        @PathVariable("Id") String Id,  // 경로 변수와 일치시킴
+//	        @RequestBody UserProfileDTO userProfileDTO) {
+//	    UserDTO updatedUser = userService.updateProfile(Id, userProfileDTO);
+//	    return ResponseEntity.ok(updatedUser);
+//	}
+
+	@PutMapping(value = "/profile/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<UserDTO> updateProfile(
+	        @PathVariable("id") String id,
+	        @RequestPart("userProfileDTO") UserProfileDTO userProfileDTO,  // JSON 데이터 받음
+	        @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+
+	    UserDTO updatedUser = userService.updateProfile(id, userProfileDTO, profileImage);
+	    return ResponseEntity.ok(updatedUser);
 	}
+
+
 
 	// Spotify 로그인/회원가입
 	@PostMapping("/spotify-login")
@@ -129,4 +177,12 @@ public class UserAuthController {
 	    
 	    return ResponseEntity.ok(Collections.singletonMap("message", "사용 가능한 닉네임입니다."));
 	}
+	
+	@PostMapping("/profile")
+    public ResponseEntity<UserProfileDTO> getUserProfile(@RequestBody UserProfileDTO userProfileDTO) {
+        String id = userProfileDTO.getId(); // 요청 본문에서 id 추출
+        UserProfileDTO userProfile = userService.getUserProfile(id);
+        return ResponseEntity.ok(userProfile);
+    }
+
 }

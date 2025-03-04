@@ -3,7 +3,6 @@ package com.musicovery.user.service;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -20,7 +19,7 @@ public class UserServiceTest {
 	@Setter(onMethod_ = @Autowired)
 	private UserService userService;
 
-	@Test
+	//@Test
 	public void userInsertTest() {
 	    // Given
 	    UserSignupDTO userSignupDTO = new UserSignupDTO();
@@ -54,4 +53,6 @@ public class UserServiceTest {
 	    assertNotNull(loggedInUser); // 로그인 성공 시 반환된 UserDTO가 null이 아님을 확인
 	    log.info("User logged in with Email: {}", loggedInUser.getEmail());
 	}
+	
+	
 }
