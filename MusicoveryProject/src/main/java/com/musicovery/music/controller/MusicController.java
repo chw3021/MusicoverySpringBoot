@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,13 +39,24 @@ public class MusicController {
     /**
      * 🎵 음악 재생
      */
-    @GetMapping("/play")
+    @PutMapping("/play")
     public ResponseEntity<String> playMusic(
             @RequestHeader("Authorization") String bearerToken,
-            @RequestParam String musicId) {
+            @RequestParam String musicId,
+            @RequestParam(required = false) String deviceId) {
         String accessToken = bearerToken.replace("Bearer ", "");
-        musicService.playMusic(accessToken, musicId);
+        musicService.playMusic(accessToken, musicId, deviceId);
         return ResponseEntity.ok("음악 재생 요청 완료!");
     }
 
+    /**
+     * 🎵 디바이스 목록 가져오기
+     */
+    @GetMapping("/devices")
+    public ResponseEntity<String> getDevices(
+            @RequestHeader("Authorization") String bearerToken) {
+        String accessToken = bearerToken.replace("Bearer ", "");
+        String devices = musicService.getDevices(accessToken);
+        return ResponseEntity.ok(devices);
+    }
 }
