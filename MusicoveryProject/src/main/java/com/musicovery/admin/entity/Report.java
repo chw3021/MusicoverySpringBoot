@@ -35,6 +35,22 @@ public class Report {
 	@Column(name = "status", nullable = false, length = 50)
 	private String status; // 신고 상태 (대기, 처리 중, 완료)
 
+	@Column(name = "reported_post_title", length = 255)
+	private String reportedPostTitle;
+
+	@Column(name = "reported_post_author", length = 100)
+	private String reportedPostAuthor;
+
+	@Column(name = "reported_post_content", columnDefinition = "TEXT")
+	private String reportedPostContent;
+
+	@Column(name = "playlist_title", length = 255)
+	private String playlistTitle;
+
+	@Column(name = "playlist_description", length = 500)
+	private String playlistDescription;
+
+	// ✅ 상태 업데이트 메서드 유지
 	public void updateStatus(String newStatus) {
 		this.status = newStatus;
 	}

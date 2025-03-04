@@ -17,7 +17,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Entity
 @Table(name = "report")
 @Data
@@ -26,25 +25,25 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserReport {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "report_id")
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "report_id")
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "reporter_id", nullable = false)
-    private User reporter; // 신고한 사용자
+	@ManyToOne
+	@JoinColumn(name = "reporter_id", nullable = false)
+	private User reporter; // 신고한 사용자
 
-    @ManyToOne
-    @JoinColumn(name = "reported_id", nullable = false)
-    private User reportedUser; // 신고 대상 사용자
+	@ManyToOne
+	@JoinColumn(name = "reported_id", nullable = false)
+	private User reportedUser; // 신고 대상 사용자
 
-    @Column(nullable = false, length = 500)
-    private String reason; // 신고 사유
+	@Column(nullable = false, length = 500)
+	private String reason; // 신고 사유
 
-    @Column(nullable = false)
-    private LocalDateTime reportedAt; // 신고 일시
+	@Column(nullable = false)
+	private LocalDateTime reportedAt; // 신고 일시
 
-    @Column(nullable = false)
-    private String status; // 상태 추가
+	@Column(nullable = false)
+	private String status; // 상태 추가
 }

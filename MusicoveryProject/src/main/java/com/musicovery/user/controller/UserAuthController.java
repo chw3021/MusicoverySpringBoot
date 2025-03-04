@@ -2,6 +2,7 @@ package com.musicovery.user.controller;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.musicovery.admin.entity.BannedUser;
+import com.musicovery.admin.repository.BannedUserRepository;
 import com.musicovery.mail.service.MailService;
 import com.musicovery.user.dto.SpotifyUserDTO;
 import com.musicovery.user.dto.UserDTO;
@@ -33,7 +36,7 @@ public class UserAuthController {
 	private final UserService userService;
 	private final MailService mailService;
 	private final UserRepository userRepository;
-
+	private BannedUserRepository bannedUserRepository;
 //	@PostMapping("/signup")
 //	public ResponseEntity<UserDTO> signup(@RequestBody UserSignupDTO userSignupDTO) {
 //		UserDTO userDTO = userService.signup(userSignupDTO);
@@ -124,5 +127,11 @@ public class UserAuthController {
 		}
 
 		return ResponseEntity.ok(Collections.singletonMap("message", "사용 가능한 닉네임입니다."));
+	}
+
+	@GetMapping("/check-ban/{userId}")
+	public boolean checkBan(@PathVariable String userId) {
+		Optional<BannedUser> bannedUser = bannedUserRepository.findByUserId(userId);
+		return bannedUser.isPresent() && bannedUser.get().isBanned();
 	}
 }
