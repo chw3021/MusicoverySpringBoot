@@ -2,6 +2,8 @@ package com.musicovery.user.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.musicovery.user.dto.SpotifyTokenDTO;
 import com.musicovery.user.dto.SpotifyUserDTO;
 import com.musicovery.user.dto.UserDTO;
@@ -14,7 +16,7 @@ public interface UserService {
 
 	UserDTO login(UserDTO userDTO); // 로그인
 
-	UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO);
+	UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO, MultipartFile profileImage);
 
 	User spotifyLogin(SpotifyUserDTO userDTO);
 
@@ -39,5 +41,6 @@ public interface UserService {
 	long getTotalUsers(); // 총 유저 수 조회 메서드 추가
 
 	List<User> getRecentUsers(); // 최근 가입한 유저 3명 조회
-
+	
+	UserProfileDTO getUserProfile(String id);
 }
