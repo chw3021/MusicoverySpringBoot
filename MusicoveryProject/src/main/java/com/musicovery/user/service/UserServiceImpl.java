@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +33,7 @@ import com.musicovery.user.dto.SpotifyUserDTO;
 import com.musicovery.user.dto.UserDTO;
 import com.musicovery.user.dto.UserProfileDTO;
 import com.musicovery.user.dto.UserSignupDTO;
+import com.musicovery.user.dto.UserUpdateDTO;
 import com.musicovery.user.entity.User;
 import com.musicovery.user.repository.UserRepository;
 
@@ -100,27 +102,28 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDTO login(UserDTO userDTO) {
-		// 이메일로 유저 조회
-		User user = userRepository.findByEmail(userDTO.getEmail())
-				.orElseThrow(() -> new IllegalArgumentException("이메일이 존재하지 않습니다."));
+	    // 이메일로 유저 조회
+	    User user = userRepository.findByEmail(userDTO.getEmail())
+	            .orElseThrow(() -> new IllegalArgumentException("이메일이 존재하지 않습니다."));
 
-		// 디버깅용 로그
-		log.debug("로그인 시도 - 이메일: {}", userDTO.getEmail());
-		log.debug("입력한 비밀번호: {}", userDTO.getPasswd());
-		log.debug("DB 저장된 비밀번호: {}", user.getPasswd());
+	    // isActive 필드 체크 (0이면 로그인 실패)
+	    if (!user.isActive()) {
+	        throw new IllegalArgumentException("비활성화된 계정입니다. 관리자에게 문의하세요.");
+	    }
 
-		// 비밀번호 일치 확인
-		if (userDTO.getPasswd() == null || !passwordEncoder.matches(userDTO.getPasswd(), user.getPasswd())) {
-			log.error("비밀번호 불일치 - 이메일: {}", userDTO.getEmail());
-			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-		}
+	    // 비밀번호 일치 확인
+	    if (userDTO.getPasswd() == null || !passwordEncoder.matches(userDTO.getPasswd(), user.getPasswd())) {
+	        log.error("비밀번호 불일치 - 이메일: {}", userDTO.getEmail());
+	        throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+	    }
 
-		// 로그인 성공 로그
-		log.info("로그인 성공 - 이메일: {}", userDTO.getEmail());
+	    // 로그인 성공 로그
+	    log.info("로그인 성공 - 이메일: {}", userDTO.getEmail());
 
-		// 엔티티 → DTO
-		return modelMapper.map(user, UserDTO.class);
+	    // 엔티티 → DTO
+	    return modelMapper.map(user, UserDTO.class);
 	}
+
 
 //	@Override
 //	public UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO) {
@@ -196,14 +199,22 @@ public class UserServiceImpl implements UserService {
 	                .phone(spotifyUserDTO.getPhone())
 	                .profileImageUrl(spotifyUserDTO.getProfileImageUrl())
 	                .spotifyConnected(true)
-	                .isActive(true)
+	                .isActive(true)  // 새로 생성되는 유저는 활성화 상태
 	                .build();
 	        return userRepository.save(newUser);
 	    });
 
+	    
+//	     isActive 필드 체크 (0이면 로그인 실패)
+	    if (!user.isActive()) {
+	        throw new IllegalArgumentException("비활성화된 계정입니다. 관리자에게 문의하세요.");
+	    }
+
+	    
 	    // ModelMapper를 사용하여 엔티티 -> DTO 변환
 	    return modelMapper.map(user, UserDTO.class);
 	}
+
 
 
 	@Override
@@ -350,4 +361,53 @@ public class UserServiceImpl implements UserService {
 	        user.getBio()
 	    );
 	}
+	
+	// 아이디에 해당하는 사용자 정보 수정
+    public User updateUserInfo(String userId, UserUpdateDTO userUpdateDTO) {
+        // 1. 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        // 2. 비밀번호 변경이 있다면, 비밀번호 암호화 후 업데이트
+        if (userUpdateDTO.getPasswd() != null && !userUpdateDTO.getPasswd().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(userUpdateDTO.getPasswd());
+            user.setPasswd(encodedPassword);
+        }
+
+        // 3. 전화번호 및 주소 변경
+        if (userUpdateDTO.getPhone() != null) {
+            user.setPhone(userUpdateDTO.getPhone());
+        }
+        if (userUpdateDTO.getAddress() != null) {
+            user.setAddress(userUpdateDTO.getAddress());
+        }
+
+        // 4. 변경된 사용자 정보 저장
+        return userRepository.save(user);
+    }
+    
+    @Override
+    public void deleteProfileImage(String id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        
+        // 프로필 이미지 필드 null로 업데이트
+        user.setProfileImageUrl(null);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    @Override
+    public void deleteUser(String id, String password) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        // 비밀번호 검증
+        if (!passwordEncoder.matches(password, user.getPasswd())) {
+            throw new RuntimeException("비밀번호가 올바르지 않습니다.");
+        }
+
+        // 유저 삭제
+        userRepository.delete(user);
+    }
 }

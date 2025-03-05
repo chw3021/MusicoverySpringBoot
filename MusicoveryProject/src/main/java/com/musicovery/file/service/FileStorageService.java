@@ -32,6 +32,7 @@ public class FileStorageService {
     
     public String uploadFile(MultipartFile file) throws IOException {
         String fileName = storeFile(file); // 기존 storeFile 메서드 활용
-        return "/uploads/" + fileName; // 저장된 파일의 접근 가능한 URL 반환
+        return fileName; // 
     }
+
 }

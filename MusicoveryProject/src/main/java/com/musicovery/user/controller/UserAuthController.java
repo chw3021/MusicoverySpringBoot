@@ -2,11 +2,13 @@ package com.musicovery.user.controller;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +25,7 @@ import com.musicovery.user.dto.SpotifyUserDTO;
 import com.musicovery.user.dto.UserDTO;
 import com.musicovery.user.dto.UserProfileDTO;
 import com.musicovery.user.dto.UserSignupDTO;
+import com.musicovery.user.dto.UserUpdateDTO;
 import com.musicovery.user.entity.User;
 import com.musicovery.user.repository.UserRepository;
 import com.musicovery.user.service.UserService;
@@ -183,6 +186,27 @@ public class UserAuthController {
         String id = userProfileDTO.getId(); // 요청 본문에서 id 추출
         UserProfileDTO userProfile = userService.getUserProfile(id);
         return ResponseEntity.ok(userProfile);
+    }
+
+	@PutMapping("/update/{userId}")
+    public ResponseEntity<User> updateUser(@PathVariable String userId, @RequestBody UserUpdateDTO userUpdateDTO) {
+        User updatedUser = userService.updateUserInfo(userId, userUpdateDTO);
+        return ResponseEntity.ok(updatedUser);
+    }
+	
+	@DeleteMapping("/profile/{id}/delete-image")
+	public ResponseEntity<?> deleteProfileImage(@PathVariable String id) {
+	    userService.deleteProfileImage(id);
+	    return ResponseEntity.ok("프로필 이미지가 삭제되었습니다.");
+	}
+	
+	@DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser(@RequestBody Map<String, String> requestData) {
+        String id = requestData.get("id");
+        String password = requestData.get("password");
+
+        userService.deleteUser(id, password);
+        return ResponseEntity.ok("회원 탈퇴 완료");
     }
 
 }
