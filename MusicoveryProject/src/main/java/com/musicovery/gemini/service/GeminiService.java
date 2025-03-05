@@ -179,7 +179,7 @@ public class GeminiService {
     
     public String getSomeTitle(String title) {
         // 제목 변형 요청을 위한 프롬프트 생성
-    	String prompt = String.format("너는이제 내가주는 노래의 title을 융통성을 가진 답이필요해. 예를들면 (Pink Venom값이 들어왔을때 : Pink Venom,pinkvenom,pink venom,PINKVENOM,PINK VENOM,핑크베놈,핑크 베놈) 이런식으로 해줄수있다. 이런식으로 글로만 써줘 다른말들은 필요없어. : \"%s\"", title);
+    	String prompt = String.format("너는이제 내가주는 노래의 title을 융통성을 가진 답이필요해. 예를들면 (Pink Venom값이 들어왔을때 : Pink Venom,pinkvenom,pink venom,PINKVENOM,PINK VENOM,핑크베놈,핑크 베놈) 이런식으로 해줄수있다. 이런식으로 글로만 써줘 다른말들은 필요없어. title마다 공백도 필요없어 , 로 나눠줘 : \"%s\"", title);
         log.info("제목 요청 프롬프트: {}", prompt);
 
         HttpHeaders headers = new HttpHeaders();
