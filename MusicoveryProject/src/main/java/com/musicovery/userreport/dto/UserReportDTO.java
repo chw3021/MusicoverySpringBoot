@@ -20,5 +20,5 @@ public class UserReportDTO {
 	private String playlistId;
 	private String playlistTitle;
 	private String playlistDescription;
-
+	private Long reportId;
 }

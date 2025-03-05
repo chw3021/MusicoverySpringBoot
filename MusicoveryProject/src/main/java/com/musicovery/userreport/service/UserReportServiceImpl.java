@@ -79,7 +79,9 @@ public class UserReportServiceImpl implements UserReportService {
 	public List<UserReportDTO> getUserReports() {
 		return userReportRepository.findAllWithPost().stream().map(report -> {
 			UserReportDTO dto = new UserReportDTO();
-			dto.setReporter(report.getReporter().getId());
+			dto.setReportId(report.getId());
+			// ✅ reporter_id가 존재하는 경우만 매핑 (예외 방지)
+			dto.setReporter(report.getReporter() != null ? report.getReporter().getId() : "알 수 없음");
 			dto.setReportedUser(report.getReportedUser().getId());
 			dto.setReason(report.getReason());
 			dto.setReportedAt(report.getReportedAt());
