@@ -27,4 +27,5 @@ public interface SpotifyApiMusicService {
 	 * 🎵 음악 재생
 	 */
 	String getDevices(String accessToken);
+	String searchArtist(String query);
 }

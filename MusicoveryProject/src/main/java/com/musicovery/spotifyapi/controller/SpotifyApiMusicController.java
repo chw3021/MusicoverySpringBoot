@@ -29,6 +29,15 @@ public class SpotifyApiMusicController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * 🔍 음악 검색 API
+     */
+    @GetMapping("/searchArtist")
+    public ResponseEntity<String> searchArtist(@RequestParam String query) {
+   	
+    	String result = spotifyApiMusicService.searchArtist(query);
+        return ResponseEntity.ok(result);
+    }
 	/**
 	 * 🎵 AI 추천 결과 기반으로 곡 정보 조회 API
 	 */
