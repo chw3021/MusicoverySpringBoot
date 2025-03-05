@@ -9,6 +9,7 @@ import com.musicovery.user.dto.SpotifyUserDTO;
 import com.musicovery.user.dto.UserDTO;
 import com.musicovery.user.dto.UserProfileDTO;
 import com.musicovery.user.dto.UserSignupDTO;
+import com.musicovery.user.dto.UserUpdateDTO;
 import com.musicovery.user.entity.User;
 
 public interface UserService {
@@ -43,4 +44,10 @@ public interface UserService {
 	List<User> getRecentUsers(); // 최근 가입한 유저 3명 조회
 	
 	UserProfileDTO getUserProfile(String id);
+
+	User updateUserInfo(String userId, UserUpdateDTO userUpdateDTO);
+	
+	void deleteProfileImage(String id);
+	
+	void deleteUser(String id, String password);
 }
