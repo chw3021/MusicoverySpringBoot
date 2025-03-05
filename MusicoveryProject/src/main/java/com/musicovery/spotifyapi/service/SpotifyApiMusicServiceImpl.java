@@ -133,13 +133,13 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
         SpotifyApiRequestDTO request = new SpotifyApiRequestDTO(url, "GET");
 		return spotifyApiUtil.callSpotifyApi(request, accessToken);
     }
-
-    /**
-     * 🎵 음악 재생
-     */
+    
     @Override
-    public String playMusic(String sessionId, String musicId) {
+    public String playMusic(String accessToken, String musicId, String deviceId) {
         String url = baseUrl + "/me/player/play";
+        if (deviceId != null && !deviceId.isEmpty()) {
+            url += "?device_id=" + deviceId;
+        }
 
         // 🎵 API 요청 본문 생성
         Map<String, Object> body = new HashMap<>();
@@ -153,7 +153,12 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
         }
 
         // 🎵 Spotify API 호출
-        return spotifyApiUtil.callSpotifyApi(sessionId, new SpotifyApiRequestDTO(url, "PUT"), requestBody);
+        return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "PUT"), requestBody);
     }
 
+    @Override
+    public String getDevices(String accessToken) {
+        String url = baseUrl + "/me/player/devices";
+        return spotifyApiUtil.callSpotifyApi(accessToken, new SpotifyApiRequestDTO(url, "GET"), null);
+    }
 }

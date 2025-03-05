@@ -21,6 +21,10 @@ public interface SpotifyApiMusicService {
 	 * 🎵 음악 재생
 	 * @return 
 	 */
-	String playMusic(String accessToken, String musicId);
+	String playMusic(String accessToken, String musicId, String deviceId);
 	String searchTrack(String query);
+	/**
+	 * 🎵 음악 재생
+	 */
+	String getDevices(String accessToken);
 }

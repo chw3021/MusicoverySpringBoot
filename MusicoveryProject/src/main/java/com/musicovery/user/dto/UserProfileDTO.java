@@ -11,6 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserProfileDTO {
 
+	private String id;
+	
 	private String nickname;
 
 	private String profileImageUrl;

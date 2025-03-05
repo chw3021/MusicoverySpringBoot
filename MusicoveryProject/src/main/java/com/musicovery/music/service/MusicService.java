@@ -38,8 +38,9 @@ public class MusicService {
     public Music saveMusic(Music music) {
         return musicRepository.save(music);
     }
+    
     @Transactional
-    public void playMusic(String accessToken, String musicId) {
+    public void playMusic(String accessToken, String musicId, String deviceId) {
         String userInfoJson = spotifyApiUserService.getUserInfo(accessToken);
         String userId = extractUserIdFromJson(userInfoJson); // JSON에서 userId 추출
 
@@ -54,9 +55,13 @@ public class MusicService {
         weightService.increaseWeightForPlayedSong(userId, musicId);
 
         // 🎵 Spotify에서 음악 재생 API 호출
-        spotifyApiMusicService.playMusic(accessToken, musicId);
+        spotifyApiMusicService.playMusic(accessToken, musicId, deviceId);
     }
 
+    public String getDevices(String accessToken) {
+        return spotifyApiMusicService.getDevices(accessToken);
+    }
+    
 	 // JSON에서 userId 추출하는 메서드 (Jackson 사용)
 	 private String extractUserIdFromJson(String json) {
 	     try {

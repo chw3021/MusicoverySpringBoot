@@ -1,5 +1,6 @@
 package com.musicovery.user.service;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -20,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.musicovery.file.service.FileStorageService;
 import com.musicovery.mail.entity.EmailVerificationToken;
 import com.musicovery.mail.repository.EmailVerificationTokenRepository;
 import com.musicovery.mail.service.MailService;
@@ -45,14 +48,17 @@ public class UserServiceImpl implements UserService {
 	private final EmailVerificationTokenRepository tokenRepository;
 	private final MailService mailService;
 
+	private final FileStorageService fileService;
+
 	// 생성자 주입
 	public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper,
-			EmailVerificationTokenRepository tokenRepository, MailService mailService) {
+			EmailVerificationTokenRepository tokenRepository, MailService mailService, FileStorageService fileService) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.modelMapper = modelMapper;
 		this.tokenRepository = tokenRepository;
 		this.mailService = mailService;
+		this.fileService = fileService;
 	}
 
 	@Override
@@ -116,25 +122,51 @@ public class UserServiceImpl implements UserService {
 		return modelMapper.map(user, UserDTO.class);
 	}
 
+//	@Override
+//	public UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO) {
+//		// 유저 정보 확인
+//		User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+//
+//		// 닉네임이 변경되었고, 중복일 경우 예외 발생
+//		if (!user.getNickname().equals(userProfileDTO.getNickname())
+//				&& userRepository.existsByNickname(userProfileDTO.getNickname())) {
+//			throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+//		}
+//
+//		// 변경할 필드만 업데이트
+//		user.setNickname(userProfileDTO.getNickname());
+//		user.setProfileImageUrl(userProfileDTO.getProfileImageUrl());
+//		user.setBio(userProfileDTO.getBio());
+//
+//		User updatedUser = userRepository.save(user);
+//
+//		// 엔티티 → DTO
+//		return modelMapper.map(updatedUser, UserDTO.class);
+//	}
+
 	@Override
-	public UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO) {
-		// 유저 정보 확인
+	public UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO, MultipartFile profileImage) {
 		User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-		// 닉네임이 변경되었고, 중복일 경우 예외 발생
 		if (!user.getNickname().equals(userProfileDTO.getNickname())
 				&& userRepository.existsByNickname(userProfileDTO.getNickname())) {
 			throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
 		}
 
-		// 변경할 필드만 업데이트
 		user.setNickname(userProfileDTO.getNickname());
-		user.setProfileImageUrl(userProfileDTO.getProfileImageUrl());
 		user.setBio(userProfileDTO.getBio());
 
-		User updatedUser = userRepository.save(user);
+		// 프로필 이미지 업로드
+		if (profileImage != null && !profileImage.isEmpty()) {
+			try {
+				String profileImageUrl = fileService.uploadFile(profileImage); // 새로운 메서드 사용
+				user.setProfileImageUrl(profileImageUrl);
+			} catch (IOException e) {
+				throw new RuntimeException("파일 업로드 실패", e);
+			}
+		}
 
-		// 엔티티 → DTO
+		User updatedUser = userRepository.save(user);
 		return modelMapper.map(updatedUser, UserDTO.class);
 	}
 
@@ -147,29 +179,21 @@ public class UserServiceImpl implements UserService {
 	// oauth 2.0 로그인 및 회원가입
 	@Override
 	public UserDTO spotifyLoginDTO(SpotifyUserDTO spotifyUserDTO) {
-	    // 이메일로 기존 유저 확인
-	    User user = userRepository.findByEmail(spotifyUserDTO.getEmail()).orElseGet(() -> {
-	        // 기존 유저가 없다면 신규 가입
-	        User newUser = User.builder()
-	                .id(spotifyUserDTO.getUserId())  // DTO에서 생성된 userId 그대로 사용
-	                .userId(spotifyUserDTO.getUserId())
-	                .email(spotifyUserDTO.getEmail())
-	                // 비밀번호 암호화 추가
-	                .passwd(passwordEncoder.encode(spotifyUserDTO.getPasswd()))  
-	                .nickname(spotifyUserDTO.getNickname())
-	                .bio(spotifyUserDTO.getBio())
-	                .phone(spotifyUserDTO.getPhone())
-	                .profileImageUrl(spotifyUserDTO.getProfileImageUrl())
-	                .spotifyConnected(true)
-	                .isActive(true)
-	                .build();
-	        return userRepository.save(newUser);
-	    });
+		// 이메일로 기존 유저 확인
+		User user = userRepository.findByEmail(spotifyUserDTO.getEmail()).orElseGet(() -> {
+			// 기존 유저가 없다면 신규 가입
+			User newUser = User.builder().id(spotifyUserDTO.getUserId()) // DTO에서 생성된 userId 그대로 사용
+					.userId(spotifyUserDTO.getUserId()).email(spotifyUserDTO.getEmail())
+					// 비밀번호 암호화 추가
+					.passwd(passwordEncoder.encode(spotifyUserDTO.getPasswd())).nickname(spotifyUserDTO.getNickname())
+					.bio(spotifyUserDTO.getBio()).phone(spotifyUserDTO.getPhone())
+					.profileImageUrl(spotifyUserDTO.getProfileImageUrl()).spotifyConnected(true).isActive(true).build();
+			return userRepository.save(newUser);
+		});
 
-	    // ModelMapper를 사용하여 엔티티 -> DTO 변환
-	    return modelMapper.map(user, UserDTO.class);
+		// ModelMapper를 사용하여 엔티티 -> DTO 변환
+		return modelMapper.map(user, UserDTO.class);
 	}
-
 
 	@Override
 	public User spotifyLogin(SpotifyUserDTO userDTO) {
@@ -303,4 +327,10 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findTop3ByOrderByRegdateDesc();
 	}
 
+	@Override
+	public UserProfileDTO getUserProfile(String id) {
+		User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+
+		return new UserProfileDTO(user.getId(), user.getNickname(), user.getProfileImageUrl(), user.getBio());
+	}
 }
