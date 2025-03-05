@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,6 +25,7 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
     private final SpotifyApiUtil spotifyApiUtil;
     private final SpotifyAuthServiceImpl spotifyAuthService;
     private final RestTemplate restTemplate;
+    private final String SPOTIFY_API_URL = "https://api.spotify.com/v1/artists/";
 
     @Value("${spotify.api.base_url}")
     private String baseUrl;
@@ -41,6 +47,67 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
         
         return response;
     }
+
+    @Override
+    public String searchArtist(String query) {
+        String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
+        String url = String.format("%s/search?q=%s&type=artist&market=KR&limit=1", baseUrl, encodedQuery);
+
+        SpotifyApiRequestDTO request = new SpotifyApiRequestDTO(url, "GET");
+        String response = spotifyApiUtil.callSpotifyApi(request, null);
+
+        // 응답에서 아티스트 ID 추출
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> result = objectMapper.readValue(response, Map.class);
+            List<Map<String, Object>> artists = (List<Map<String, Object>>) ((Map<String, Object>) result.get("artists")).get("items");
+            
+            if (artists != null && !artists.isEmpty()) {
+                return (String) artists.get(0).get("id"); // 첫 번째 아티스트 ID 반환
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return null; // 아티스트를 찾을 수 없으면 null 반환
+    }
+
+    public ResponseEntity<Map<String, Object>> getTracksByArtist(String artistId) {
+        try {
+            String accessToken = spotifyAuthService.getAccessToken();
+            String url = "https://api.spotify.com/v1/artists/" + artistId + "/top-tracks?market=KR";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + accessToken);
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+            // JSON String → Map 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> responseBody = objectMapper.readValue(response.getBody(), Map.class);
+
+            return ResponseEntity.ok(responseBody);
+        } catch (Exception e) {
+            // 보다 자세한 에러 메시지 로깅
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "서버 오류 발생", "message", e.getMessage()));
+        }
+    }
+    
+//    public String getTracksByArtist(String artistId) {
+//        String accessToken = spotifyAuthService.getAccessToken();
+//        String url = SPOTIFY_API_URL + artistId + "/top-tracks?market=KR"; // 한국 시장 기준
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set("Authorization", "Bearer " + accessToken);
+//
+//        HttpEntity<String> entity = new HttpEntity<>(headers);
+//        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+//
+//        return response.getBody();
+//    }
+    
 
     /**
      * 🔍 음악 검색 (Spotify API 호출)

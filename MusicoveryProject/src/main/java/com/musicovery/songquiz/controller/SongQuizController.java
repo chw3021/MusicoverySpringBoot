@@ -60,6 +60,17 @@ public class SongQuizController {
                                         .collect(Collectors.toList());
         return ResponseEntity.ok(aliasesList);
     }
+    
+//    @GetMapping("/someName")
+//    public ResponseEntity<List<String>> getSongName(@RequestParam String name) {
+//        String aliasesString = geminservice.getSomeTitle(name); // 서비스 메서드를 통해 유사 제목 가져오기
+//        List<String> aliasesList = Arrays.asList(aliasesString.split(","))
+//                                         .stream()
+//                                         .map(String::trim)
+//                                         .collect(Collectors.toList()); // 유사 제목들을 리스트로 변환
+//        return ResponseEntity.ok(aliasesList); // 리스트 반환
+//    }
+    
 
     
 }

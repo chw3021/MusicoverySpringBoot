@@ -1,6 +1,9 @@
 package com.musicovery.spotifyapi.service;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 
 public interface SpotifyApiMusicService {
     String search(String keyword, String type);
@@ -27,4 +30,6 @@ public interface SpotifyApiMusicService {
 	 * 🎵 음악 재생
 	 */
 	String getDevices(String accessToken);
+	String searchArtist(String query);
+	ResponseEntity<Map<String, Object>> getTracksByArtist(String artistId);
 }
