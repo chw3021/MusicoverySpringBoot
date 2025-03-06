@@ -48,7 +48,6 @@ public class UserServiceImpl implements UserService {
 	private final ModelMapper modelMapper; // ModelMapper 주입
 
 	private final EmailVerificationTokenRepository tokenRepository;
-	private final MailService mailService;
 	
 	private final FileStorageService fileService;
 
@@ -59,7 +58,6 @@ public class UserServiceImpl implements UserService {
 		this.passwordEncoder = passwordEncoder;
 		this.modelMapper = modelMapper;
 		this.tokenRepository = tokenRepository;
-		this.mailService = mailService;
 		this.fileService = fileService;
 	}
 
@@ -86,15 +84,9 @@ public class UserServiceImpl implements UserService {
 			user.setPasswd(passwordEncoder.encode(userSignupDTO.getPasswd()));
 		}
 
-		// 기본적으로 활성화 상태는 false로 설정
-		user.setActive(false); // 이메일 인증 전까지는 비활성화 상태
-
 		// 사용자 저장
 		User savedUser = userRepository.save(user);
 
-		// 이메일 인증 토큰 생성 및 메일 발송
-		String token = createVerificationToken(userSignupDTO.getEmail());
-		mailService.sendVerificationEmail(userSignupDTO.getEmail(), token);
 
 		// 엔티티 -> DTO
 		return modelMapper.map(savedUser, UserDTO.class);
@@ -318,8 +310,6 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByEmail(verificationToken.getEmail())
 				.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-		// 이메일 인증 완료 후 사용자 활성화
-		user.setActive(true);
 		userRepository.save(user);
 	}
 
