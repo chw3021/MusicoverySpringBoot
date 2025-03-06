@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.musicovery.musicrecommendation.service.WeightService;
 import com.musicovery.playlist.dto.PlaylistDTO;
 import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.repository.PlaylistRepository;
@@ -28,6 +29,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final SpotifyApiPlaylistService spotifyApiPlaylistService;
     private final UserService userService;
+    private final WeightService weightService;
 
 
     /**
@@ -40,6 +42,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         // 현재 시간 생성
         Date currentDate = new Date();
 
+        for (String trackId : playlistDTO.getTracks()) {
+            weightService.increaseWeightForCommentedPlaylist(playlistDTO.getUserId(), trackId);
+        }
         // 생성된 플레이리스트 정보를 DB에 저장
         Playlist playlist = Playlist.builder()
                 .playlistId(spotifyPlaylistId)
