@@ -66,7 +66,6 @@ public class StreamingServiceImpl implements StreamingService {
             streaming.setPlaylist(playlistService.getPlaylist(accessToken, streamingDTO.getPlaylistId()));
             streaming.setHostUser(streamingDTO.getHostUser());
             streaming.setIsLive(true);
-            streaming.setIsPremiumOnly(false);
             System.out.println("streamingDTO.getIsPublic() "+streamingDTO.getIsPublic());
             streaming.setIsPublic(streamingDTO.getIsPublic());
 
@@ -91,7 +90,6 @@ public class StreamingServiceImpl implements StreamingService {
             .hostUser(streamingDTO.getHostUser()) // ✅ 문자열을 Long 타입으로 변환
             .playlist(playlistService.getPlaylist(accessToken, streamingDTO.getPlaylistId())) // ✅ 변수명 수정
             .isLive(true)
-            .isPremiumOnly(streamingDTO.getIsPremiumOnly())
             .isPublic(streamingDTO.getIsPublic())
             .build();
 
@@ -107,7 +105,6 @@ public class StreamingServiceImpl implements StreamingService {
                     .hostUser(s.getHostUser())
                     .playlist(s.getPlaylist())
                     .isLive(false) // ✅ 스트리밍 종료
-                    .isPremiumOnly(s.getIsPremiumOnly())
                     .isPublic(s.getIsPublic())
                     .build();
             

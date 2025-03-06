@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.musicovery.musicrecommendation.service.WeightService;
 import com.musicovery.playlist.dto.PlaylistDTO;
 import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.repository.PlaylistRepository;
@@ -31,6 +32,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 	private final PlaylistRepository playlistRepository;
 	private final SpotifyApiPlaylistService spotifyApiPlaylistService;
 	private final UserService userService;
+	private final WeightService weightService;
 
 	/**
 	 * 📂 플레이리스트 생성 + Spotify API 동기화

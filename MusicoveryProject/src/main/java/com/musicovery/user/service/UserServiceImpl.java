@@ -46,10 +46,8 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final ModelMapper modelMapper; // ModelMapper 주입
-
 	private final EmailVerificationTokenRepository tokenRepository;
 	private final MailService mailService;
-
 	private final FileStorageService fileService;
 
 	// 생성자 주입
@@ -59,8 +57,8 @@ public class UserServiceImpl implements UserService {
 		this.passwordEncoder = passwordEncoder;
 		this.modelMapper = modelMapper;
 		this.tokenRepository = tokenRepository;
-		this.mailService = mailService;
 		this.fileService = fileService;
+		this.mailService = mailService;
 	}
 
 	@Override
@@ -86,15 +84,8 @@ public class UserServiceImpl implements UserService {
 			user.setPasswd(passwordEncoder.encode(userSignupDTO.getPasswd()));
 		}
 
-		// 기본적으로 활성화 상태는 false로 설정
-		user.setActive(false); // 이메일 인증 전까지는 비활성화 상태
-
 		// 사용자 저장
 		User savedUser = userRepository.save(user);
-
-		// 이메일 인증 토큰 생성 및 메일 발송
-		String token = createVerificationToken(userSignupDTO.getEmail());
-		mailService.sendVerificationEmail(userSignupDTO.getEmail(), token);
 
 		// 엔티티 -> DTO
 		return modelMapper.map(savedUser, UserDTO.class);
@@ -184,8 +175,8 @@ public class UserServiceImpl implements UserService {
 		// 이메일로 기존 유저 확인
 		User user = userRepository.findByEmail(spotifyUserDTO.getEmail()).orElseGet(() -> {
 			// 기존 유저가 없다면 신규 가입
-			User newUser = User.builder().id(spotifyUserDTO.getUserId()) // DTO에서 생성된 userId 그대로 사용
-					.userId(spotifyUserDTO.getUserId()).email(spotifyUserDTO.getEmail())
+			User newUser = User.builder().id(spotifyUserDTO.getId()).userId(spotifyUserDTO.getUserId())
+					.email(spotifyUserDTO.getEmail())
 					// 비밀번호 암호화 추가
 					.passwd(passwordEncoder.encode(spotifyUserDTO.getPasswd())).nickname(spotifyUserDTO.getNickname())
 					.bio(spotifyUserDTO.getBio()).phone(spotifyUserDTO.getPhone())
@@ -198,9 +189,20 @@ public class UserServiceImpl implements UserService {
 			return userRepository.save(newUser);
 		});
 
+		// 기존 계정이 있지만 아직 소셜 연동이 안 되어 있는 경우
+		if (user != null && !user.isSpotifyConnected() && user.getUserId() == null) {
+			user.setUserId(spotifyUserDTO.getUserId()); // Spotify ID 추가
+			user.setSpotifyConnected(true); // 소셜 연동 활성화
+			userRepository.save(user); // 업데이트된 정보 저장
+		}
+
+		// isActive 필드 체크 (0이면 로그인 실패)
+		if (!user.isActive()) {
+			throw new IllegalArgumentException("비활성화된 계정입니다. 관리자에게 문의하세요.");
+		}
+
 		// ModelMapper를 사용하여 엔티티 -> DTO 변환
 		return modelMapper.map(user, UserDTO.class);
-
 	}
 
 	@Override
@@ -304,8 +306,6 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByEmail(verificationToken.getEmail())
 				.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-		// 이메일 인증 완료 후 사용자 활성화
-		user.setActive(true);
 		userRepository.save(user);
 	}
 

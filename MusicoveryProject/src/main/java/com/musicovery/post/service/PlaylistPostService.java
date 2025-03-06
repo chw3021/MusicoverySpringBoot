@@ -26,7 +26,9 @@ import com.musicovery.user.entity.User;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 @Service
+@RequiredArgsConstructor
 public class PlaylistPostService {
 
     private final WeightService weightService;
@@ -35,17 +37,6 @@ public class PlaylistPostService {
     private final LikeRepository likeRepository;
     private final ReplyRepository replyRepository;
     private final PlaylistService playlistService;
-
-    public PlaylistPostService(WeightService weightService, PlaylistPostRepository playlistPostRepository, 
-                               SpotifyApiPlaylistService spotifyApiPlaylistService, LikeRepository likeRepository,
-                               ReplyRepository replyRepository, PlaylistService playlistService) {
-        this.weightService = weightService;
-        this.playlistPostRepository = playlistPostRepository;
-        this.spotifyApiPlaylistService = spotifyApiPlaylistService;
-        this.likeRepository = likeRepository;
-        this.replyRepository = replyRepository;
-        this.playlistService = playlistService;
-    }
 
     @Transactional
     public PlaylistPost createPost(String accessToken, User user, String title, String description, String playlistId) {
@@ -62,7 +53,7 @@ public class PlaylistPostService {
         List<String> trackIds = spotifyApiPlaylistService.getTracksIdInPlaylist(accessToken, playlistId);
 
         for (String trackId : trackIds) {
-            weightService.increaseWeightForLikedPlaylist(user.getUserId(), trackId);
+            weightService.increaseWeightForCommentedPlaylist(user.getUserId(), trackId);
         }
         return post;
     }

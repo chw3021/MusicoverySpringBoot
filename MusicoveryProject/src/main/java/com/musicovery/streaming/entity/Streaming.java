@@ -41,9 +41,6 @@ public class Streaming {
     @Column(name = "is_live", nullable = false)
     private Boolean isLive;
 
-    @Column(name = "is_premium_only", nullable = false)
-    private Boolean isPremiumOnly;
-
     @Column(name = "is_public", nullable = false)
     private Boolean isPublic;
     
