@@ -35,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "${react.base_url}")
 public class UserAuthController {
 
 	private final UserService userService;

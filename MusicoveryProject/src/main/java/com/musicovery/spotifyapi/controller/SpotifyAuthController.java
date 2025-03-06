@@ -4,6 +4,7 @@ package com.musicovery.spotifyapi.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,9 @@ public class SpotifyAuthController {
         return ResponseEntity.ok(authUrl); // Spotify 인증 페이지 URL 반환
     }
     
+    @Value("${react.base_url}")
+    private String reactUrl;
+
     @GetMapping("/callback")
     public ResponseEntity<String> handleSpotifyCallback(@RequestParam("code") String code) {
         try {
@@ -48,7 +52,7 @@ public class SpotifyAuthController {
 
             return ResponseEntity.ok()
                 .contentType(MediaType.TEXT_HTML)
-                .body("""
+                .body(String.format("""
                     <!DOCTYPE html>
                     <html>
                     <head>
@@ -61,7 +65,7 @@ public class SpotifyAuthController {
                                         type: 'auth_complete',
                                         accessToken: '%s',
                                         refreshToken: '%s'
-                                    }, 'http://localhost:3000');
+                                    }, '%s');
                                     
                                     // 창 닫기
                                     setTimeout(function() {
@@ -78,7 +82,7 @@ public class SpotifyAuthController {
                         <h3>인증이 완료되었습니다. 잠시 후 창이 닫힙니다.</h3>
                     </body>
                     </html>
-                    """.formatted(accessToken, refreshToken));
+                    """, accessToken, refreshToken, reactUrl));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("인증 실패: " + e.getMessage());
