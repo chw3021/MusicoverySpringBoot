@@ -115,29 +115,6 @@ public class UserServiceImpl implements UserService {
 	    // 엔티티 → DTO
 	    return modelMapper.map(user, UserDTO.class);
 	}
-
-
-//	@Override
-//	public UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO) {
-//		// 유저 정보 확인
-//		User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-//
-//		// 닉네임이 변경되었고, 중복일 경우 예외 발생
-//		if (!user.getNickname().equals(userProfileDTO.getNickname())
-//				&& userRepository.existsByNickname(userProfileDTO.getNickname())) {
-//			throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
-//		}
-//
-//		// 변경할 필드만 업데이트
-//		user.setNickname(userProfileDTO.getNickname());
-//		user.setProfileImageUrl(userProfileDTO.getProfileImageUrl());
-//		user.setBio(userProfileDTO.getBio());
-//
-//		User updatedUser = userRepository.save(user);
-//
-//		// 엔티티 → DTO
-//		return modelMapper.map(updatedUser, UserDTO.class);
-//	}
 	
 	@Override
 	public UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO, MultipartFile profileImage) {
@@ -181,7 +158,7 @@ public class UserServiceImpl implements UserService {
 	    User user = userRepository.findByEmail(spotifyUserDTO.getEmail()).orElseGet(() -> {
 	        // 기존 유저가 없다면 신규 가입
 	        User newUser = User.builder()
-	                .id(spotifyUserDTO.getUserId())  // DTO에서 생성된 userId 그대로 사용
+	                .id(spotifyUserDTO.getId())  
 	                .userId(spotifyUserDTO.getUserId())
 	                .email(spotifyUserDTO.getEmail())
 	                // 비밀번호 암호화 추가
@@ -196,17 +173,23 @@ public class UserServiceImpl implements UserService {
 	        return userRepository.save(newUser);
 	    });
 
+	    // 기존 계정이 있지만 아직 소셜 연동이 안 되어 있는 경우
+	    if (user != null && !user.isSpotifyConnected() && user.getUserId() == null) {
+	        user.setUserId(spotifyUserDTO.getUserId()); // Spotify ID 추가
+	        user.setSpotifyConnected(true); // 소셜 연동 활성화
+	        userRepository.save(user);  // 업데이트된 정보 저장
+	    }
 	    
-//	     isActive 필드 체크 (0이면 로그인 실패)
+	    // isActive 필드 체크 (0이면 로그인 실패)
 	    if (!user.isActive()) {
 	        throw new IllegalArgumentException("비활성화된 계정입니다. 관리자에게 문의하세요.");
 	    }
-
 	    
 	    // ModelMapper를 사용하여 엔티티 -> DTO 변환
 	    return modelMapper.map(user, UserDTO.class);
 	}
-
+	
+	
 
 
 	@Override
