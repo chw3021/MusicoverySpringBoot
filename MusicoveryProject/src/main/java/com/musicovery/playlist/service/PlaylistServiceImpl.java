@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +43,12 @@ public class PlaylistServiceImpl implements PlaylistService {
         // 현재 시간 생성
         Date currentDate = new Date();
 
-        for (String trackId : playlistDTO.getTracks()) {
+        // 트랙 ID에서 "spotify:track:" 부분 제거
+        List<String> parsedTrackIds = playlistDTO.getTracks().stream()
+                .map(trackId -> trackId.replace("spotify:track:", ""))
+                .collect(Collectors.toList());
+
+        for (String trackId : parsedTrackIds) {
             weightService.increaseWeightForCommentedPlaylist(playlistDTO.getUserId(), trackId);
         }
         // 생성된 플레이리스트 정보를 DB에 저장
