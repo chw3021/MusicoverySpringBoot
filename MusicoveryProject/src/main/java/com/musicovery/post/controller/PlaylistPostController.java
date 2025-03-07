@@ -1,6 +1,7 @@
 package com.musicovery.post.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -98,6 +99,8 @@ public class PlaylistPostController {
         List<ReplyDTO> replies = playlistPostService.getRepliesByPostId(postId);
         return ResponseEntity.ok(replies);
     }
+    
+    
 
     @DeleteMapping("/replydelete/{replyId}")
     public ResponseEntity<Reply> deleteReply(
@@ -106,7 +109,13 @@ public class PlaylistPostController {
     	Reply reply = playlistPostService.deleteReply(accessToken, postId, replyId);
         return ResponseEntity.ok(reply);
     }
-    
+
+    @GetMapping("/playlist/{postId}")
+    public ResponseEntity<Map<String, Object>> getPostPlaylist(@RequestHeader("Authorization") String bearerToken, @PathVariable Long postId) {
+    	String accessToken = bearerToken.replace("Bearer ", "");
+    	Map<String, Object> playlist = playlistPostService.getPostPlaylist(accessToken, postId);
+        return ResponseEntity.ok(playlist);
+    }
     
     @GetMapping("/ranking")
     public ResponseEntity<List<PlaylistPost>> getRanking() {

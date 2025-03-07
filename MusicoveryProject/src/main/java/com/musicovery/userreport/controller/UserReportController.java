@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musicovery.userreport.dto.UserReportDTO;
+import com.musicovery.userreport.dto.UserReportDataDTO;
 import com.musicovery.userreport.entity.UserReport;
 import com.musicovery.userreport.service.UserReportService;
 
@@ -36,21 +37,21 @@ public class UserReportController {
 
     // 특정 사용자가 신고한 내역을 조회하는 GET 요청
     @GetMapping("/reporter/{reporterUserId}")
-    public List<UserReport> getReportsByReporter(@PathVariable String reporterUserId) {
+    public List<UserReportDataDTO> getReportsByReporter(@PathVariable String reporterUserId) {
         // 사용자의 신고 내역을 조회
         return userReportService.getReportsByReporter(reporterUserId);
     }
 
     // 특정 사용자의 신고 내역을 조회하는 GET 요청
     @GetMapping("/reported/{reportedUserId}")
-    public List<UserReport> getReportsByReportedUser(@PathVariable String reportedUserId) {
+    public List<UserReportDataDTO> getReportsByReportedUser(@PathVariable String reportedUserId) {
         // 사용자의 신고 내역을 조회
         return userReportService.getReportsByReportedUser(reportedUserId);
     }
 
     // 전체 신고 조회
     @GetMapping("/reportsAll")
-    public List<UserReport> getReports() {
+    public List<UserReportDataDTO> getReports() {
         // 사용자의 신고 내역을 조회
         return userReportService.getReports();
     }
