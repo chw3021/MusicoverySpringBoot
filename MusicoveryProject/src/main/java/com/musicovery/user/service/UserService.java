@@ -50,4 +50,5 @@ public interface UserService {
 	void deleteProfileImage(String id);
 	
 	void deleteUser(String id, String password);
+	
 }
