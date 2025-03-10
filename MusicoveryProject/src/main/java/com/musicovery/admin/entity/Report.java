@@ -1,5 +1,7 @@
 package com.musicovery.admin.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,19 +23,20 @@ public class Report {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long report_Id; // 신고 ID
-
-	@Column(name = "reason", nullable = false, length = 255)
-	private String reason; // 신고 사유
+	@Column(name = "report_id") // ✅ 명확한 컬럼 매핑 추가
+	private Long reportId;
 
 	@Column(name = "reported_id", nullable = false, length = 50)
-	private String reportedUserId; // 신고된 사용자 (user_id)
+	private String reportedUserId;
 
 	@Column(name = "reporter_id", nullable = false, length = 50)
-	private String reporterUserId; // 신고한 사용자 (user_id)
+	private String reporterUserId;
+
+	@Column(name = "reason", nullable = false, length = 255)
+	private String reason;
 
 	@Column(name = "status", nullable = false, length = 50)
-	private String status; // 신고 상태 (대기, 처리 중, 완료)
+	private String status;
 
 	@Column(name = "reported_post_title", length = 255)
 	private String reportedPostTitle;
@@ -44,14 +47,14 @@ public class Report {
 	@Column(name = "reported_post_content", columnDefinition = "TEXT")
 	private String reportedPostContent;
 
-	@Column(name = "playlist_title", length = 255)
-	private String playlistTitle;
+	@Column(name = "ban_end_date")
+	private LocalDateTime banEndDate;
 
-	@Column(name = "playlist_description", length = 500)
-	private String playlistDescription;
-
-	// ✅ 상태 업데이트 메서드 유지
 	public void updateStatus(String newStatus) {
 		this.status = newStatus;
+	}
+
+	public boolean isBanned() {
+		return banEndDate == null || banEndDate.isAfter(LocalDateTime.now());
 	}
 }

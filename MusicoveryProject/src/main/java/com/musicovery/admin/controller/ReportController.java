@@ -29,7 +29,6 @@ public class ReportController {
 		// ✅ 로그 확인 (데이터가 정상적으로 포함되는지 확인)
 		for (Report report : reports) {
 			System.out.println("🚀 신고된 게시글 제목: " + report.getReportedPostTitle());
-			System.out.println("🚀 신고된 플레이리스트 제목: " + report.getPlaylistTitle());
 		}
 
 		return reports;

@@ -3,7 +3,6 @@ package com.musicovery.user.controller;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,8 +20,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.musicovery.admin.entity.BannedUser;
-import com.musicovery.admin.repository.BannedUserRepository;
+import com.musicovery.admin.repository.ReportRepository;
 import com.musicovery.mail.service.MailService;
 import com.musicovery.user.dto.SpotifyUserDTO;
 import com.musicovery.user.dto.UserDTO;
@@ -44,7 +42,7 @@ public class UserAuthController {
 	private final UserService userService;
 	private final MailService mailService;
 	private final UserRepository userRepository;
-	private BannedUserRepository bannedUserRepository;
+	private final ReportRepository reportRepository;
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody UserSignupDTO userSignupDTO) {
@@ -136,8 +134,7 @@ public class UserAuthController {
 
 	@GetMapping("/check-ban/{userId}")
 	public boolean checkBan(@PathVariable String userId) {
-		Optional<BannedUser> bannedUser = bannedUserRepository.findByUserId(userId);
-		return bannedUser.isPresent() && bannedUser.get().isBanned();
+		return reportRepository.existsByReportedUserIdAndStatus(userId, "벤");
 	}
 
 	@PostMapping("/profile")

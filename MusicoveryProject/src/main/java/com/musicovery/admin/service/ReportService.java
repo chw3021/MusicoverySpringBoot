@@ -11,5 +11,9 @@ public interface ReportService {
 
 	boolean updateReportStatus(Long reportId, String status);
 
+	boolean isUserBanned(String reportedUserId);
+
+	boolean unbanUser(String reportedUserId);
+
 	boolean banUser(Long reportId, int days);
 }
