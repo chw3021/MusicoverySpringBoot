@@ -2,8 +2,8 @@ package com.musicovery.user.controller;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,11 +45,6 @@ public class UserAuthController {
 	private final MailService mailService;
 	private final UserRepository userRepository;
 	private BannedUserRepository bannedUserRepository;
-//	@PostMapping("/signup")
-//	public ResponseEntity<UserDTO> signup(@RequestBody UserSignupDTO userSignupDTO) {
-//		UserDTO userDTO = userService.signup(userSignupDTO);
-//		return ResponseEntity.ok(userDTO);
-//	}
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody UserSignupDTO userSignupDTO) {
@@ -68,55 +63,14 @@ public class UserAuthController {
 		return ResponseEntity.ok(loggedInUser);
 	}
 
-	
-//	@GetMapping("/profile")
-//    public Object getUserProfile(Authentication authentication, 
-//                                 @AuthenticationPrincipal Object principal) {
-//        if (authentication == null) {
-//            return "인증되지 않은 사용자입니다.";
-//        }
-//
-//        // 일반 로그인 사용자인 경우 (UserDetails)
-//        if (principal instanceof UserDetails) {
-//            UserDetails userDetails = (UserDetails) principal;
-//            return Map.of(
-//                "loginType", "LOCAL",
-//                "username", userDetails.getUsername()
-//            );
-//        }
-//
-//        // OAuth2 로그인 사용자인 경우 (OAuth2User)
-//        if (principal instanceof OAuth2User) {
-//            OAuth2User oauth2User = (OAuth2User) principal;
-//            return Map.of(
-//                "loginType", "OAUTH2",
-//                "attributes", oauth2User.getAttributes()
-//            );
-//        }
-//
-//        return "알 수 없는 로그인 방식입니다.";
-//    }
-
-	
-//	@PutMapping("/profile/{Id}")
-//	public ResponseEntity<UserDTO> updateProfile(
-//	        @PathVariable("Id") String Id,  // 경로 변수와 일치시킴
-//	        @RequestBody UserProfileDTO userProfileDTO) {
-//	    UserDTO updatedUser = userService.updateProfile(Id, userProfileDTO);
-//	    return ResponseEntity.ok(updatedUser);
-//	}
-
 	@PutMapping(value = "/profile/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<UserDTO> updateProfile(
-	        @PathVariable("id") String id,
-	        @RequestPart("userProfileDTO") UserProfileDTO userProfileDTO,  // JSON 데이터 받음
-	        @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+	public ResponseEntity<UserDTO> updateProfile(@PathVariable("id") String id,
+			@RequestPart("userProfileDTO") UserProfileDTO userProfileDTO, // JSON 데이터 받음
+			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 
-	    UserDTO updatedUser = userService.updateProfile(id, userProfileDTO, profileImage);
-	    return ResponseEntity.ok(updatedUser);
+		UserDTO updatedUser = userService.updateProfile(id, userProfileDTO, profileImage);
+		return ResponseEntity.ok(updatedUser);
 	}
-
-
 
 	// Spotify 로그인/회원가입
 	@PostMapping("/spotify-login")
@@ -185,33 +139,39 @@ public class UserAuthController {
 		Optional<BannedUser> bannedUser = bannedUserRepository.findByUserId(userId);
 		return bannedUser.isPresent() && bannedUser.get().isBanned();
 	}
-	
+
 	@PostMapping("/profile")
-    public ResponseEntity<UserProfileDTO> getUserProfile(@RequestBody UserProfileDTO userProfileDTO) {
-        String id = userProfileDTO.getId(); // 요청 본문에서 id 추출
-        UserProfileDTO userProfile = userService.getUserProfile(id);
-        return ResponseEntity.ok(userProfile);
-    }
+	public ResponseEntity<UserProfileDTO> getUserProfile(@RequestBody UserProfileDTO userProfileDTO) {
+		String id = userProfileDTO.getId(); // 요청 본문에서 id 추출
+		UserProfileDTO userProfile = userService.getUserProfile(id);
+		return ResponseEntity.ok(userProfile);
+	}
 
 	@PutMapping("/update/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable String userId, @RequestBody UserUpdateDTO userUpdateDTO) {
-        User updatedUser = userService.updateUserInfo(userId, userUpdateDTO);
-        return ResponseEntity.ok(updatedUser);
-    }
-	
+	public ResponseEntity<User> updateUser(@PathVariable String userId, @RequestBody UserUpdateDTO userUpdateDTO) {
+		User updatedUser = userService.updateUserInfo(userId, userUpdateDTO);
+		return ResponseEntity.ok(updatedUser);
+	}
+
 	@DeleteMapping("/profile/{id}/delete-image")
 	public ResponseEntity<?> deleteProfileImage(@PathVariable String id) {
-	    userService.deleteProfileImage(id);
-	    return ResponseEntity.ok("프로필 이미지가 삭제되었습니다.");
+		userService.deleteProfileImage(id);
+		return ResponseEntity.ok("프로필 이미지가 삭제되었습니다.");
 	}
-	
+
 	@DeleteMapping("/delete")
-    public ResponseEntity<?> deleteUser(@RequestBody Map<String, String> requestData) {
-        String id = requestData.get("id");
-        String password = requestData.get("password");
+	public ResponseEntity<?> deleteUser(@RequestBody Map<String, String> requestData) {
+		String id = requestData.get("id");
+		String password = requestData.get("password");
 
-        userService.deleteUser(id, password);
-        return ResponseEntity.ok("회원 탈퇴 완료");
-    }
+		userService.deleteUser(id, password);
+		return ResponseEntity.ok("회원 탈퇴 완료");
+	}
 
+	@PostMapping("/info")
+	public ResponseEntity<UserDTO> getUserInfo(@RequestBody UserDTO userDTO) {
+		// 클라이언트에서 받은 userAuthDTO를 통해 사용자의 정보를 조회
+		UserDTO user = userService.getUserInfo(userDTO.getUserId());
+		return ResponseEntity.ok(user); // 사용자의 정보 반환
+	}
 }

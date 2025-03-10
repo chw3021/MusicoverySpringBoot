@@ -74,4 +74,11 @@ public class UserReportController {
 	public List<UserReportDTO> getUserReports() {
 		return userReportService.getUserReports();
 	}
+
+	// UserReportController.java (컨트롤러)
+	@GetMapping("/count")
+	public int getReportCount() {
+		return userReportService.countUserReports();
+	}
+
 }

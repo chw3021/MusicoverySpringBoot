@@ -3,6 +3,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,5 +70,10 @@ public class CustomerSupportController {
     @PostMapping("/respond/{inquiryId}")
     public CustomerSupport respondToInquiry(@PathVariable Long inquiryId, @RequestBody String response) {
         return customerSupportService.respondToInquiry(inquiryId, response);
+    }
+    
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getTotalInquiries() {
+        return ResponseEntity.ok(customerSupportService.countTotalInquiries());
     }
 }

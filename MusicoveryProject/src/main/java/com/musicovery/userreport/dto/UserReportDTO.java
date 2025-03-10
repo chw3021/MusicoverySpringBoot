@@ -15,11 +15,8 @@ public class UserReportDTO {
 	private Long postId;
 	private String postTitle;
 	private String postDescription;
-	private String playlistId;
-	private String playlistTitle;
-	private String playlistDescription;
 	private Long reportId;
 	private String reporterId;
 	private String reportedUserId;
-
+	private String reportedNickname;
 }
