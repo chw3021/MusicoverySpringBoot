@@ -25,6 +25,7 @@ public interface PlaylistPostRepository extends JpaRepository<PlaylistPost, Long
             p.createdDate, p.likeCount, p.replyCount, p.viewCount, p.isNotice, p.playlist
         ) 
         FROM PlaylistPost p
+        WHERE p.isNotice = false
         ORDER BY p.createdDate DESC
         """)
     Page<PlaylistPostDTO> findAllWithProjection(Pageable pageable);
@@ -35,6 +36,7 @@ public interface PlaylistPostRepository extends JpaRepository<PlaylistPost, Long
             p.createdDate, p.likeCount, p.replyCount, p.viewCount, p.isNotice, p.playlist
         ) 
         FROM PlaylistPost p
+        WHERE p.isNotice = false
         ORDER BY p.viewCount DESC, p.createdDate DESC
         """)
     Page<PlaylistPostDTO> findAllWithProjectionByViewCount(Pageable pageable);
@@ -49,8 +51,15 @@ public interface PlaylistPostRepository extends JpaRepository<PlaylistPost, Long
                is_notice as isNotice ,
                playlist_id as playlistId
         FROM post 
+        WHERE is_notice = false 
         ORDER BY created_date DESC
         """,
         nativeQuery = true)
     Page<PlaylistPost> findAllWithNativeQuery(Pageable pageable);
+    
+	Page<PlaylistPost> findByTitleContainingIgnoreCaseAndIsNoticeFalse(String keyword, Pageable pageable);
+	Page<PlaylistPost> findByUser_NicknameContainingIgnoreCaseAndIsNoticeFalse(String keyword, Pageable pageable);
+	Page<PlaylistPost> findByDescriptionContainingIgnoreCaseAndIsNoticeFalse(String keyword, Pageable pageable);
+	Page<PlaylistPost> findByIsNoticeFalse(Pageable pageable);
+	Page<PlaylistPost> findByIsNoticeTrue(Pageable pageable);
 }
