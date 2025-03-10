@@ -165,10 +165,4 @@ public class UserAuthController {
         return ResponseEntity.ok("회원 탈퇴 완료");
     }
 
-	@PostMapping("/info")
-    public ResponseEntity<UserDTO> getUserInfo(@RequestBody UserDTO userDTO) {
-        // 클라이언트에서 받은 userAuthDTO를 통해 사용자의 정보를 조회
-        UserDTO user = userService.getUserInfo(userDTO.getUserId());
-        return ResponseEntity.ok(user); // 사용자의 정보 반환
-    }
 }

@@ -51,5 +51,4 @@ public interface UserService {
 	
 	void deleteUser(String id, String password);
 	
-	UserDTO getUserInfo(String id);
 }

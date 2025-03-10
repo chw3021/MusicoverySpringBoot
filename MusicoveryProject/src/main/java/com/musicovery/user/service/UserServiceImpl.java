@@ -384,15 +384,4 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
-	@Override
-	public UserDTO getUserInfo(String id) {
-		User user = userRepository.findById(id)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
-
-	        // User 엔티티에서 필요한 정보를 DTO로 변환
-	        UserDTO userDTO = new UserDTO();
-	        userDTO.setId(user.getId());
-	        userDTO.setAdmin(user.isAdmin());  // admin 여부 전달
-	        return userDTO;
-	}
 }
