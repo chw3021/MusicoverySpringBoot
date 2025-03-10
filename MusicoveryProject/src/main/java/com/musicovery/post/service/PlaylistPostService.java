@@ -51,16 +51,23 @@ public class PlaylistPostService {
         post.setLikeCount(0);
         post.setCreatedDate(new Date());
         post.setReplyCount(0);
+        post.setIsNotice(false);
         playlistPostRepository.save(post);
-
-        List<String> trackIds = spotifyApiPlaylistService.getTracksIdInPlaylist(accessToken, playlistId);
-
-        for (String trackId : trackIds) {
-            weightService.increaseWeightForCommentedPlaylist(user.getUserId(), trackId);
-        }
         return post;
     }
 
+	public PlaylistPost createNotice(String accessToken, User user, String title, String description) {
+        PlaylistPost post = new PlaylistPost();
+        post.setTitle(title);
+        post.setDescription(description);
+        post.setUser(user);
+        post.setLikeCount(0);
+        post.setCreatedDate(new Date());
+        post.setReplyCount(0);
+        post.setIsNotice(true);
+        playlistPostRepository.save(post);
+        return post;
+	}
     public String getTracksInPlaylist(String accessToken, String playlistId) {
         return spotifyApiPlaylistService.getTracksInPlaylist(accessToken, playlistId);
     }
@@ -88,6 +95,14 @@ public class PlaylistPostService {
     }
     
 
+    @Transactional
+    public PlaylistPost increaseViewCount(String accessToken, Long postId) {
+        PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        post.setViewCount(post.getViewCount()+1);
+        playlistPostRepository.save(post);
+        return post;
+    }
+    
 
     @Transactional
     public PlaylistPost deletePost(String accessToken, Long postId) {
@@ -179,6 +194,7 @@ public class PlaylistPostService {
         
         return reply;
     }
+    
     public Page<PlaylistPostDTO> getPlaylistPosts(int page, int size, String sort, String searchType, String keyword) {
         Sort.Direction direction = Sort.Direction.DESC;
         String sortField = "createdDate";
@@ -198,13 +214,13 @@ public class PlaylistPostService {
             // 검색 조건이 있을 때는 기존 방식 사용
             Page<PlaylistPost> postEntities;
             if (searchType.equals("title")) {
-                postEntities = playlistPostRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+                postEntities = playlistPostRepository.findByTitleContainingIgnoreCaseAndIsNoticeFalse(keyword, pageable);
             } else if (searchType.equals("description")) {
-                postEntities = playlistPostRepository.findByDescriptionContainingIgnoreCase(keyword, pageable);
+                postEntities = playlistPostRepository.findByDescriptionContainingIgnoreCaseAndIsNoticeFalse(keyword, pageable);
             } else if (searchType.equals("author")) {
-                postEntities = playlistPostRepository.findByUser_NicknameContainingIgnoreCase(keyword, pageable);
+                postEntities = playlistPostRepository.findByUser_NicknameContainingIgnoreCaseAndIsNoticeFalse(keyword, pageable);
             } else {
-                postEntities = playlistPostRepository.findAll(pageable);
+                postEntities = playlistPostRepository.findByIsNoticeFalse(pageable);
             }
             posts = postEntities.map(post -> PlaylistPostDTO.builder()
                     .id(post.getId())
@@ -228,7 +244,22 @@ public class PlaylistPostService {
 
         return posts;
     }
-
+    
+    public Page<PlaylistPostDTO> getNoticePosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Page<PlaylistPost> postEntities = playlistPostRepository.findByIsNoticeTrue(pageable);
+        return postEntities.map(post -> PlaylistPostDTO.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .description(post.getDescription())
+                .user(post.getUser())
+                .createdDate(post.getCreatedDate())
+                .likeCount(post.getLikeCount())
+                .replyCount(post.getReplyCount())
+                .viewCount(post.getViewCount())
+                .isNotice(post.getIsNotice())
+                .build());
+    }
     public List<PlaylistPost> getRanking() {
         return playlistPostRepository.findAllByOrderByLikeCountDesc();
     }
@@ -236,4 +267,5 @@ public class PlaylistPostService {
     public List<PlaylistPost> getPlaylistPosts() {
         return playlistPostRepository.findAll(); // 모든 게시글을 가져오는 메서드
     }
+
 }

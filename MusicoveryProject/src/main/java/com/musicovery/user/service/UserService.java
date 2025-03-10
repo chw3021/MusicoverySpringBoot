@@ -41,15 +41,14 @@ public interface UserService {
 
 	long getTotalUsers(); // 총 유저 수 조회 메서드 추가
 
-	UserProfileDTO getUserProfile(String id); // 사용자 프로필 조회
-
 	List<User> getRecentUsers(); // 최근 가입한 유저 3명 조회
+
+	UserProfileDTO getUserProfile(String id);
 
 	User updateUserInfo(String userId, UserUpdateDTO userUpdateDTO);
 
 	void deleteProfileImage(String id);
 
 	void deleteUser(String id, String password);
-	
-	UserDTO getUserInfo(String id);
+
 }

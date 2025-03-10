@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.musicovery.admin.repository.ReportRepository;
 import com.musicovery.mail.service.MailService;
 import com.musicovery.user.dto.SpotifyUserDTO;
 import com.musicovery.user.dto.UserDTO;
@@ -42,19 +41,19 @@ public class UserAuthController {
 	private final UserService userService;
 	private final MailService mailService;
 	private final UserRepository userRepository;
-	private final ReportRepository reportRepository;
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody UserSignupDTO userSignupDTO) {
-		try {
-			UserDTO userDTO = userService.signup(userSignupDTO);
-			return ResponseEntity.ok(userDTO);
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT) // 409 Conflict
-					.body(Collections.singletonMap("message", e.getMessage()));
-		}
+	    try {
+	        UserDTO userDTO = userService.signup(userSignupDTO);
+	        return ResponseEntity.ok(userDTO);
+	    } catch (IllegalArgumentException e) {
+	        return ResponseEntity
+	                .status(HttpStatus.CONFLICT) // 409 Conflict
+	                .body(Collections.singletonMap("message", e.getMessage()));
+	    }
 	}
-
+	
 	@PostMapping("/login")
 	public ResponseEntity<UserDTO> login(@RequestBody UserDTO userDTO) {
 		UserDTO loggedInUser = userService.login(userDTO);
@@ -62,13 +61,16 @@ public class UserAuthController {
 	}
 
 	@PutMapping(value = "/profile/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<UserDTO> updateProfile(@PathVariable("id") String id,
-			@RequestPart("userProfileDTO") UserProfileDTO userProfileDTO, // JSON 데이터 받음
-			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+	public ResponseEntity<UserDTO> updateProfile(
+	        @PathVariable("id") String id,
+	        @RequestPart("userProfileDTO") UserProfileDTO userProfileDTO,  // JSON 데이터 받음
+	        @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 
-		UserDTO updatedUser = userService.updateProfile(id, userProfileDTO, profileImage);
-		return ResponseEntity.ok(updatedUser);
+	    UserDTO updatedUser = userService.updateProfile(id, userProfileDTO, profileImage);
+	    return ResponseEntity.ok(updatedUser);
 	}
+
+
 
 	// Spotify 로그인/회원가입
 	@PostMapping("/spotify-login")
@@ -79,18 +81,20 @@ public class UserAuthController {
 
 	@PostMapping("/signup/verify-email")
 	public ResponseEntity<?> registerUser(@RequestBody UserSignupDTO userSignupDTO) {
-		// 이메일 중복 확인
-		if (userRepository.existsByEmail(userSignupDTO.getEmail())) {
-			return ResponseEntity.status(HttpStatus.CONFLICT) // 409 Conflict
-					.body(Collections.singletonMap("message", "이미 사용중인 이메일입니다."));
-		}
+	    // 이메일 중복 확인
+	    if (userRepository.existsByEmail(userSignupDTO.getEmail())) {
+	        return ResponseEntity
+	                .status(HttpStatus.CONFLICT) // 409 Conflict
+	                .body(Collections.singletonMap("message", "이미 사용중인 이메일입니다."));
+	    }
 
-		// 중복이 아니면 이메일 인증 토큰 생성 및 메일 발송
-		String token = userService.createVerificationToken(userSignupDTO.getEmail());
-		mailService.sendVerificationEmail(userSignupDTO.getEmail(), token);
+	    // 중복이 아니면 이메일 인증 토큰 생성 및 메일 발송
+	    String token = userService.createVerificationToken(userSignupDTO.getEmail());
+	    mailService.sendVerificationEmail(userSignupDTO.getEmail(), token);
 
-		return ResponseEntity.ok(Collections.singletonMap("message", "이메일 인증 메일이 발송되었습니다."));
+	    return ResponseEntity.ok(Collections.singletonMap("message", "이메일 인증 메일이 발송되었습니다."));
 	}
+
 
 	// 이메일 인증 검증
 	@GetMapping("/verify-email")
@@ -119,56 +123,46 @@ public class UserAuthController {
 		List<User> recentUsers = userService.getRecentUsers();
 		return ResponseEntity.ok(recentUsers);
 	}
-
+	
 	@GetMapping("/signup/check-nickname")
 	public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
-		boolean isDuplicate = userRepository.existsByNickname(nickname);
+	    boolean isDuplicate = userRepository.existsByNickname(nickname);
 
-		if (isDuplicate) {
-			return ResponseEntity.status(HttpStatus.CONFLICT) // 409 Conflict
-					.body(Collections.singletonMap("message", "이미 사용중인 닉네임입니다."));
-		}
-
-		return ResponseEntity.ok(Collections.singletonMap("message", "사용 가능한 닉네임입니다."));
+	    if (isDuplicate) {
+	        return ResponseEntity
+	                .status(HttpStatus.CONFLICT) // 409 Conflict
+	                .body(Collections.singletonMap("message", "이미 사용중인 닉네임입니다."));
+	    }
+	    
+	    return ResponseEntity.ok(Collections.singletonMap("message", "사용 가능한 닉네임입니다."));
 	}
-
-	@GetMapping("/check-ban/{userId}")
-	public boolean checkBan(@PathVariable String userId) {
-		return reportRepository.existsByReportedUserIdAndStatus(userId, "벤");
-	}
-
+	
 	@PostMapping("/profile")
-	public ResponseEntity<UserProfileDTO> getUserProfile(@RequestBody UserProfileDTO userProfileDTO) {
-		String id = userProfileDTO.getId(); // 요청 본문에서 id 추출
-		UserProfileDTO userProfile = userService.getUserProfile(id);
-		return ResponseEntity.ok(userProfile);
-	}
+    public ResponseEntity<UserProfileDTO> getUserProfile(@RequestBody UserProfileDTO userProfileDTO) {
+        String id = userProfileDTO.getId(); // 요청 본문에서 id 추출
+        UserProfileDTO userProfile = userService.getUserProfile(id);
+        return ResponseEntity.ok(userProfile);
+    }
 
 	@PutMapping("/update/{userId}")
-	public ResponseEntity<User> updateUser(@PathVariable String userId, @RequestBody UserUpdateDTO userUpdateDTO) {
-		User updatedUser = userService.updateUserInfo(userId, userUpdateDTO);
-		return ResponseEntity.ok(updatedUser);
-	}
-
+    public ResponseEntity<User> updateUser(@PathVariable String userId, @RequestBody UserUpdateDTO userUpdateDTO) {
+        User updatedUser = userService.updateUserInfo(userId, userUpdateDTO);
+        return ResponseEntity.ok(updatedUser);
+    }
+	
 	@DeleteMapping("/profile/{id}/delete-image")
 	public ResponseEntity<?> deleteProfileImage(@PathVariable String id) {
-		userService.deleteProfileImage(id);
-		return ResponseEntity.ok("프로필 이미지가 삭제되었습니다.");
+	    userService.deleteProfileImage(id);
+	    return ResponseEntity.ok("프로필 이미지가 삭제되었습니다.");
 	}
-
+	
 	@DeleteMapping("/delete")
-	public ResponseEntity<?> deleteUser(@RequestBody Map<String, String> requestData) {
-		String id = requestData.get("id");
-		String password = requestData.get("password");
+    public ResponseEntity<?> deleteUser(@RequestBody Map<String, String> requestData) {
+        String id = requestData.get("id");
+        String password = requestData.get("password");
 
-		userService.deleteUser(id, password);
-		return ResponseEntity.ok("회원 탈퇴 완료");
-	}
+        userService.deleteUser(id, password);
+        return ResponseEntity.ok("회원 탈퇴 완료");
+    }
 
-	@PostMapping("/info")
-	public ResponseEntity<UserDTO> getUserInfo(@RequestBody UserDTO userDTO) {
-		// 클라이언트에서 받은 userAuthDTO를 통해 사용자의 정보를 조회
-		UserDTO user = userService.getUserInfo(userDTO.getUserId());
-		return ResponseEntity.ok(user); // 사용자의 정보 반환
-	}
 }

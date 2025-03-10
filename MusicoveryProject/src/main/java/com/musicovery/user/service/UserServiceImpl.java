@@ -46,8 +46,9 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final ModelMapper modelMapper; // ModelMapper 주입
+
 	private final EmailVerificationTokenRepository tokenRepository;
-	private final MailService mailService;
+
 	private final FileStorageService fileService;
 
 	// 생성자 주입
@@ -58,7 +59,6 @@ public class UserServiceImpl implements UserService {
 		this.modelMapper = modelMapper;
 		this.tokenRepository = tokenRepository;
 		this.fileService = fileService;
-		this.mailService = mailService;
 	}
 
 	@Override
@@ -114,28 +114,6 @@ public class UserServiceImpl implements UserService {
 		// 엔티티 → DTO
 		return modelMapper.map(user, UserDTO.class);
 	}
-
-//	@Override
-//	public UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO) {
-//		// 유저 정보 확인
-//		User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-//
-//		// 닉네임이 변경되었고, 중복일 경우 예외 발생
-//		if (!user.getNickname().equals(userProfileDTO.getNickname())
-//				&& userRepository.existsByNickname(userProfileDTO.getNickname())) {
-//			throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
-//		}
-//
-//		// 변경할 필드만 업데이트
-//		user.setNickname(userProfileDTO.getNickname());
-//		user.setProfileImageUrl(userProfileDTO.getProfileImageUrl());
-//		user.setBio(userProfileDTO.getBio());
-//
-//		User updatedUser = userRepository.save(user);
-//
-//		// 엔티티 → DTO
-//		return modelMapper.map(updatedUser, UserDTO.class);
-//	}
 
 	@Override
 	public UserDTO updateProfile(String userId, UserProfileDTO userProfileDTO, MultipartFile profileImage) {
@@ -374,7 +352,6 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(user);
 	}
 
-
 	@Transactional
 	@Override
 	public void deleteUser(String id, String password) {
@@ -387,18 +364,6 @@ public class UserServiceImpl implements UserService {
 
 		// 유저 삭제
 		userRepository.delete(user);
-
-    }
-
-	@Override
-	public UserDTO getUserInfo(String id) {
-		User user = userRepository.findById(id)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
-
-	        // User 엔티티에서 필요한 정보를 DTO로 변환
-	        UserDTO userDTO = new UserDTO();
-	        userDTO.setId(user.getId());
-	        userDTO.setAdmin(user.isAdmin());  // admin 여부 전달
-	        return userDTO;
 	}
+
 }

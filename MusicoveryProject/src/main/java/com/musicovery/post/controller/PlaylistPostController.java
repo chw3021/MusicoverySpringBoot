@@ -46,6 +46,16 @@ public class PlaylistPostController {
         return ResponseEntity.ok(post);
     }
 
+    @PostMapping("/createnotice")
+    public ResponseEntity<?> createNotice(
+            @RequestHeader("Authorization") String bearerToken, @RequestParam String userId,
+            @RequestParam String title, @RequestParam String description) {
+        User user = userService.findByUserId(userId);
+        String accessToken = bearerToken.replace("Bearer ", "");
+        PlaylistPost post = playlistPostService.createNotice(accessToken, user, title, description);
+        return ResponseEntity.ok(post);
+    }
+
 
     @PutMapping("/update/{postId}")
     public ResponseEntity<?> updatePost(
@@ -56,6 +66,16 @@ public class PlaylistPostController {
         return ResponseEntity.ok(post);
     }
 
+
+
+    @PutMapping("/increaseview/{postId}")
+    public ResponseEntity<?> increaseViewCount(
+            @RequestHeader("Authorization") String bearerToken, @PathVariable Long postId,
+            @RequestParam String title, @RequestParam String description) {
+        String accessToken = bearerToken.replace("Bearer ", "");
+        PlaylistPost post = playlistPostService.increaseViewCount(accessToken, postId);
+        return ResponseEntity.ok(post);
+    }
 
     @DeleteMapping("/delete/{postId}")
     public ResponseEntity<?> deletePost(
@@ -121,6 +141,14 @@ public class PlaylistPostController {
     public ResponseEntity<List<PlaylistPost>> getRanking() {
         List<PlaylistPost> ranking = playlistPostService.getRanking();
         return ResponseEntity.ok(ranking);
+    }
+    @GetMapping("/notices")
+    public ResponseEntity<PagedModel<EntityModel<PlaylistPostDTO>>> getNoticePosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size) {
+        Page<PlaylistPostDTO> noticePosts = playlistPostService.getNoticePosts(page, size);
+        PagedModel<EntityModel<PlaylistPostDTO>> pagedModel = pagedResourcesAssembler.toModel(noticePosts);
+        return ResponseEntity.ok(pagedModel);
     }
 
     @GetMapping("/list")
