@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.musicovery.post.dto.PlaylistPostDTO;
 import com.musicovery.post.entity.PlaylistPost;
@@ -16,7 +17,12 @@ public interface PlaylistPostRepository extends JpaRepository<PlaylistPost, Long
     Page<PlaylistPost> findAll(Pageable pageable);
 
     Page<PlaylistPost> findByTitleContainingIgnoreCase(String title, Pageable pageable);
-    Page<PlaylistPost> findByDescriptionContainingIgnoreCase(String description, Pageable pageable);
+
+    // 네이티브 쿼리로 description 검색 구현
+    @Query(value = "SELECT * FROM post p WHERE p.description LIKE CONCAT('%', :description, '%')", 
+           nativeQuery = true)
+    Page<PlaylistPost> findByDescriptionContainingIgnoreCase(@Param("description") String description, Pageable pageable);
+
     Page<PlaylistPost> findByUser_NicknameContainingIgnoreCase(String nickname, Pageable pageable);
 
     @Query(value = """
