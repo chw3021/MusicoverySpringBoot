@@ -2,11 +2,9 @@ package com.musicovery.userreport.dto;
 
 import java.time.LocalDateTime;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class UserReportDTO {
 	private Long id;
 	private String reporter;
@@ -21,4 +19,7 @@ public class UserReportDTO {
 	private String playlistTitle;
 	private String playlistDescription;
 	private Long reportId;
+	private String reporterId;
+	private String reportedUserId;
+
 }

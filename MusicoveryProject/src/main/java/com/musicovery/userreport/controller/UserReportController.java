@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musicovery.userreport.dto.UserReportDTO;
+import com.musicovery.userreport.dto.UserReportDataDTO;
 import com.musicovery.userreport.entity.UserReport;
 import com.musicovery.userreport.service.UserReportService;
 
@@ -40,20 +41,39 @@ public class UserReportController {
 		return userReportService.getReportsByReporter(reporterUserId);
 	}
 
+<<<<<<< HEAD
 	// 특정 사용자의 신고 내역을 조회하는 GET 요청
 	@GetMapping("/reported/{reportedUserId}")
 	public List<UserReport> getReportsByReportedUser(@PathVariable String reportedUserId) {
 		// 사용자의 신고 내역을 조회
 		return userReportService.getReportsByReportedUser(reportedUserId);
 	}
+=======
+    // 특정 사용자가 신고한 내역을 조회하는 GET 요청
+    @GetMapping("/reporter/{reporterUserId}")
+    public List<UserReportDataDTO> getReportsByReporter(@PathVariable String reporterUserId) {
+        // 사용자의 신고 내역을 조회
+        return userReportService.getReportsByReporter(reporterUserId);
+    }
+>>>>>>> branch 'main' of https://github.com/chw3021/MusicoverySpringBoot.git
 
+<<<<<<< HEAD
 	// 전체 신고 조회
 	@GetMapping("/reportsAll")
 	public List<UserReport> getReports() {
 		// 사용자의 신고 내역을 조회
 		return userReportService.getReports();
 	}
+=======
+    // 특정 사용자의 신고 내역을 조회하는 GET 요청
+    @GetMapping("/reported/{reportedUserId}")
+    public List<UserReportDataDTO> getReportsByReportedUser(@PathVariable String reportedUserId) {
+        // 사용자의 신고 내역을 조회
+        return userReportService.getReportsByReportedUser(reportedUserId);
+    }
+>>>>>>> branch 'main' of https://github.com/chw3021/MusicoverySpringBoot.git
 
+<<<<<<< HEAD
 	// 신고 상태를 업데이트하는 PUT 요청
 //	@PutMapping("/status/{reportId}")
 //	public ResponseEntity<UserReport> updateUserReportStatus(@PathVariable Long reportId, @RequestParam String status) {
@@ -85,4 +105,21 @@ public class UserReportController {
 		return userReportService.getUserReports();
 	}
 
+=======
+    // 전체 신고 조회
+    @GetMapping("/reportsAll")
+    public List<UserReportDataDTO> getReports() {
+        // 사용자의 신고 내역을 조회
+        return userReportService.getReports();
+    }
+    
+    // 신고 상태를 업데이트하는 PUT 요청
+    @PutMapping("/status/{reportId}")
+    public ResponseEntity<UserReport> updateUserReportStatus(
+            @PathVariable Long reportId,
+            @RequestParam String status) {
+        UserReport updatedReport = userReportService.updateUserReportStatus(reportId, status);
+        return ResponseEntity.ok(updatedReport);
+    }
+>>>>>>> branch 'main' of https://github.com/chw3021/MusicoverySpringBoot.git
 }

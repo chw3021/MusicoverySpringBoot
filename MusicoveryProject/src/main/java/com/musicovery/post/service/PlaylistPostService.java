@@ -2,7 +2,9 @@ package com.musicovery.post.service;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.musicovery.musicrecommendation.service.WeightService;
+import com.musicovery.playlist.entity.Playlist;
 import com.musicovery.playlist.service.PlaylistService;
 import com.musicovery.post.dto.PlaylistPostDTO;
 import com.musicovery.post.dto.ReplyDTO;
@@ -58,6 +61,22 @@ public class PlaylistPostService {
         return post;
     }
 
+    public String getTracksInPlaylist(String accessToken, String playlistId) {
+        return spotifyApiPlaylistService.getTracksInPlaylist(accessToken, playlistId);
+    }
+    @Transactional
+    public Map<String, Object> getPostPlaylist(String accessToken, Long postId) {
+        PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        Playlist playlist = post.getPlaylist();
+        String trackDataJson = getTracksInPlaylist(accessToken, playlist.getPlaylistId()); // JSON 전체 반환
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("playlist", playlist);
+        response.put("tracks", trackDataJson); // JSON 그대로 반환
+        
+        return response;
+    }
 
     @Transactional
     public PlaylistPost updatePost(String accessToken, Long postId, String title, String description) {
