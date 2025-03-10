@@ -42,12 +42,6 @@ public class UserAuthController {
 	private final MailService mailService;
 	private final UserRepository userRepository;
 
-//	@PostMapping("/signup")
-//	public ResponseEntity<UserDTO> signup(@RequestBody UserSignupDTO userSignupDTO) {
-//		UserDTO userDTO = userService.signup(userSignupDTO);
-//		return ResponseEntity.ok(userDTO);
-//	}
-
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody UserSignupDTO userSignupDTO) {
 	    try {
@@ -65,44 +59,6 @@ public class UserAuthController {
 		UserDTO loggedInUser = userService.login(userDTO);
 		return ResponseEntity.ok(loggedInUser);
 	}
-
-	
-//	@GetMapping("/profile")
-//    public Object getUserProfile(Authentication authentication, 
-//                                 @AuthenticationPrincipal Object principal) {
-//        if (authentication == null) {
-//            return "인증되지 않은 사용자입니다.";
-//        }
-//
-//        // 일반 로그인 사용자인 경우 (UserDetails)
-//        if (principal instanceof UserDetails) {
-//            UserDetails userDetails = (UserDetails) principal;
-//            return Map.of(
-//                "loginType", "LOCAL",
-//                "username", userDetails.getUsername()
-//            );
-//        }
-//
-//        // OAuth2 로그인 사용자인 경우 (OAuth2User)
-//        if (principal instanceof OAuth2User) {
-//            OAuth2User oauth2User = (OAuth2User) principal;
-//            return Map.of(
-//                "loginType", "OAUTH2",
-//                "attributes", oauth2User.getAttributes()
-//            );
-//        }
-//
-//        return "알 수 없는 로그인 방식입니다.";
-//    }
-
-	
-//	@PutMapping("/profile/{Id}")
-//	public ResponseEntity<UserDTO> updateProfile(
-//	        @PathVariable("Id") String Id,  // 경로 변수와 일치시킴
-//	        @RequestBody UserProfileDTO userProfileDTO) {
-//	    UserDTO updatedUser = userService.updateProfile(Id, userProfileDTO);
-//	    return ResponseEntity.ok(updatedUser);
-//	}
 
 	@PutMapping(value = "/profile/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<UserDTO> updateProfile(
@@ -209,4 +165,10 @@ public class UserAuthController {
         return ResponseEntity.ok("회원 탈퇴 완료");
     }
 
+	@PostMapping("/info")
+    public ResponseEntity<UserDTO> getUserInfo(@RequestBody UserDTO userDTO) {
+        // 클라이언트에서 받은 userAuthDTO를 통해 사용자의 정보를 조회
+        UserDTO user = userService.getUserInfo(userDTO.getUserId());
+        return ResponseEntity.ok(user); // 사용자의 정보 반환
+    }
 }

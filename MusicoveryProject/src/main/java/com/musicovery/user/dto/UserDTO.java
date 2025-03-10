@@ -24,4 +24,6 @@ public class UserDTO {
 	private String passwd;
 
 	private boolean isActive;
+	
+	private boolean isAdmin;
 }
