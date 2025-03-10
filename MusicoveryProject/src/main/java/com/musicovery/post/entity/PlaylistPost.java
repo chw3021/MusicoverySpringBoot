@@ -36,7 +36,7 @@ public class PlaylistPost {
 
     private String title;
 
-    @Column(length = 500)
+    @Column(columnDefinition = "TEXT") 
     private String description;
 
     @ManyToOne
