@@ -25,7 +25,6 @@ public class SpotifyApiMusicServiceImpl implements SpotifyApiMusicService {
     private final SpotifyApiUtil spotifyApiUtil;
     private final SpotifyAuthServiceImpl spotifyAuthService;
     private final RestTemplate restTemplate;
-    private final String SPOTIFY_API_URL = "https://api.spotify.com/v1/artists/";
 
     @Value("${spotify.api.base_url}")
     private String baseUrl;
