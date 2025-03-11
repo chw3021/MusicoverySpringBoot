@@ -38,7 +38,7 @@ public class UserReportServiceImpl implements UserReportService {
         dto.setReporterId(report.getReporter().getId());
         dto.setReporterNickname(report.getReporter().getNickname());
         dto.setReportedUserId(report.getReportedUser().getId());
-        dto.setReportedUserNickname(report.getReporter().getNickname());
+        dto.setReportedUserNickname(report.getReportedUser().getNickname());
         dto.setReason(report.getReason());
         dto.setReportedAt(report.getReportedAt());
         dto.setStatus(report.getStatus());

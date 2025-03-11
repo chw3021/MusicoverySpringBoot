@@ -41,8 +41,8 @@ public class PlaylistPostService {
     private final ReplyRepository replyRepository;
     private final PlaylistService playlistService;
 
-    @Transactional
-    public PlaylistPost createPost(String accessToken, User user, String title, String description, String playlistId) {
+    public PlaylistPost createPost(String accessToken, User user, String title, 
+    		String description, String playlistId) {
         PlaylistPost post = new PlaylistPost();
         post.setTitle(title);
         post.setDescription(description);
@@ -85,7 +85,6 @@ public class PlaylistPostService {
         return response;
     }
 
-    @Transactional
     public PlaylistPost updatePost(String accessToken, Long postId, String title, String description) {
         PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
         post.setTitle(title);
@@ -95,7 +94,6 @@ public class PlaylistPostService {
     }
     
 
-    @Transactional
     public PlaylistPost increaseViewCount(String accessToken, Long postId) {
         PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
         post.setViewCount(post.getViewCount()+1);
@@ -104,7 +102,6 @@ public class PlaylistPostService {
     }
     
 
-    @Transactional
     public PlaylistPost deletePost(String accessToken, Long postId) {
         PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
@@ -112,6 +109,7 @@ public class PlaylistPostService {
         
         return post;
     }
+    
     @Transactional
     public void likePost(String accessToken, User user, Long postId) {
         PlaylistPost post = playlistPostRepository.findById(postId).orElseThrow();
