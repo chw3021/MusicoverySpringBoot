@@ -40,7 +40,6 @@ public class GeminiService {
             "다른 설명은 필요없습니다.", 
             genres, mood, bpm
         );
-        log.info(prompt);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -53,9 +52,6 @@ public class GeminiService {
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(builder.toUriString(), request, String.class);
-
-        // 응답 본문을 로그에 출력하여 확인
-        log.info("Gemini API 응답 본문: {}", response.getBody());
 
         // JSON 파싱 및 변환
         ObjectMapper mapper = new ObjectMapper();
@@ -79,7 +75,6 @@ public class GeminiService {
     public List<SongRecommendation> getRandomRecommendations() {
         String prompt = "다양한 장르, 분위기, BPM의 노래 20곡을 무작위로 추천해주세요. " +
                         "JSON 형식으로 응답해주세요: [{\"title\": \"노래제목\", \"artist\": \"가수이름\"}]";
-        log.info(prompt);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -94,7 +89,6 @@ public class GeminiService {
         ResponseEntity<String> response = restTemplate.postForEntity(builder.toUriString(), request, String.class);
 
         // 응답 본문을 로그에 출력하여 확인
-        log.info("Gemini API 응답 본문: {}", response.getBody());
 
         // JSON 파싱 및 변환
         ObjectMapper mapper = new ObjectMapper();
