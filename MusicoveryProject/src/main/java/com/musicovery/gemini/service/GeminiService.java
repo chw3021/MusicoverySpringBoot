@@ -113,18 +113,18 @@ public class GeminiService {
     
     
     public static String filterLyrics(String lyrics) {
-        // 1. 줄바꿈 제거
         String noNewlines = lyrics.replaceAll("\\n", "");
-
-        // 2. 괄호와 괄호 안의 내용 제거
         String noParentheses = noNewlines.replaceAll("\\(.*?\\)", "");
-
         return noParentheses;
     }
     
     public String getLyrics(String artist, String title) {
         // 가사를 요청하기 위한 프롬프트 생성
-        String prompt = String.format("Instruction: The AI provides the lyrics to the following song as pure text, without parentheses, chorus marks, or line breaks.\\n- Simply prohibit the AI from formatting the lyrics with italics, bold, parentheses, etc.\\n- Provide the original EN/KO text without translation. If the original lyrics are a mix of languages, do not translate them, but provide the original mixed lyrics.: \"%s\"의 \"%s\"의 가사", artist, title);
+        String prompt = String.format("Instruction: The AI provides the lyrics to the following song as pure text, "
+        		+ "without parentheses, chorus marks, or line breaks.\\n- Simply prohibit the AI from formatting the "
+        		+ "lyrics with italics, bold, parentheses, etc.\\n- Provide the original EN/KO text without translation. "
+        		+ "If the original lyrics are a mix of languages, do not translate them, but provide the original mixed "
+        		+ "lyrics.: \"%s\"의 \"%s\"의 가사", artist, title);
         log.info("가사 요청 프롬프트: {}", prompt);
 
         HttpHeaders headers = new HttpHeaders();
@@ -173,7 +173,9 @@ public class GeminiService {
     
     public String getSomeTitle(String title) {
         // 제목 변형 요청을 위한 프롬프트 생성
-    	String prompt = String.format("너는이제 내가주는 노래의 title을 융통성을 가진 답이필요해. 예를들면 (Pink Venom값이 들어왔을때 : Pink Venom,pinkvenom,pink venom,PINKVENOM,PINK VENOM,핑크베놈,핑크 베놈) 이런식으로 해줄수있다. 이런식으로 글로만 써줘 다른말들은 필요없어. title마다 공백도 필요없어 , 로 나눠줘 : \"%s\"", title);
+    	String prompt = String.format("너는이제 내가주는 노래의 title을 융통성을 가진 답이필요해. 예를들면 (Pink Venom값이 들어왔을때 : "
+    			+ "Pink Venom,pinkvenom,pink venom,PINKVENOM,PINK VENOM,핑크베놈,핑크 베놈) 이런식으로 해줄수있다. 이런식으로 글로만 "
+    			+ "써줘 다른말들은 필요없어. title마다 공백도 필요없어 , 로 나눠줘 : \"%s\"", title);
         log.info("제목 요청 프롬프트: {}", prompt);
 
         HttpHeaders headers = new HttpHeaders();
@@ -218,7 +220,5 @@ public class GeminiService {
             return "제목을 가져오는 중 오류가 발생했습니다.";
         }
     }
-    
-    
     
 }

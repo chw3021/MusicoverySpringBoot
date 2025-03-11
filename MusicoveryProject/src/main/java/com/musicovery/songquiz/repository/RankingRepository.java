@@ -10,6 +10,5 @@ import com.musicovery.songquiz.entity.Ranking;
 @Repository
 public interface RankingRepository extends JpaRepository<Ranking, Long> {
     List<Ranking> findAllByOrderByTimeTakenAsc();
-    
     List<Ranking> findTop5ByOrderByTimeTakenAsc();
 }
