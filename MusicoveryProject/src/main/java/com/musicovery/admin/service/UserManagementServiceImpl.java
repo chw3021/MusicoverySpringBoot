@@ -2,6 +2,7 @@ package com.musicovery.admin.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +18,16 @@ public class UserManagementServiceImpl implements UserManagementService {
 	}
 
 	@Override
-	public List<User> getAllUsers() {
-		return userRepository.findAll();
+	public List<User> getAllUsers(String searchTerm, String sortBy) {
+		Sort sort = sortBy.equals("nickname") ? Sort.by(Sort.Direction.ASC, "nickname")
+				: Sort.by(Sort.Direction.DESC, "regdate"); // 기본 정렬: 최신 가입일순
+
+		if (searchTerm == null || searchTerm.isEmpty()) {
+			return userRepository.findAll(sort); // ✅ 검색어 없으면 전체 유저 목록
+		}
+
+		return userRepository.findByEmailContainingOrUserIdContainingOrNicknameContaining(searchTerm, searchTerm,
+				searchTerm, sort);
 	}
 
 	@Override
@@ -44,4 +53,5 @@ public class UserManagementServiceImpl implements UserManagementService {
 		userRepository.deleteById(userId);
 		return true;
 	}
+
 }

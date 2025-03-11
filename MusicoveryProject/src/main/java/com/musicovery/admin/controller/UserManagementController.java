@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 //import com.musicovery.user.entity.User;
@@ -26,8 +27,9 @@ public class UserManagementController {
 
 	// 사용자 목록 조회
 	@GetMapping
-	public List<User> getAllUsers() {
-		return userService.getAllUsers();
+	public List<User> getAllUsers(@RequestParam(required = false) String search,
+			@RequestParam(defaultValue = "regdate") String sort) {
+		return userService.getAllUsers(search, sort);
 	}
 
 	// 특정 사용자 조회
@@ -47,4 +49,5 @@ public class UserManagementController {
 	public boolean deleteUser(@PathVariable String userId) {
 		return userService.deleteUser(userId);
 	}
+
 }

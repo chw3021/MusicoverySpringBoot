@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -258,7 +259,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<User> searchUsers(String keyword) {
-		return userRepository.findByEmailContainingOrUserIdContainingOrNicknameContaining(keyword, keyword, keyword);
+		Sort sort = Sort.by(Sort.Direction.DESC, "regdate"); // 기본 정렬: 가입일 최신순
+		return userRepository.findByEmailContainingOrUserIdContainingOrNicknameContaining(keyword, keyword, keyword,
+				sort);
 	}
 
 	// 이메일 인증을 위한 토큰 생성

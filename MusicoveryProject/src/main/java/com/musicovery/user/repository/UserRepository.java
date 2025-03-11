@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,8 +24,8 @@ public interface UserRepository extends JpaRepository<User, String> {
 	Optional<User> findByNickname(String nickname);
 
 	// 사용자 검색 메서드 추가
-	List<User> findByEmailContainingOrUserIdContainingOrNicknameContaining(String email, String userId,
-			String nickname);
+	List<User> findByEmailContainingOrUserIdContainingOrNicknameContaining(String email, String userId, String nickname,
+			Sort sort);
 
 	// 날짜별 가입한 유저 수 조회
 	@Query("SELECT COUNT(u) FROM User u WHERE DATE(u.regdate) = :date")
