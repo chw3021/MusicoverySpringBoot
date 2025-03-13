@@ -1,10 +1,13 @@
 package com.musicovery.admin.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,10 +44,14 @@ public class ReportController {
 	}
 
 	// 신고 상태 변경
-	@PutMapping("/{reportId}/status")
-	public boolean updateReportStatus(@PathVariable Long reportId, @RequestParam String status) {
-		return reportService.updateReportStatus(reportId, status);
+	@PutMapping("/status/{reportId}")
+	public ResponseEntity<String> updateReportStatus(@PathVariable Long reportId, @RequestBody Map<String, String> request) {
+	    String newStatus = request.get("status");
+
+	    reportService.updateReportStatus(reportId, newStatus);
+	    return ResponseEntity.ok("신고 상태가 변경되었습니다.");
 	}
+
 
 	@PutMapping("/{reportId}/resolve")
 	public boolean resolveReport(@PathVariable Long reportId) {

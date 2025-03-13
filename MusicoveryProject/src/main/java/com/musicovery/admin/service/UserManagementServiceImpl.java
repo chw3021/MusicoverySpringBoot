@@ -23,7 +23,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 				: Sort.by(Sort.Direction.DESC, "regdate"); // 기본 정렬: 최신 가입일순
 
 		if (searchTerm == null || searchTerm.isEmpty()) {
-			return userRepository.findAll(sort); // ✅ 검색어 없으면 전체 유저 목록
+			return userRepository.findAll(sort); // 검색어 없으면 전체 유저 목록
 		}
 
 		return userRepository.findByEmailContainingOrUserIdContainingOrNicknameContaining(searchTerm, searchTerm,
