@@ -26,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.musicovery.file.service.FileStorageService;
+import com.musicovery.friends.repository.FriendsRepository;
 import com.musicovery.mail.entity.EmailVerificationToken;
 import com.musicovery.mail.repository.EmailVerificationTokenRepository;
 import com.musicovery.mail.service.MailService;
@@ -49,17 +50,20 @@ public class UserServiceImpl implements UserService {
 	private final ModelMapper modelMapper; // ModelMapper 주입
 
 	private final EmailVerificationTokenRepository tokenRepository;
+	private final FriendsRepository friendsRepository;
 
 	private final FileStorageService fileService;
 
 	// 생성자 주입
 	public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper,
-			EmailVerificationTokenRepository tokenRepository, MailService mailService, FileStorageService fileService) {
+			EmailVerificationTokenRepository tokenRepository, MailService mailService, FileStorageService fileService
+			,FriendsRepository friendsRepository) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.modelMapper = modelMapper;
 		this.tokenRepository = tokenRepository;
 		this.fileService = fileService;
+		this.friendsRepository = friendsRepository;
 	}
 
 	@Override
@@ -357,13 +361,15 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public void deleteUser(String id, String password) {
+	public void deleteUser(String id, String passwd) {
 		User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
 		// 비밀번호 검증
-		if (!passwordEncoder.matches(password, user.getPasswd())) {
-			throw new RuntimeException("비밀번호가 올바르지 않습니다.");
-		}
+		if (passwd == null || !passwordEncoder.matches(passwd, user.getPasswd())) {
+            throw new RuntimeException("비밀번호가 올바르지 않습니다.");
+        }
+
+	    friendsRepository.deleteAllByUserOrFriend(user, user);
 
 		// 유저 삭제
 		userRepository.delete(user);

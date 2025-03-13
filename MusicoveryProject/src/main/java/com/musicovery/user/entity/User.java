@@ -2,7 +2,7 @@ package com.musicovery.user.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -97,11 +97,11 @@ public class User {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
-	private Set<Friends> friends;
+	private List<Friends> friends;
 
 	@OneToMany(mappedBy = "friend", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
-	private Set<Friends> friendOf;
+	private List<Friends> friendOf;
 
 	@Column(nullable = false, updatable = false)
 	@CreatedDate
