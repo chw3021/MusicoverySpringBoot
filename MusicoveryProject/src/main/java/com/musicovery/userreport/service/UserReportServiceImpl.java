@@ -99,35 +99,35 @@ public class UserReportServiceImpl implements UserReportService {
 
 	@Override
 	public List<UserReportDTO> getUserReports() {
-	    return userReportRepository.findAllWithPost().stream().map(report -> {
-	        UserReportDTO dto = new UserReportDTO();
-	        dto.setReportId(report.getId());
+		return userReportRepository.findAllWithPost().stream().map(report -> {
+			UserReportDTO dto = new UserReportDTO();
+			dto.setReportId(report.getId());
 
-	        // ✅ 신고자 정보 (ID + 닉네임)
-	        dto.setReporter(report.getReporter() != null ? report.getReporter().getId() : "알 수 없음");
+			// ✅ 신고자 정보 (ID + 닉네임)
+			dto.setReporter(report.getReporter() != null ? report.getReporter().getId() : "알 수 없음");
 
-	        // ✅ 피신고자 정보 (ID + 닉네임)
-	        dto.setReportedUser(report.getReportedUser().getId());
-	        dto.setReportedNickname(report.getReportedUser().getNickname()); // 🚀 닉네임 추가
+			// ✅ 피신고자 정보 (ID + 닉네임)
+			dto.setReportedUser(report.getReportedUser().getId());
+			dto.setReportedNickname(report.getReportedUser().getNickname()); // 🚀 닉네임 추가
 
-	        dto.setReason(report.getReason());
-	        dto.setReportedAt(report.getReportedAt());
-	        dto.setStatus(report.getStatus());
+			dto.setReason(report.getReason());
+			dto.setReportedAt(report.getReportedAt());
+			dto.setStatus(report.getStatus());
 
-	        // 🚀 게시글 정보 추가
-	        if (report.getPost() != null) {
-	            dto.setPostId(report.getPost().getId());
-	            dto.setPostTitle(report.getPost().getTitle());
-	            dto.setPostDescription(report.getPost().getDescription());
-	        }
+			// 🚀 게시글 정보 추가
+			if (report.getPost() != null) {
+				dto.setPostId(report.getPost().getId());
+				dto.setPostTitle(report.getPost().getTitle());
+				dto.setPostDescription(report.getPost().getDescription());
+			}
 
-	        return dto;
-	    }).collect(Collectors.toList());
+			return dto;
+		}).collect(Collectors.toList());
 	}
 
 	@Override
 	public int countUserReports() {
-	    return (int) userReportRepository.count();
+		return (int) userReportRepository.count();
 	}
 
 }

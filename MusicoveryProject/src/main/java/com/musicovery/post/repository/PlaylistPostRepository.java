@@ -59,8 +59,7 @@ public interface PlaylistPostRepository extends JpaRepository<PlaylistPost, Long
         FROM post 
         WHERE is_notice = false 
         ORDER BY created_date DESC
-        """,
-        nativeQuery = true)
+        """,        nativeQuery = true)
     Page<PlaylistPost> findAllWithNativeQuery(Pageable pageable);
     
 	Page<PlaylistPost> findByTitleContainingIgnoreCaseAndIsNoticeFalse(String keyword, Pageable pageable);
