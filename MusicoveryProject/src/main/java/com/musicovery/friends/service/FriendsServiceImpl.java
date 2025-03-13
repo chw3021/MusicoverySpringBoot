@@ -36,21 +36,22 @@ public class FriendsServiceImpl implements FriendsService {
     }
 
     @Override
-    public List<Friends> getFriendRequests(String friendId) {
-        return friendsRepository.findByFriendIdAndIsAcceptedFalse(friendId);
-    }
-
-    @Override
     public List<Friends> getPendingRequests(String userId) {
         return friendsRepository.findByUserIdAndIsAcceptedFalse(userId);
     }
 
+
+    @Override
+    public List<Friends> getFriendRequests(String friendId) {
+        return friendsRepository.findByFriendIdAndIsAcceptedFalse(friendId);
+    }
+    
     @Override
     public Friends acceptFriendRequest(Long friendRequestId) {
         Optional<Friends> friendRequest = friendsRepository.findById(friendRequestId);
         if (friendRequest.isPresent()) {
             Friends friend = friendRequest.get();
-            friend.setIsAccepted(true);
+            friend.setIsAccepted(true); 
             return friendsRepository.save(friend);
         }
         throw new RuntimeException("친구 요청을 찾을 수 없습니다.");
