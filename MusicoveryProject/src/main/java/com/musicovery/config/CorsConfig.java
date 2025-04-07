@@ -14,7 +14,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-        		.allowedOrigins(reactUrl)
+				.allowedOrigins("https://chw3021.github.io", reactUrl, "https://brave-hairs-check.loca.lt")
                 .allowCredentials(true) // 쿠키 허용
                 .allowedHeaders("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
